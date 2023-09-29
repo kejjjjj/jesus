@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\entry">
+      <UniqueIdentifier>{e6741430-ee81-471f-8db6-aca6c5b18ba7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cg">
+      <UniqueIdentifier>{a87350b1-55cb-47d1-9136-d30893275723}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\r">
+      <UniqueIdentifier>{3bea3ced-0132-44f6-885a-750c5eaccd19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\bg">
+      <UniqueIdentifier>{53e874c8-ee5c-44fc-873a-bce54e06193d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mh">
+      <UniqueIdentifier>{45f7fdc6-ea97-41d4-b8b9-b59d50c0c56f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGui">
+      <UniqueIdentifier>{cfa33eda-f169-4aee-89d5-41595c0b80cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mh\hde">
+      <UniqueIdentifier>{447d16e8-bf9c-4698-92a3-64ddf80fbc38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGui\implot">
+      <UniqueIdentifier>{db52d612-a1a9-4841-be6e-d7be7ec94f4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\msc">
+      <UniqueIdentifier>{554c731f-3782-4ffb-874c-9a03b68d69ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\koukku">
+      <UniqueIdentifier>{040f7ba7-574a-4be7-8242-9c017bd52586}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\engine">
+      <UniqueIdentifier>{5c22c0c4-59ce-4e7a-8918-0405ff0b446a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\com">
+      <UniqueIdentifier>{ab098210-a244-4dea-96c8-25900d6a454b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tools">
+      <UniqueIdentifier>{3f5d4de6-6c85-46fc-9da6-2a5c725c308c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tools\recording">
+      <UniqueIdentifier>{442b685c-edda-4dc8-9924-2e8d049003f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cl">
+      <UniqueIdentifier>{c4778572-d6d2-4dbf-b3f2-096053c2b42b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tools\elebot">
+      <UniqueIdentifier>{db25844c-b376-4c6e-97b0-e43f5f55398d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cg_hooks.hpp">
+      <Filter>Source Files\cg</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\hde\hde64.h">
+      <Filter>Header Files\mh\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\hde\pstdint.h">
+      <Filter>Header Files\mh\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\hde\table32.h">
+      <Filter>Header Files\mh\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\hde\table64.h">
+      <Filter>Header Files\mh\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\hde\hde32.h">
+      <Filter>Header Files\mh\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\MinHook.h">
+      <Filter>Header Files\mh</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\trampoline.h">
+      <Filter>Header Files\mh</Filter>
+    </ClInclude>
+    <ClInclude Include="mh\buffer.h">
+      <Filter>Header Files\mh</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\implot\implot_internal.h">
+      <Filter>Header Files\ImGui\implot</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\implot\implot.h">
+      <Filter>Header Files\ImGui\implot</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_dx9.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_impl_win32.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_internal.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_stdlib.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_rectpack.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_textedit.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imstb_truetype.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imconfig.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGui\imgui_color_gradient.hpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="errors.hpp">
+      <Filter>Source Files\msc</Filter>
+    </ClInclude>
+    <ClInclude Include="koukku.hpp">
+      <Filter>Header Files\koukku</Filter>
+    </ClInclude>
+    <ClInclude Include="r_renderer.hpp">
+      <Filter>Source Files\r</Filter>
+    </ClInclude>
+    <ClInclude Include="rb_endscene.hpp">
+      <Filter>Source Files\r</Filter>
+    </ClInclude>
+    <ClInclude Include="r_drawtools.hpp">
+      <Filter>Source Files\r</Filter>
+    </ClInclude>
+    <ClInclude Include="cg_local.hpp">
+      <Filter>Source Files\cg</Filter>
+    </ClInclude>
+    <ClInclude Include="cg_offsets.hpp">
+      <Filter>Source Files\cg</Filter>
+    </ClInclude>
+    <ClInclude Include="cg_init.hpp">
+      <Filter>Source Files\cg</Filter>
+    </ClInclude>
+    <ClInclude Include="e_utilities.hpp">
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="com_vector.hpp">
+      <Filter>Source Files\com</Filter>
+    </ClInclude>
+    <ClInclude Include="com_channel.hpp">
+      <Filter>Source Files\com</Filter>
+    </ClInclude>
+    <ClInclude Include="typedefs.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cg_angles.hpp">
+      <Filter>Source Files\cg</Filter>
+    </ClInclude>
+    <ClInclude Include="recording.hpp">
+      <Filter>Source Files\tools\recording</Filter>
+    </ClInclude>
+    <ClInclude Include="dvar.hpp">
+      <Filter>Source Files\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="cl_client.hpp">
+      <Filter>Source Files\cl</Filter>
+    </ClInclude>
+    <ClInclude Include="sys_tools.hpp">
+      <Filter>Source Files\msc</Filter>
+    </ClInclude>
+    <ClInclude Include="elebot.hpp">
+      <Filter>Source Files\tools\elebot</Filter>
+    </ClInclude>
+    <ClInclude Include="bg_pmove_simulation.hpp">
+      <Filter>Source Files\bg</Filter>
+    </ClInclude>
+    <ClInclude Include="bg_pmove.hpp">
+      <Filter>Source Files\bg</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cg_hooks.cpp">
+      <Filter>Source Files\cg</Filter>
+    </ClCompile>
+    <ClCompile Include="mh\hde\hde64.c">
+      <Filter>Header Files\mh\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="mh\hde\hde32.c">
+      <Filter>Header Files\mh\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="mh\trampoline.c">
+      <Filter>Header Files\mh</Filter>
+    </ClCompile>
+    <ClCompile Include="mh\buffer.c">
+      <Filter>Header Files\mh</Filter>
+    </ClCompile>
+    <ClCompile Include="mh\hook.c">
+      <Filter>Header Files\mh</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot_demo.cpp">
+      <Filter>Header Files\ImGui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot_items.cpp">
+      <Filter>Header Files\ImGui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\implot\implot.cpp">
+      <Filter>Header Files\ImGui\implot</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_draw.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_dx9.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_impl_win32.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_stdlib.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_tables.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_widgets.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_color_gradient.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGui\imgui_demo.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="errors.cpp">
+      <Filter>Source Files\msc</Filter>
+    </ClCompile>
+    <ClCompile Include="koukku.cpp">
+      <Filter>Header Files\koukku</Filter>
+    </ClCompile>
+    <ClCompile Include="rb_endscene.cpp">
+      <Filter>Source Files\r</Filter>
+    </ClCompile>
+    <ClCompile Include="r_drawtools.cpp">
+      <Filter>Source Files\r</Filter>
+    </ClCompile>
+    <ClCompile Include="r_endscene.cpp">
+      <Filter>Source Files\r</Filter>
+    </ClCompile>
+    <ClCompile Include="r_renderer.cpp">
+      <Filter>Source Files\r</Filter>
+    </ClCompile>
+    <ClCompile Include="cg_init.cpp">
+      <Filter>Source Files\cg</Filter>
+    </ClCompile>
+    <ClCompile Include="e_utilities.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="com_vector.cpp">
+      <Filter>Source Files\com</Filter>
+    </ClCompile>
+    <ClCompile Include="com_channel.cpp">
+      <Filter>Source Files\com</Filter>
+    </ClCompile>
+    <ClCompile Include="cg_angles.cpp">
+      <Filter>Source Files\cg</Filter>
+    </ClCompile>
+    <ClCompile Include="recording.cpp">
+      <Filter>Source Files\tools\recording</Filter>
+    </ClCompile>
+    <ClCompile Include="playback.cpp">
+      <Filter>Source Files\tools\recording</Filter>
+    </ClCompile>
+    <ClCompile Include="dvar.cpp">
+      <Filter>Source Files\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="cl_client.cpp">
+      <Filter>Source Files\cl</Filter>
+    </ClCompile>
+    <ClCompile Include="sys_tools.cpp">
+      <Filter>Source Files\msc</Filter>
+    </ClCompile>
+    <ClCompile Include="elebot.cpp">
+      <Filter>Source Files\tools\elebot</Filter>
+    </ClCompile>
+    <ClCompile Include="bg_pmove_simulation.cpp">
+      <Filter>Source Files\bg</Filter>
+    </ClCompile>
+    <ClCompile Include="bg_pmove.cpp">
+      <Filter>Source Files\bg</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
