@@ -321,7 +321,7 @@ bool Mantle_FindMantleSurface(pmove_t* pm, trace_t* trace, float* normal, float*
 	end[1] = angles[1] * mantle_range + v7->origin[1];
 	end[2] = angles[2] * mantle_range + v7->origin[2];
 
-	pmoveHandler_t* handler = reinterpret_cast<pmoveHandler_t*>(0x06DA590);
+	pmoveHandler_t* handler = reinterpret_cast<pmoveHandler_t*>(0x729448);
 
 	handler->trace(trace, start, mins, maxs, end, v7->clientNum, 0x1000000);
 

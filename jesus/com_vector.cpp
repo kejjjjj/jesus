@@ -68,19 +68,6 @@ void MatrixTransformVector43(const float* in1, const float(*in2)[3], float* out)
 	out[2] = (((*in2)[5] * in1[1]) + (((*in2)[2] * *in1) + ((*in2)[8] * in1[2]))) + (*in2)[11];
 }
 
-float random(const float range) { //0 -> HI
-	std::random_device rd;
-	static std::mt19937 mt(rd());
-	std::uniform_real_distribution num{ 0.f, range };
-	return num(mt);
-
-}
-float random(const float min, const float range) { //LO -> HI
-	std::random_device rd;
-	static std::mt19937 mt;
-	std::uniform_real_distribution num{ min, range };
-	return num(mt);
-}
 int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, cplane_s* p) {
 	float dist1, dist2;
 

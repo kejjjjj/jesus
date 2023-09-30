@@ -196,7 +196,7 @@ public:
 	{
 		char bufff[64];
 
-		sprintf_s(bufff, "%.6f", cgs->snap->ps.delta_angles[YAW]);
+		sprintf_s(bufff, "%.6f", cgs->predictedPlayerState.origin[1]);
 		R_AddCmdDrawTextWithEffects(bufff, "fonts/objectivefont", cgs->refdef.width / 1.5f - strlen(bufff) * 2, cgs->refdef.height / 1.5f-100, 1.f, 1.f, 0, vec4_t{ 1,1,1,1 }, 3, vec4_t{ 1,0,0,1 }, 0, 0, 0, 0, 0, 0);
 
 

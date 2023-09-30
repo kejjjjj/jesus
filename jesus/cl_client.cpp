@@ -23,9 +23,8 @@ void CL_FinishMove(usercmd_s* cmd)
 
 	mr.OnUserCmd(cmd);
 
-	//if (GetAsyncKeyState(VK_NUMPAD8) & 1) {
-	//}
-
+	if (GetAsyncKeyState(VK_NUMPAD8) & 1) {
+	}
 	elebot.move(cmd);
 
 	elebot.do_playback(cmd);

@@ -79,6 +79,22 @@ public:
 
 	float up;
 };
+class prediction_viewangle_fixed_angle : public prediction_viewangle
+{
+public:
+	prediction_angle_enumerator get_type() const override
+	{
+		return prediction_angle_enumerator::FIXED_ANGLE;
+	}
+	fvec3 get_deltas(pmove_t* pm, pml_t* pml) const override
+	{
+		return { forward - pm->ps->viewangles[0], right - pm->ps->viewangles[1], up - pm->ps->viewangles[2] };
+	}
+
+	float forward;
+	float right;
+	float up;
+};
 struct simulation_results
 {
 	ivec3 cmd_angles;

@@ -2,7 +2,7 @@
 void CG_SetYaw(const float ang)
 {
 	float ref = clients->cgameViewangles[YAW];
-	ref = fmodf(ref, 360);
+	//ref = fmodf(ref, 360);
 	ref -= ref * 2 - ang;
 	clients->viewangles[1] += ref;
 

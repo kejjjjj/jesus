@@ -20,6 +20,7 @@ enum class cardinalDirection_e : unsigned short
 	E = 270, //Y- 270°
 	S = 180, //X- 180°
 	W = 90 //Y+ 90°
+
 };
 
 

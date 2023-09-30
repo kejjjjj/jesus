@@ -114,6 +114,9 @@ simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_con
 	case prediction_angle_enumerator::STRAFEBOT:
 		deltas = dynamic_cast<prediction_viewangle_strafebot*>(controller->turntype.get())->get_deltas(pm, pml);
 		break;
+	case prediction_angle_enumerator::FIXED_ANGLE:
+		deltas = dynamic_cast<prediction_viewangle_fixed_angle*>(controller->turntype.get())->get_deltas(pm, pml);
+		break;
 
 	}
 
@@ -149,7 +152,7 @@ simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_con
 		PM_GroundTrace_(pm, pml);
 	}
 
-	//Mantle_Check(pm, pml);
+	Mantle_Check(pm, pml);
 
 	if ((ps->pm_flags & PMF_MANTLE) != 0) {
 
@@ -220,7 +223,7 @@ simulation_results PmoveSingleSimulation(pmove_t* pm, pml_t* pml, prediction_con
 	results.rightmove = pm->cmd.rightmove;
 	results.FPS = 1000 / pml->msec;
 	memcpy(&pm->oldcmd, &pm->cmd, sizeof(pm->oldcmd));
-	pm->cmd.buttons = 0;
+	//pm->cmd.buttons = 0;
 
 	hook::write_addr(0x537D10, "\x81", 1);
 

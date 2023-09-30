@@ -22,7 +22,7 @@ void Playback::StartPlayback(const int serverTime, playerState_s* ps, usercmd_s*
 		precmd.FPS = first_cmd.FPS;
 		precmd.forwardmove = 0;
 		precmd.rightmove = 0;
-		precmd.buttons = 0;
+		precmd.buttons = first_cmd.buttons;
 		precmd.viewangles = first_cmd.viewangles;
 		precmd.weapon = first_cmd.weapon;
 		precmd.offhand = first_cmd.offhand;
