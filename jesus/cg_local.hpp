@@ -1403,14 +1403,6 @@ struct usercmd_s
 	char meleeChargeDist;
 	char selectedLocation[2];
 
-	void set_angles(float* src, int* dst) {
-
-		int delta = ANGLE2SHORT(src[YAW]);
-		delta -= delta * 2 - dst[1];
-
-		this->angles[1] += delta;
-
-	}
 };
 struct TraceExtents
 {

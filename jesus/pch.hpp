@@ -115,6 +115,7 @@ typedef vec_t vec4_t[4];
 #include "bg_pmove_simulation.hpp"
 
 #include "cl_client.hpp"
+#include "cl_input.hpp"
 
 #include "rb_endscene.hpp"
 
@@ -124,7 +125,9 @@ typedef vec_t vec4_t[4];
 
 #include "recording.hpp"
 
+#include "lineup.hpp"
 #include "elebot.hpp"
+
 
 using namespace std::chrono_literals;
 

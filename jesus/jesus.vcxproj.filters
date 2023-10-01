@@ -61,6 +61,9 @@
     <Filter Include="Source Files\tools\elebot">
       <UniqueIdentifier>{db25844c-b376-4c6e-97b0-e43f5f55398d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\lineup">
+      <UniqueIdentifier>{e826eff3-069b-41d5-a889-571b5982c068}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -189,6 +192,12 @@
     <ClInclude Include="bg_pmove.hpp">
       <Filter>Source Files\bg</Filter>
     </ClInclude>
+    <ClInclude Include="cl_input.hpp">
+      <Filter>Source Files\cl</Filter>
+    </ClInclude>
+    <ClInclude Include="lineup.hpp">
+      <Filter>Source Files\lineup</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -307,6 +316,15 @@
     </ClCompile>
     <ClCompile Include="bg_pmove.cpp">
       <Filter>Source Files\bg</Filter>
+    </ClCompile>
+    <ClCompile Include="cl_input.cpp">
+      <Filter>Source Files\cl</Filter>
+    </ClCompile>
+    <ClCompile Include="lineup.cpp">
+      <Filter>Source Files\lineup</Filter>
+    </ClCompile>
+    <ClCompile Include="m_recorder.cpp">
+      <Filter>Source Files\tools\recording</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

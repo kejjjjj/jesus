@@ -34,7 +34,7 @@ void __cdecl Renderer::CG_DrawActive()
 
 	char buffer[128];
 
-	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], AngleNormalize90(clients->cgameViewangles[YAW]));
+	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], (clients->cgameViewangles[YAW]));
 
 	float col[4] = { 0,1,0,1 };
 	float glowCol[4] = { 1,0,0,1 };

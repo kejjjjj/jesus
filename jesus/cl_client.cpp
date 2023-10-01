@@ -21,13 +21,16 @@ void CL_FinishMove(usercmd_s* cmd)
 	static Elebot& elebot = Elebot::getInstance();
 	CL_FixServerTime(cmd);
 
+
+
 	mr.OnUserCmd(cmd);
 
-	if (GetAsyncKeyState(VK_NUMPAD8) & 1) {
-	}
 	elebot.move(cmd);
-
 	elebot.do_playback(cmd);
+
+
+	lineup_testing_func(cmd);
+
 	return;
 
 }

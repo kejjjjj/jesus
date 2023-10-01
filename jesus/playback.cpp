@@ -111,35 +111,3 @@ playback_cmd* Playback::CurrentCmd() const {
 
 	return &(*copy);
 }
-
-void MovementRecorder::blabla(usercmd_s* cmd)
-{
-	static int angles[3] = { 0,0,0 };
-
-	if (GetAsyncKeyState(VK_NUMPAD5) & 1) {
-
-
-
-		ivec3 deltas = CL_GetPlayerAngles(cmd, cgs->snap->ps.delta_angles, recorder.data.front().viewangles[YAW]);
-
-		VectorCopy(recorder.data.front().angles, angles);
-		angles[YAW] = cmd->angles[YAW] + deltas.y;
-
-		int delta = angles[YAW] - recorder.data.front().angles[YAW];
-
-		for (auto& i : recorder.data) {
-			i.angles[YAW] += delta;
-		}
-	}
-
-	if ((GetAsyncKeyState(VK_NUMPAD3) < 0) == false || recorder.data.empty())
-		return;
-
-	fvec3 r_deltas = recorder.delta_angles;
-	 
-
-
-	cmd->angles[YAW] = angles[YAW];
-
-
-}

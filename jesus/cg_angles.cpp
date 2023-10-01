@@ -44,6 +44,19 @@ void CL_SetPlayerAngles(usercmd_s* cmd, float* delta_angles, const fvec3& target
 
 	}
 }
+void CL_SetSilentAngles(const fvec3& target)
+{
+	usercmd_s* cmd = CL_GetUserCmd(clients->cmdNumber - 1);
+
+	cmd->serverTime = cgs->oldTime + 1;
+	
+	const ivec3 deltas = CL_GetPlayerAngles(cmd, cgs->predictedPlayerState.delta_angles, target);
+
+	cmd->angles[PITCH] += deltas.x;
+	cmd->angles[YAW] += deltas.y;
+	cmd->angles[ROLL] += deltas.z;
+
+}
 ivec3 CL_GetPlayerAngles(usercmd_s* cmd, float* delta_angles, const fvec3& target)
 {
 	fvec3 results;

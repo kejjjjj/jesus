@@ -182,6 +182,9 @@ struct vec3
 	{
 		return { -x, -y, -z };
 	}
+	vec3 abs() const noexcept {
+		return { std::abs(x), std::abs(y), std::abs(z) };
+	}
 	float MagSq() const noexcept { //magnitude squared
 		return (x * x + y * y + z * z);
 	}
