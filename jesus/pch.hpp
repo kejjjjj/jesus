@@ -92,6 +92,7 @@ typedef vec_t vec4_t[4];
 
 #include "typedefs.hpp"
 
+#include "fs_utilities.hpp"
 
 #include "errors.hpp"
 #include "koukku.hpp"
@@ -111,6 +112,8 @@ typedef vec_t vec4_t[4];
 #include "r_renderer.hpp"
 #include "r_drawtools.hpp"
 
+#include "g_weapon.hpp"
+
 #include "bg_pmove.hpp"
 #include "bg_pmove_simulation.hpp"
 
@@ -128,6 +131,7 @@ typedef vec_t vec4_t[4];
 #include "lineup.hpp"
 #include "elebot.hpp"
 
+#include "geom_shapes.hpp"
 
 using namespace std::chrono_literals;
 

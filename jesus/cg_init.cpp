@@ -10,6 +10,7 @@ void CG_Init()
 
     decltype(auto) renderer = Renderer::getInstance();
     decltype(auto) elebot = Elebot::getInstance();
+    decltype(auto) recorder = MovementRecorder::getInstance();
     //decltype(auto) resources = Resources::getInstance();
     //decltype(auto) gui = Gui::getInstance();
 
@@ -28,7 +29,26 @@ void CG_Init()
 
     }
 
+    CG_CreateSubdirectory("");
+    CG_CreateSubdirectory("recorder");
+
+
     Cmd_AddCommand("elebot_run", elebot.start_ground);
+    Cmd_AddCommand("recorder_record", recorder.OnToggleRecording);
+    Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);
+    Cmd_AddCommand("recorder_playback", recorder.OnStartPlayback);
+
+    dvar_limits l;
+    dvar_value v;
+
+    v.value = 0.01f;
+    l.value.min = 0.f;
+    l.value.max = 1.f;
+
+    recorder.recorder_lineupDistance = Dvar_Register("recorder_lineupDistance", dvar_type::value, dvar_flags::saved, 
+        "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback", v, l);
+
+
 
     //gscript.initialize();
     //resources.initialize();

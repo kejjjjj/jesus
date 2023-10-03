@@ -64,6 +64,12 @@
     <Filter Include="Source Files\lineup">
       <UniqueIdentifier>{e826eff3-069b-41d5-a889-571b5982c068}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\g">
+      <UniqueIdentifier>{26153918-2a1a-4e7f-ba68-14d26db8c81a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\geom">
+      <UniqueIdentifier>{45d9aa17-3707-48e0-a954-b95ed349e977}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -198,6 +204,15 @@
     <ClInclude Include="lineup.hpp">
       <Filter>Source Files\lineup</Filter>
     </ClInclude>
+    <ClInclude Include="fs_utilities.hpp">
+      <Filter>Source Files\msc</Filter>
+    </ClInclude>
+    <ClInclude Include="g_weapon.hpp">
+      <Filter>Source Files\g</Filter>
+    </ClInclude>
+    <ClInclude Include="geom_shapes.hpp">
+      <Filter>Source Files\geom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -325,6 +340,18 @@
     </ClCompile>
     <ClCompile Include="m_recorder.cpp">
       <Filter>Source Files\tools\recording</Filter>
+    </ClCompile>
+    <ClCompile Include="recorder_io.cpp">
+      <Filter>Source Files\tools\recording</Filter>
+    </ClCompile>
+    <ClCompile Include="fs_utilities.cpp">
+      <Filter>Source Files\msc</Filter>
+    </ClCompile>
+    <ClCompile Include="g_weapon.cpp">
+      <Filter>Source Files\g</Filter>
+    </ClCompile>
+    <ClCompile Include="geom_shapes.cpp">
+      <Filter>Source Files\geom</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -21,6 +21,10 @@ void CL_FinishMove(usercmd_s* cmd)
 	static Elebot& elebot = Elebot::getInstance();
 	CL_FixServerTime(cmd);
 
+	if (GetAsyncKeyState(VK_NUMPAD0) & 1) {
+		mr.LoadRecordings(Dvar_FindMalleableVar("mapname")->current.string);
+
+	}
 
 
 	mr.OnUserCmd(cmd);

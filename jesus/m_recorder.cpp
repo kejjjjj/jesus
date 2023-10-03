@@ -1,23 +1,53 @@
 #include "pch.hpp"
 
+void MovementRecorder::OnToggleRecording()
+{
+	if (NOT_SERVER)
+		return;
+
+	decltype(auto) r = getInstance();
+
+	if (r.recorder.isRecording()) {
+		Com_Printf("stop!\n");
+		return r.recorder.StopRecording();
+	}
+
+	r.recorder.data.clear();
+	Com_Printf("record!\n");
+	r.recorder.StartRecording(&cgs->predictedPlayerState);
+	r.playback.data_original.clear();
+}
+void MovementRecorder::OnStartPlayback()
+{
+	if (NOT_SERVER)
+		return;
+
+	decltype(auto) r = getInstance();
+
+	r.lineup_toggle = !r.lineup_toggle;
+
+}
+void MovementRecorder::OnSaveRecording()
+{
+	if (NOT_SERVER)
+		return;
+
+	decltype(auto) r = getInstance();
+
+	if (r.recorder.isRecording())
+		r.recorder.StopRecording();
+
+	if (r.recorder.data.empty()) {
+		return Com_Printf("^1Can't save an empty recording\n");
+	}
+
+	r.Save2File();
+
+}
+
 void MovementRecorder::OnRecorderCmd(usercmd_s* cmd)
 {
 	static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
-
-	if (GetAsyncKeyState(VK_NUMPAD4) & 1) {
-		if (!recorder.isRecording()) {
-			recorder.data.clear();
-			Com_Printf("record!\n");
-			recorder.StartRecording(&cgs->predictedPlayerState, cmd);
-			playback.data_original.clear();
-
-		}
-		else {
-			Com_Printf("stop!\n");
-			recorder.StopRecording();
-		}
-	}
-
 	if (recorder.isRecording()) {
 		recorder.Record(cmd, com_maxfps->current.integer);
 	}
@@ -33,7 +63,7 @@ void MovementRecorder::OnPlaybackCmd(usercmd_s* cmd)
 
 	if (waiting_for_playback) {
 
-		if (!playback.isPlayback() && !playbackDelay) {
+		if (!playback.isPlayback() && !playbackDelay && !playbacks.empty()) {
 			if (playback.data_original.empty())
 				playback.data_original = recorder.data;
 
@@ -41,7 +71,7 @@ void MovementRecorder::OnPlaybackCmd(usercmd_s* cmd)
 			ms = Sys_MilliSeconds();
 
 
-			playback.StartPlayback(cmd->serverTime, &cgs->nextSnap->ps, cmd, recorder.data.front(), true);
+			playback.StartPlayback(cmd->serverTime, &cgs->nextSnap->ps, cmd, playbacks.front()->data.front(), true);
 			playbackDelay = true;
 
 			CL_SetPlayerAngles(cmd, cgs->nextSnap->ps.delta_angles, recorder.data.front().viewangles);
@@ -76,12 +106,12 @@ void MovementRecorder::OnLineupCmd(usercmd_s* cmd)
 {
 	static std::unique_ptr<Lineup> lineup;
 
-	if (recorder.isRecording())
+	if (recorder.isRecording() || playbacks.empty())
 		return;
 
-	const auto& front = recorder.data.front();
+	const auto& front = playbacks.front()->data.front();
 
-	if (GetAsyncKeyState(VK_NUMPAD6) & 1) {
+	if (lineup_toggle) {
 		lineup_in_progress = true;
 		
 		if (lineup == nullptr) {
@@ -95,15 +125,13 @@ void MovementRecorder::OnLineupCmd(usercmd_s* cmd)
 			lineup_in_progress = false;
 
 		}
+
+		lineup_toggle = false;
 	}
 
 	if (lineup_in_progress == false)
 		return;
 
-
-
-
-	
 	if (lineup) {
 
 		lineup->move(cmd);
@@ -136,7 +164,7 @@ void MovementRecorder::DrawPlayback()
 
 	auto cmd = CL_GetUserCmd(clients->cmdNumber - 1);
 
-	sprintf_s(bufff, "%.6f", std::atan2(-cmd->rightmove, cmd->forwardmove) * 180 / PI);
+	sprintf_s(bufff, "%.6f", cgs->predictedPlayerState.moveSpeedScaleMultiplier);
 	R_AddCmdDrawTextWithEffects(bufff, "fonts/objectivefont", cgs->refdef.width / 1.5f - strlen(bufff) * 2, cgs->refdef.height / 1.5f - 100, 1.f, 1.f, 0, vec4_t{ 1,1,1,1 }, 3, vec4_t{ 1,0,0,1 }, 0, 0, 0, 0, 0, 0);
 
 
@@ -161,5 +189,26 @@ void MovementRecorder::DrawPlayback()
 
 	sprintf_s(buff, "%.6f\ntime: %d", dist, current->serverTime);
 	R_AddCmdDrawTextWithEffects(buff, "fonts/objectivefont", cgs->refdef.width / 1.5f - strlen(buff) * 2, cgs->refdef.height / 1.5f, 1.f, 1.f, 0, vec4_t{ 1,1,1,1 }, 3, vec4_t{ 1,0,0,1 }, 0, 0, 0, 0, 0, 0);
+
+}
+
+void MovementRecorder::RB_OnRenderPositions()
+{
+	decltype(auto) r = getInstance();
+
+	std::uint8_t c[4];
+	((char(__fastcall*)(const float* in, uint8_t * out))0x493530)(vec4_t{0,1,1,0.3f}, c);
+
+
+	for (auto& i : r.playbacks) {
+
+		const fvec3& origin = i->data.front().origin;
+
+		auto pts = Geom_CreatePyramid(14 * 2);
+
+		RB_DrawPolyInteriors(pts.size(), pts, c, true, true);
+
+	}
+
 
 }

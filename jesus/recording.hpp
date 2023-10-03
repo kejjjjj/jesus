@@ -19,12 +19,18 @@ struct playback_cmd
 	float camera_yaw;
 };
 
+struct recording_io_data
+{
+	float moveSpeedScale = 1.f;
+	std::vector<playback_cmd> data;
+
+};
 
 class Recorder
 {
 public:
 	void Record(usercmd_s* cmd, const int FPS) noexcept;
-	void StartRecording(playerState_s* ps, usercmd_s* cmd) noexcept;
+	void StartRecording(playerState_s* ps) noexcept;
 	bool isRecording() const noexcept { return recording; }
 	void StopRecording() noexcept { recording = false; }
 
@@ -36,10 +42,8 @@ protected:
 
 	std::list<playback_cmd> data;
 	playerState_s state;
-	usercmd_s state_cmd;
 	fvec3 start_angles;
 	fvec3 delta_angles;
-	usercmd_s oldcmd;
 };
 
 class Playback
@@ -48,6 +52,10 @@ public:
 	Playback() = default;
 	Playback(const std::list<playback_cmd>& cmds) : data_original(cmds) {
 
+	}
+	Playback(const std::vector<playback_cmd>& cmds) {
+		for (auto& i : cmds)
+			data_original.push_back(i);
 	}
 	void SetPlayback(const std::list<playback_cmd>& cmds) noexcept { data_original = cmds; }
 	void StartPlayback(const int serverTime, playerState_s* ps, usercmd_s* cmd, const playback_cmd& first_cmd, bool fix_deltas) noexcept;
@@ -77,15 +85,30 @@ public:
 	Recorder recorder;
 	Playback playback;
 
+	std::list<std::unique_ptr<Playback>> playbacks;
+
 	void OnUserCmd(usercmd_s* cmd);
 	void DrawPlayback();
 
+	static void OnToggleRecording();
+	static void OnStartPlayback();
+	static void OnSaveRecording();
+
+	static void RB_OnRenderPositions();
+
+	dvar_s* recorder_lineupDistance = 0;
+	void LoadRecordings(const std::string& mapname);
+
 private:
+	void Save2File();
+	recording_io_data ReadRecording(std::fstream& f, const std::string& file);
 	void OnRecorderCmd(usercmd_s* cmd);
 	void OnPlaybackCmd(usercmd_s* cmd);
 	void OnLineupCmd(usercmd_s* cmd);
 	
 	bool waiting_for_playback = false;
 	bool lineup_in_progress = false;
+
+	bool lineup_toggle = false;
 
 };

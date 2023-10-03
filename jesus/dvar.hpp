@@ -117,5 +117,6 @@ struct dvar_s
 };
 
 dvar_s* Dvar_FindMalleableVar(const char* name);
+dvar_s* Dvar_Register(const char* name, dvar_type type, int flags, const char* description, dvar_value defaultValue, dvar_limits domain);
 dvar_s* Dvar_RegisterNew(const char* name, dvar_type type, int flags, const char* description, dvar_value defaultValue, dvar_limits domain);
-dvar_s* Dvar_Reregister(dvar_s* dvar, const char* name, dvar_type type, int flags, const char* description, dvar_value defaultValue, dvar_limits domain);
+void Dvar_Reregister(dvar_s* dvar, const char* name, dvar_type type, int flags, dvar_value defaultValue, dvar_limits domain);

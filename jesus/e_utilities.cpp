@@ -213,3 +213,15 @@ Material* FindMaterialByName(const std::string& mtl)
 
 	return 0;
 }
+
+void CG_CreateSubdirectory(const std::string& name)
+{
+	const std::string full_path = fs::exe_path() + "\\Jesus\\" + name;
+
+	if (!fs::directory_exists(full_path)) {
+		if (!fs::create_directory(full_path)) {
+			FatalError(std::format("unable to create the following directory: '{}'", full_path));
+			return;
+		}
+	}
+}

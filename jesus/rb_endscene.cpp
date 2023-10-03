@@ -172,6 +172,10 @@ char RB_DrawDebug(GfxViewParms* viewParms)
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_RB_ENDSCENE);
 
+	decltype(auto) r = MovementRecorder::getInstance();
+
+	r.RB_OnRenderPositions();
+
 	//RB_ShowCollision(viewParms);
 	
 

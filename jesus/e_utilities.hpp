@@ -33,3 +33,6 @@ int PM_playerTrace(pmove_t* pm, trace_t* trace, const vec3_t start, const vec3_t
 pmove_t* PM_AddTouchEnt(pmove_t* pm, int groundEntityNum);
 
 Material* FindMaterialByName(const std::string& mtl);
+
+
+void CG_CreateSubdirectory(const std::string& name);
