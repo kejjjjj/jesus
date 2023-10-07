@@ -14,6 +14,7 @@ void MovementRecorder::OnToggleRecording()
 		//	Com_Printf("stop!\n");
 		r.temp_playback = std::move(std::unique_ptr<Playback>(new Playback(r.recorder.data)));
 		r.recorder.data.clear();
+		r.playback = 0;
 
 		return r.recorder.StopRecording();
 	}
@@ -59,6 +60,8 @@ void MovementRecorder::OnSaveRecording()
 		return Com_Printf("^1Stop the playback before saving!\n");
 
 
+	r.temp_playback->TrimIdleFrames();
+
 	r.playback = r.temp_playback.get();
 
 	r.Save2File();
@@ -72,7 +75,7 @@ void MovementRecorder::OnRecorderCmd(usercmd_s* cmd)
 	static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
 
 	if (queued_recorder_time) {
-		if (cmd->serverTime >= queued_recorder_time.value()) {
+		if (queued_recorder_time.value() + 100 < cmd->serverTime) {
 			
 			recorder.StartRecording(&cgs->predictedPlayerState);
 			queued_recorder_time = std::nullopt;
@@ -138,7 +141,10 @@ void MovementRecorder::OnPlaybackCmd(usercmd_s* cmd)
 
 			CL_SetPlayerAngles(cmd, cgs->predictedPlayerState.delta_angles, angles);
 			//CG_SetYaw(playback->data.back().viewangles.y);
+			playback = nullptr;
+
 		}
+
 	}
 
 
@@ -219,13 +225,13 @@ void MovementRecorder::OnUserCmd(usercmd_s* cmd)
 
 void MovementRecorder::DrawPlayback()
 {
-	char bufff[64];
+	//char bufff[64];
 
-	auto cmd = CL_GetUserCmd(clients->cmdNumber - 1);
+	//auto cmd = CL_GetUserCmd(clients->cmdNumber - 1);
 
 
 
-	//sprintf_s(bufff, "%.6f", health);
+	//sprintf_s(bufff, "%i", cgs->predictedPlayerState.pm_flags);
 	//R_AddCmdDrawTextWithEffects(bufff, "fonts/objectivefont", cgs->refdef.width / 1.5f - strlen(bufff) * 2, cgs->refdef.height / 1.5f - 100, 1.f, 1.f, 0, vec4_t{ 1,1,1,1 }, 3, vec4_t{ 1,0,0,1 }, 0, 0, 0, 0, 0, 0);
 
 
@@ -236,7 +242,7 @@ void MovementRecorder::DrawPlayback()
 		return;
 	}
 
-	return;
+	//return;
 
 	if (!playback || !playback->isPlayback())
 		return;
@@ -312,22 +318,28 @@ void MovementRecorder::OnDisconnect() noexcept
 	waiting_for_playback = false;
 	lineup_in_progress = false;
 
+	playbacks_loaded = false;
+
 	lineup_toggle = false;
 }
-void MovementRecorder::OnRespawn(playerState_s* ps) noexcept
+void MovementRecorder::OnLoadFromMemory(playerState_s* ps) noexcept
 {
 	const float moveSpeedScaleMultiplier = ps->moveSpeedScaleMultiplier;
 	const int speed = ps->speed;
+	bool slowdown = Dvar_FindMalleableVar("jump_slowdownEnable")->current.enabled;
+
 	playbacks.clear();
 
 	for (auto& i : playback_data) {
 
 		recording_io_data::requirements_s& r = i->requirements;
 
-		if(r.g_speed == speed && r.moveSpeedScale == moveSpeedScaleMultiplier)
+	//	Com_Printf("assert(%i == %i && %.6f == %.6f && %i == %i)\n", r.g_speed, speed, r.moveSpeedScale, moveSpeedScaleMultiplier, r.jumpSlowdown, slowdown);
+
+		if(r.g_speed == speed && r.moveSpeedScale == moveSpeedScaleMultiplier && r.jumpSlowdown == slowdown)
 			playbacks.push_back(std::move(std::unique_ptr<Playback>(new Playback(i->data))));
 
 	}
 
-
+	playbacks_loaded = true;
 }

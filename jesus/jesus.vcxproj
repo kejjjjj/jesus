@@ -188,8 +188,10 @@
     <ClInclude Include="mh\MinHook.h" />
     <ClInclude Include="mh\trampoline.h" />
     <ClInclude Include="pch.hpp" />
+    <ClInclude Include="pm_fps.hpp" />
     <ClInclude Include="rb_endscene.hpp" />
     <ClInclude Include="recording.hpp" />
+    <ClInclude Include="rt_prediction.hpp" />
     <ClInclude Include="r_drawtools.hpp" />
     <ClInclude Include="r_renderer.hpp" />
     <ClInclude Include="scr_menuresponse.hpp" />
@@ -277,9 +279,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="playback.cpp" />
+    <ClCompile Include="pm_fps.cpp" />
     <ClCompile Include="rb_endscene.cpp" />
     <ClCompile Include="recorder_io.cpp" />
     <ClCompile Include="recording.cpp" />
+    <ClCompile Include="rt_prediction.cpp" />
     <ClCompile Include="r_drawtools.cpp" />
     <ClCompile Include="r_endscene.cpp" />
     <ClCompile Include="r_renderer.cpp" />

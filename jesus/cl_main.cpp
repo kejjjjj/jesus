@@ -7,7 +7,10 @@ void CL_Disconnect()
 	if (clientUI->connectionState != CA_DISCONNECTED) { //gets called in the loading screen in 1.7
 		
 		MovementRecorder::getInstance().OnDisconnect();
+		if (test_playback)
+			delete test_playback;
 
+		test_playback = 0;
 	}
 
 	detour_func.cast_call<void(*)()>();

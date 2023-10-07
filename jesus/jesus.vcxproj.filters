@@ -73,6 +73,12 @@
     <Filter Include="Source Files\gscr">
       <UniqueIdentifier>{01c25512-dc70-490c-bbe0-dc60beaa770d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\prediction">
+      <UniqueIdentifier>{056092db-6b3a-43d5-8427-5ad3176108d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pm">
+      <UniqueIdentifier>{6e63fce2-3954-42ca-9fb2-1c10070b8059}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -225,6 +231,12 @@
     <ClInclude Include="g_client.hpp">
       <Filter>Source Files\g</Filter>
     </ClInclude>
+    <ClInclude Include="rt_prediction.hpp">
+      <Filter>Source Files\prediction</Filter>
+    </ClInclude>
+    <ClInclude Include="pm_fps.hpp">
+      <Filter>Source Files\pm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -373,6 +385,12 @@
     </ClCompile>
     <ClCompile Include="g_client.cpp">
       <Filter>Source Files\g</Filter>
+    </ClCompile>
+    <ClCompile Include="rt_prediction.cpp">
+      <Filter>Source Files\prediction</Filter>
+    </ClCompile>
+    <ClCompile Include="pm_fps.cpp">
+      <Filter>Source Files\pm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

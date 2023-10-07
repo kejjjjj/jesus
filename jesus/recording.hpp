@@ -19,7 +19,23 @@ struct playback_cmd
 	float camera_yaw;
 };
 
+inline playback_cmd cmd2playback(playerState_s* ps, usercmd_s* cmd, const int FPS) {
+	playback_cmd pcmd;
 
+	VectorCopy(cmd->angles, pcmd.angles);
+	pcmd.buttons = cmd->buttons;
+	pcmd.forwardmove = cmd->forwardmove;
+	pcmd.rightmove = cmd->rightmove;
+	pcmd.weapon = cmd->weapon;
+	pcmd.offhand = cmd->offHandIndex;
+	pcmd.origin = ps->origin;
+	pcmd.velocity = ps->velocity;
+	pcmd.viewangles = ps->viewangles;
+	pcmd.FPS = FPS;
+	pcmd.serverTime = cmd->serverTime;
+
+	return pcmd;
+}
 
 struct recording_io_data
 {
@@ -27,8 +43,7 @@ struct recording_io_data
 		int g_speed = 190;
 		float jump_height = 39.f;
 		float moveSpeedScale = 1.f;
-		//bool rpgUsed = false;
-		//bool jumpSlowdown = false;
+		int jumpSlowdown = 0;
 	};
 
 	requirements_s requirements;
@@ -73,6 +88,9 @@ public:
 	void StartPlayback(const int serverTime, playerState_s* ps, usercmd_s* cmd, const playback_cmd& first_cmd, bool fix_deltas) noexcept;
 	void doPlayback(usercmd_s* cmd) noexcept;
 	bool isPlayback() const noexcept { return active; }
+	void DrawPlayback();
+
+	void TrimIdleFrames();
 	
 	playback_cmd* CurrentCmd() const;
 
@@ -115,9 +133,9 @@ public:
 	void LoadRecordings(const std::string& mapname);
 
 	std::optional<int> queued_recorder_time;
-
+	bool playbacks_loaded = false;
 	void OnDisconnect() noexcept;
-	void OnRespawn(playerState_s* ps) noexcept;
+	void OnLoadFromMemory(playerState_s* ps) noexcept;
 private:
 	Playback* GetClosestRecording() const noexcept;
 
@@ -134,4 +152,8 @@ private:
 
 	bool lineup_toggle = false;
 
+	
+
 };
+
+inline Playback* test_playback = 0;

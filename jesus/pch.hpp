@@ -124,6 +124,8 @@ typedef vec_t vec4_t[4];
 
 #include "scr_menuresponse.hpp"
 
+#include "pm_fps.hpp"
+
 #include "rb_endscene.hpp"
 
 #include "com_channel.hpp"
@@ -131,6 +133,9 @@ typedef vec_t vec4_t[4];
 #include "com_vector.hpp"
 
 #include "recording.hpp"
+
+#include "rt_prediction.hpp"
+
 
 #include "lineup.hpp"
 #include "elebot.hpp"

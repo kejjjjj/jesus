@@ -68,3 +68,43 @@ dvar_s* Dvar_RegisterFloat(const char* name, float value, float min, float max, 
 {
     return engine_call<dvar_s * __cdecl>(false, 0x56C460, name, value, min, max, flags, description);
 }
+dvar_s* Dvar_RegisterInt(const char* name, int value, int min, int max, int flags, const char* description)
+{
+    return engine_call<dvar_s * __cdecl>(false, 0x56C410, name, value, min, max, flags, description);
+
+}
+dvar_s* Dvar_RegisterBool(const char* name, int flags, bool value, const char* description)
+{
+    dvar_s* result = 0;
+
+    __asm {
+        movzx al, value;
+        push description;
+        push flags;
+        push name;
+        mov esi, 0x56C3C0;
+        call esi;
+        add esp, 0xC;
+        mov result, eax;
+    }
+
+    return result;
+
+}
+void GetDvarIntValue(Operand* result, Operand* source)
+{
+    __asm mov result, esi;
+    __asm mov source, edx;
+
+    decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_GET_DVAR_INT);
+    detour_func.cast_call<void(*)(Operand*, Operand*)>(source, result);
+
+    if (source->dataType == expDataType::VAL_STRING) {
+        if (!strcmp(source->internals.string, "com_maxfps")) {
+            result->internals.intVal = 69;
+        }
+    }
+
+    return;
+
+}

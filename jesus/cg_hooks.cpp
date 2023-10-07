@@ -23,7 +23,7 @@ void CG_CreateHooks()
 	decltype(auto) hooktable = HookTable::getInstance();
 	decltype(auto) renderer = Renderer::getInstance();
 
-	hooktable.insert(hookEnums_e::HOOK_ENDSCENE,			hook::hookobj<void*>((renderer.endscene_getter()),	renderer.EndSceneRenderer,		TRUE));
+//	hooktable.insert(hookEnums_e::HOOK_ENDSCENE,			hook::hookobj<void*>((renderer.endscene_getter()),	renderer.EndSceneRenderer,		TRUE));
 	hooktable.insert(hookEnums_e::HOOK_DRAWACTIVE,			hook::hookobj<void*>(is_cod4x() ? is_cod4x() + 0x5464 : 0x42F7F0, renderer.CG_DrawActive, TRUE));
 	
 
@@ -44,6 +44,11 @@ void CG_CreateHooks()
 	hooktable.insert(hookEnums_e::HOOK_SCR_OPENSCRIPTMENU, hook::hookobj<void*>(0x46D4CF, Script_OpenScriptMenu, TRUE));
 
 	hooktable.insert(hookEnums_e::HOOK_LOADMAP_LOADSCREEN, hook::hookobj<void*>(0x46A800, LoadMapLoadscreen, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_CMD_EXECUTESINGLE, hook::hookobj<void*>(0x4F9AB0, Cmd_ExecuteSingleCommand, TRUE));
+
+	hooktable.insert(hookEnums_e::HOOK_GET_DVAR_INT, hook::hookobj<void*>(0x53C5C0, GetDvarIntValue, TRUE));
+
+	//hooktable.insert(hookEnums_e::HOOK_ENDSCENE_FIX, hook::hookobj<void*>(0x6496CF, RB_FixEndscene, TRUE));
 
 
 }

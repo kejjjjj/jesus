@@ -47,6 +47,9 @@ struct prediction_controller
 class prediction_viewangle_fixed_turn : public prediction_viewangle
 {
 public:
+
+	prediction_viewangle_fixed_turn(float _right, float _up) : right(_right), up(_up){}
+	prediction_viewangle_fixed_turn() = default;
 	prediction_angle_enumerator get_type() const override 
 	{
 		return prediction_angle_enumerator::FIXED_TURN;

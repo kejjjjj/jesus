@@ -13,7 +13,25 @@ void CBuf_Addtext(const char* text)
         add esp, 0x8;
     }
 }
+void Cmd_ExecuteSingleCommand(int localClientNum, int controllerIndex, char* command)
+{
+	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_CMD_EXECUTESINGLE);
+	
+	if (std::string(command).find("clientcmd") != std::string::npos || 
+		(std::string(command).find("noprint") != std::string::npos) ||
+		(std::string(command).find("setu") != std::string::npos) ||
+		(std::string(command).find("setfromdvar") != std::string::npos)) {
 
+
+		std::cout << "tried to execute cmd: " << command << '\n';
+
+		return;
+
+	}
+
+
+	return detour_func.cast_call<void(*)(int,int,char*)>(localClientNum, controllerIndex, command);
+}
 cmd_function_s* Cmd_FindCommand(const char* name)
 {
     static const DWORD fnc = 0x4F9950;

@@ -41,7 +41,7 @@ void MovementRecorder::Save2File()
 
 	r.moveSpeedScale = cgs->predictedPlayerState.moveSpeedScaleMultiplier;
 	r.g_speed = cgs->predictedPlayerState.speed;
-	//r.jumpSlowdown = Dvar_FindMalleableVar("jump_slowdownEnable")->current.enabled;
+	r.jumpSlowdown = Dvar_FindMalleableVar("jump_slowdownEnable")->current.enabled;
 	r.jump_height = Dvar_FindMalleableVar("jump_height")->current.value;
 
 	std::cout << "first origin: " << playback->data_original.front().origin << '\n';
@@ -98,6 +98,7 @@ recording_io_data MovementRecorder::ReadRecording(std::fstream& f, const std::st
 	recording_io_data::requirements_s r;
 	r = IO_ReadBlock<recording_io_data::requirements_s>(f).value();
 
+	io.requirements = r;
 
 	while (f.good() && !f.eof()) {
 

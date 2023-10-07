@@ -25,16 +25,82 @@ void CL_FinishMove(usercmd_s* cmd)
 
 	static MovementRecorder& mr = MovementRecorder::getInstance();
 	static Elebot& elebot = Elebot::getInstance();
+
 	CL_FixServerTime(cmd);
 
 
 	mr.OnUserCmd(cmd);
 
-	elebot.move(cmd);
-	elebot.do_playback(cmd);
+	//elebot.move(cmd);
+	//elebot.do_playback(cmd);
 
 	CL_MonitorEvents();
 
+	static dvar_s* kej_bhop = Dvar_FindMalleableVar("kej_bhop");
+
+	if (kej_bhop && kej_bhop->current.enabled && (cmd->buttons & cmdEnums::jump) != 0) {
+			
+		if (cmd->serverTime - cgs->predictedPlayerState.jumpTime >= 500 
+			&& cgs->predictedPlayerState.groundEntityNum == 1023 
+			&& CG_GetDistanceToGround(&cgs->predictedPlayerState) < 100)
+			cmd->buttons -= cmdEnums::jump;
+
+		else if(cmd->serverTime - cgs->predictedPlayerState.jumpTime < 500 && cgs->predictedPlayerState.groundEntityNum == 1022)
+			cmd->buttons -= cmdEnums::jump;
+
+
+		
+	}
+
+	static dvar_s* kej_easyBounces = Dvar_FindMalleableVar("kej_easyBounces");
+
+	if (kej_easyBounces && kej_easyBounces->current.enabled) {
+		static bool playback_active = false;
+		static bool stop_predicting = false;
+		static std::list<playback_cmd>::iterator pb_it;
+		static std::list<playback_cmd>::iterator pb_end;
+		static std::optional<std::list<playback_cmd>> results;
+
+		bool bplayback = test_playback && test_playback->isPlayback();
+
+		if (stop_predicting == false && !mr.playback)
+			results = RealTimePrediction(&cgs->predictedPlayerState, cmd);
+
+		if (results) {
+			pb_it = results.value().begin();
+			test_playback = new Playback(results.value());
+
+			test_playback->StartPlayback(cmd->serverTime, &cgs->predictedPlayerState, cmd, *pb_it, false);
+			stop_predicting = true;
+			results = std::nullopt;
+
+
+			auto current = test_playback->CurrentCmd();
+
+			if (!current)
+				return;
+
+			float dist = current->origin.dist(clients->cgameOrigin);
+
+			//Com_Printf("start dist: %.6f\n", dist);
+			//bplayback = true;
+		}
+
+		if (bplayback) {
+			test_playback->doPlayback(cmd);
+
+			if (!test_playback->isPlayback()) {
+				//Com_Printf("bunce!\n");
+				delete test_playback;
+				test_playback = 0;
+			}
+
+
+		}
+
+		if (cgs->predictedPlayerState.groundEntityNum == 1022 && !bplayback)
+			stop_predicting = false;
+	}
 	return;
 
 }
@@ -77,21 +143,20 @@ void CL_MonitorEvents()
 {
 	static float old_health = 0.f;
 	float health = CG_CalcPlayerHealth(&cgs->predictedPlayerState);
+	
+	static MovementRecorder& mr = MovementRecorder::getInstance();
 
-	if (health != old_health) {
+	if (GetAsyncKeyState(VK_NUMPAD0) & 1)
+		std::cout << health << ", " << mr.playbacks.size() << '\n';
 
-		if (health == 1.f)
-			CL_OnRespawn();
+	if (health && mr.playbacks.empty()) {
 
-		old_health = health;
+		if (mr.playbacks_loaded == false) {
+			mr.OnLoadFromMemory(&cgs->predictedPlayerState);
+
+		}
+
 	}
 
 
-}
-void CL_OnRespawn()
-{
-	static MovementRecorder& mr = MovementRecorder::getInstance();
-
-
-	mr.OnRespawn(&cgs->predictedPlayerState);
 }

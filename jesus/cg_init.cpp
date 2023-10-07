@@ -14,9 +14,9 @@ void CG_Init()
     //decltype(auto) resources = Resources::getInstance();
     //decltype(auto) gui = Gui::getInstance();
 
-    //hook::nop(0x04122D2); //PM_SetStrafeCondition 
-    //hook::nop(0x4056DF); //BG_GetConditionBit
-    //hook::write_addr(0x405360, "\xC3", 1); //BG_EvaluateConditions
+    hook::nop(0x04122D2); //PM_SetStrafeCondition 
+    hook::nop(0x4056DF); //BG_GetConditionBit
+    hook::write_addr(0x405360, "\xC3", 1); //BG_EvaluateConditions
 
     if (!renderer.initialize())
         return;
@@ -42,9 +42,10 @@ void CG_Init()
     recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,
         "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback");
 
-    if (recorder.recorder_lineupDistance) {
-        std::cout << recorder.recorder_lineupDistance->name << '\n';
-    }
+    Dvar_RegisterBool("kej_bhop", dvar_flags::saved, false, "bhop when holding spacebar");
+    Dvar_RegisterBool("kej_easyBounces", dvar_flags::saved, false, "makes bouncing a lot easier");
+
+    hook::write_addr(0x6496DB, "\xEB\x00\xBA\xF0\xF5", 5); //jnz -> jmp
 
     //gscript.initialize();
     //resources.initialize();

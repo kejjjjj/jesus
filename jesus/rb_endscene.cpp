@@ -1,5 +1,12 @@
 #include "pch.hpp"
 
+__declspec(naked) void RB_FixEndscene()
+{
+	static DWORD dst = 0x6496DD;
+	__asm {
+		jmp dst;
+	}
+}
 
 void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* color, bool two_sided, bool depthTest, bool show)
 {
@@ -7,28 +14,41 @@ void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* 
 	if (n_points < 3)
 		return;
 
+	//static bool once = true;
+
+	Material material = *rgp->whiteMaterial;
+
+	//if (once) {
+	//	memcpy(material.techniqueSet, rgp->whiteMaterial->techniqueSet, sizeof(MaterialTechniqueSet));
+	//	memcpy(material.textureTable, rgp->whiteMaterial->textureTable, sizeof(MaterialTextureDef));
+	//	memcpy(material.constantTable, rgp->whiteMaterial->constantTable, sizeof(MaterialConstantDef));
+	//	memcpy(material.stateBitsTable, rgp->whiteMaterial->stateBitsTable, sizeof(GfxStateBits));
+	//	once = false;
+	//}
+
+	memcpy(material.stateBitsTable, rgp->whiteMaterial->stateBitsTable, sizeof(GfxStateBits));
+
 
 	constexpr MaterialTechniqueType tech = MaterialTechniqueType::TECHNIQUE_UNLIT;
-	Material* material = rgp->whiteMaterial;
-	static uint32_t ogBits = material->stateBitsTable->loadBits[1];
+	static uint32_t ogBits = material.stateBitsTable->loadBits[1];
 
-	if (gfxCmdBufState->origMaterial != material || gfxCmdBufState->origTechType != tech) {
+	if (gfxCmdBufState->origMaterial != &material || gfxCmdBufState->origTechType != tech) {
 		if (tess->indexCount)
 			RB_EndTessSurface();
 
 		if (depthTest)
-			material->stateBitsTable->loadBits[1] = 44;
+			material.stateBitsTable->loadBits[1] = 44;
 		else
-			material->stateBitsTable->loadBits[1] = ogBits;
+			material.stateBitsTable->loadBits[1] = ogBits;
 
 		if (two_sided)
-			material->stateBitsTable->loadBits[0] = 422072677;
+			material.stateBitsTable->loadBits[0] = 422072677;
 		else
-			material->stateBitsTable->loadBits[0] = 422089061;
+			material.stateBitsTable->loadBits[0] = 422089061;
 
-		//material->stateBitsTable->loadBits[1] = 44;
+		//material.stateBitsTable->loadBits[1] = 44;
 
-		RB_BeginSurface(tech, material);
+		RB_BeginSurface(tech, &material);
 
 	}
 	if (n_points + tess->vertexCount > 5450 || tess->indexCount + 2 * (n_points - 2) > 1048576)// RB_CheckTessOverflow

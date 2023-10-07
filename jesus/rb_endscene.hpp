@@ -2,6 +2,8 @@
 
 #include "pch.hpp"
 
+void RB_FixEndscene();
+
 char RB_DrawDebug(GfxViewParms* viewParms);
 int RB_BeginSurface(MaterialTechniqueType tech, Material* material);
 void RB_EndTessSurface();

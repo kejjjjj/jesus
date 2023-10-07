@@ -15,7 +15,7 @@ inline Return engine_call(const bool cod4x, const uintptr_t offset, Args... args
 }
 
 void CBuf_Addtext(const char* text);
-
+void Cmd_ExecuteSingleCommand(int localClientNum, int controllerIndex, char* command);
 cmd_function_s* Cmd_FindCommand(const char* name);
 cmd_function_s* Cmd_AddCommand(const char* cmdname, void(__cdecl* function)());
 cmd_function_s* Cmd_RemoveCommand(const char* cmdname);
