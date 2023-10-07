@@ -15,16 +15,17 @@ void CL_FixServerTime(usercmd_s* cmd)
 void CL_FinishMove(usercmd_s* cmd)
 {
 
+
+
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_CL_FINISHMOVE);
 	detour_func.cast_call<void(*)(usercmd_s*)>(cmd);
+
+	if (CG_CalcPlayerHealth(&cgs->predictedPlayerState) == NULL)
+		return;
+
 	static MovementRecorder& mr = MovementRecorder::getInstance();
 	static Elebot& elebot = Elebot::getInstance();
 	CL_FixServerTime(cmd);
-
-	if (GetAsyncKeyState(VK_NUMPAD0) & 1) {
-		mr.LoadRecordings(Dvar_FindMalleableVar("mapname")->current.string);
-
-	}
 
 
 	mr.OnUserCmd(cmd);
@@ -32,8 +33,7 @@ void CL_FinishMove(usercmd_s* cmd)
 	elebot.move(cmd);
 	elebot.do_playback(cmd);
 
-
-	lineup_testing_func(cmd);
+	CL_MonitorEvents();
 
 	return;
 
@@ -42,13 +42,6 @@ void CL_FinishMove(usercmd_s* cmd)
 void CL_WritePacket()
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_CL_WRITEPACKET);
-
-	if (GetAsyncKeyState(VK_NUMPAD1) & 1) {
-		clients->snap.ps.delta_angles[YAW] = 10;
-
-		std::cout << "yea!\n";
-	}
-
 	detour_func.cast_call<void(*)()>();
 
 
@@ -57,10 +50,6 @@ void CL_ParseSnapshot2(msg_t* msg)
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_CL_PARSESNAPSHOT);
 
-	if (GetAsyncKeyState(VK_NUMPAD2) & 1)
-		std::cout << "yo!\n";
-
-	
 
 	void* fnc = detour_func.get_ptr();
 
@@ -82,4 +71,27 @@ __declspec(naked) void CL_ParseSnapshot(msg_t* msg)
 		add esp, 0x4;
 		retn;
 	}
+}
+
+void CL_MonitorEvents()
+{
+	static float old_health = 0.f;
+	float health = CG_CalcPlayerHealth(&cgs->predictedPlayerState);
+
+	if (health != old_health) {
+
+		if (health == 1.f)
+			CL_OnRespawn();
+
+		old_health = health;
+	}
+
+
+}
+void CL_OnRespawn()
+{
+	static MovementRecorder& mr = MovementRecorder::getInstance();
+
+
+	mr.OnRespawn(&cgs->predictedPlayerState);
 }

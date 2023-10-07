@@ -40,35 +40,47 @@ std::list<fvec3> Geom_CreateBall(const fvec3& ref_org, const float radius, const
 		}
 	}
 }
-std::vector<fvec3> Geom_CreatePyramid(float size)
+std::vector<fvec3> Geom_CreatePyramid(const fvec3& ref_org, const fvec3& bounds, float rotation)
 {
-	std::vector<fvec3> pyramidPoints;
+	std::vector<fvec3> pyramidVertices;
 
-	pyramidPoints.emplace_back(0.0, 0.0, 0.0);
-	pyramidPoints.emplace_back(size, 0.0, 0.0);
-	pyramidPoints.emplace_back(size, 0.0, size);
-	pyramidPoints.emplace_back(0.0, 0.0, size);
+	constexpr int size = 4;
 
-	pyramidPoints.emplace_back(size / 2.0, size * 1.5, size / 2.0);
+	float r = DEG2RAD(rotation);
 
-	std::vector<std::vector<int>> triangles = {
-		{0, 1, 2},  
-		{0, 2, 3},  
-		{0, 3, 4},  
-		{0, 4, 1},  
-		{1, 2, 4},  
-		{2, 3, 4},  
-		{3, 4, 1}  
-	};
-
-	std::vector<fvec3> sortedPoints;
-
-	// Sort the points based on triangle indices
-	for (const auto& triangle : triangles) {
-		for (int index : triangle) {
-			sortedPoints.push_back(pyramidPoints[index]);
-		}
+	// Generate the base of the pyramid
+	for (int i = 0; i < size; ++i) {
+		float angle = 2 * 3.14159265359f * static_cast<float>(i) / static_cast<float>(size);
+		fvec3 vertex;
+		vertex.x = cos(angle+r) * bounds.x;
+		vertex.y = sin(angle+r) * bounds.y;
+		vertex.z = 0.0f;
+		pyramidVertices.push_back(ref_org + vertex);
 	}
 
-	return sortedPoints;
+	// Add the apex of the pyramid
+	fvec3 apex;
+	apex.x = 0.0f;
+	apex.y = 0.0f; // Adjust the height of the pyramid as needed
+	apex.z = bounds.z;
+	
+	apex += ref_org;
+	
+	pyramidVertices.push_back(ref_org + apex);
+
+	// Create triangles from the base vertices and apex
+	std::vector<fvec3> pyramidTriangles;
+
+	for (int i = 1; i < size; ++i) {
+		int nextIndex = (i + 1) % int(size);
+
+		// Base triangles
+		fvec3 triangle1[3] = { pyramidVertices[i], pyramidVertices[nextIndex], apex };
+		pyramidTriangles.insert(pyramidTriangles.end(), std::begin(triangle1), std::end(triangle1));
+
+		fvec3 triangle2[3] = { pyramidVertices[nextIndex], pyramidVertices[i], pyramidVertices[nextIndex] };
+		pyramidTriangles.insert(pyramidTriangles.end(), std::begin(triangle2), std::end(triangle2));
+	}
+
+	return pyramidTriangles;
 }

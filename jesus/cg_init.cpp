@@ -38,17 +38,13 @@ void CG_Init()
     Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);
     Cmd_AddCommand("recorder_playback", recorder.OnStartPlayback);
 
-    dvar_limits l;
-    dvar_value v;
 
-    v.value = 0.01f;
-    l.value.min = 0.f;
-    l.value.max = 1.f;
+    recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,
+        "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback");
 
-    recorder.recorder_lineupDistance = Dvar_Register("recorder_lineupDistance", dvar_type::value, dvar_flags::saved, 
-        "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback", v, l);
-
-
+    if (recorder.recorder_lineupDistance) {
+        std::cout << recorder.recorder_lineupDistance->name << '\n';
+    }
 
     //gscript.initialize();
     //resources.initialize();

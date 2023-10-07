@@ -113,12 +113,16 @@ typedef vec_t vec4_t[4];
 #include "r_drawtools.hpp"
 
 #include "g_weapon.hpp"
+#include "g_client.hpp"
 
 #include "bg_pmove.hpp"
 #include "bg_pmove_simulation.hpp"
 
+#include "cl_main.hpp"
 #include "cl_client.hpp"
 #include "cl_input.hpp"
+
+#include "scr_menuresponse.hpp"
 
 #include "rb_endscene.hpp"
 

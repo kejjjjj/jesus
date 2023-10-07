@@ -12,8 +12,8 @@ void CG_CreatePermaHooks()
 
 	CG_CreateHooks();
 
-	//hooktable.insert(hookEnums_e::HOOK_SV_MAP, hook::hookobj<void*>(0x55D3D0, SV_Map, TRUE));
-	//hooktable.insert(hookEnums_e::HOOK_CL_DISCONNECT, hook::hookobj<void*>(0x4696B0, CL_Disconnect, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_SV_MAP, hook::hookobj<void*>(0x527670, SV_Map, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_CL_DISCONNECT, hook::hookobj<void*>(0x4696B0, CL_Disconnect, TRUE));
 
 
 }
@@ -31,17 +31,20 @@ void CG_CreateHooks()
 	//hooktable.insert(hookEnums_e::HOOK_PM_AIRMOVE, hook::hookobj<void*>(0x40F680, PM_AirMove, TRUE));
 	//hooktable.insert(hookEnums_e::HOOK_PM_UPDATE_VIEWANGLES, hook::hookobj<void*>(0x413580, PM_UpdateViewAngles, TRUE));
 
-	//hooktable.insert(hookEnums_e::HOOK_RB_ENDSCENE, hook::hookobj<void*>(0x658860, RB_DrawDebug, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_RB_ENDSCENE, hook::hookobj<void*>(0x658860, RB_DrawDebug, TRUE));
 
 	//hooktable.insert(hookEnums_e::HOOK_CL_MOUSEMOVE, hook::hookobj<void*>(0x463400, CL_GetMouseMovement, TRUE));
 	hooktable.insert(hookEnums_e::HOOK_CL_FINISHMOVE, hook::hookobj<void*>(0x463A60, CL_FinishMove, TRUE));
-	hooktable.insert(hookEnums_e::HOOK_CL_WRITEPACKET, hook::hookobj<void*>(is_cod4x() ? is_cod4x() + 0x14B9A : 0x463A60, CL_WritePacket, TRUE));
+	//hooktable.insert(hookEnums_e::HOOK_CL_WRITEPACKET, hook::hookobj<void*>(is_cod4x() ? is_cod4x() + 0x14B9A : 0x463A60, CL_WritePacket, TRUE));
 
 	//hooktable.insert(hookEnums_e::HOOK_CL_PARSESNAPSHOT, hook::hookobj<void*>(0x473710, CL_ParseSnapshot, TRUE));
 
 
-	//hooktable.insert(hookEnums_e::HOOK_SCR_SCRIPTMENURESPONSE, hook::hookobj<void*>(0x54DE59, Script_ScriptMenuResponse, TRUE));
-	//hooktable.insert(hookEnums_e::HOOK_SCR_OPENSCRIPTMENU, hook::hookobj<void*>(0x46D4CF, Script_OpenScriptMenu, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_SCR_SCRIPTMENURESPONSE, hook::hookobj<void*>(0x54DE59, Script_ScriptMenuResponse, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_SCR_OPENSCRIPTMENU, hook::hookobj<void*>(0x46D4CF, Script_OpenScriptMenu, TRUE));
+
+	hooktable.insert(hookEnums_e::HOOK_LOADMAP_LOADSCREEN, hook::hookobj<void*>(0x46A800, LoadMapLoadscreen, TRUE));
+
 
 }
 void CG_ReleaseHooks()

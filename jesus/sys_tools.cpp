@@ -81,6 +81,33 @@ bool IsHex(char c)
     return (c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F') || std::isdigit(c);
 }
 
+Pixel generateRainbowColor()
+{
+    const auto HSVtoRGB = [](float h, float s, float v) -> Pixel {
+        int i = int(h * 6);
+        float f = h * 6 - i;
+        float p = v * (1 - s);
+        float q = v * (1 - f * s);
+        float t = v * (1 - (1 - f) * s);
+
+        switch (i % 6) {
+        case 0: return { uint8_t(v * 255), uint8_t(t * 255), uint8_t(p * 255), 255 };
+        case 1: return { uint8_t(q * 255), uint8_t(v * 255), uint8_t(p * 255), 255 };
+        case 2: return { uint8_t(p * 255), uint8_t(v * 255), uint8_t(t * 255), 255 };
+        case 3: return { uint8_t(p * 255), uint8_t(q * 255), uint8_t(v * 255), 255 };
+        case 4: return { uint8_t(t * 255), uint8_t(p * 255), uint8_t(v * 255), 255 };
+        case 5: return { uint8_t(v * 255), uint8_t(p * 255), uint8_t(q * 255), 255 };
+        default: return { 0, 0, 0, 255 };
+        }
+    };
+
+    static auto start = std::chrono::high_resolution_clock::now();
+    auto now = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
+    float hue = fmod(elapsed / 5000.0, 1.0);  
+    return HSVtoRGB(hue, 1.0, 1.0);
+}
+
 float random(const float range) { //0 -> HI
     std::random_device rd;
     static std::mt19937 mt(rd());

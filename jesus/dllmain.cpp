@@ -25,7 +25,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
                 puts("hello, world!");
 
                 while (!cgs || !cg::dx->device) {
-                    std::this_thread::sleep_for(100ms);
+                    std::this_thread::sleep_for(300ms);
                 }
 
                 CG_Init();

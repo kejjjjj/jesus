@@ -6,13 +6,17 @@ void Lineup::prepare_for_journey() noexcept
 
 	for (int i = 0; i < 3; i++) {
 		delta_angles[i] = AngularDistance(viewangles[i], destination_angles[i]) / total_distance;
-		Com_Printf("delta angles[%i]: %.6f\n", i, delta_angles[i]);
+		//	Com_Printf("delta angles[%i]: %.6f\n", i, delta_angles[i]);
 	}
 
 	for (int i = 0; i < 3; i++)
 		destination_angles[i] = AngleNormalize180(destination_angles[i]);
 
 	old_origin = origin;
+
+	rng_crouch = bool(std::round(random(1.f)));
+
+	//	std::cout << "moving to: " << dst << '\n';
 
 	viewangles_ok = false;
 	finished = false;
@@ -21,18 +25,23 @@ void Lineup::prepare_for_journey() noexcept
 void Lineup::move(usercmd_s* cmd) noexcept
 {
 	
+	if (can_pathfind_to_target() == false) {
+		give_up = true;
+		return;
+	}
+
 	Dvar_FindMalleableVar("com_maxfps")->current.integer = 333;
 
 	if (waiting_for_prediction_accuracy()) {
 		if (test_prediction_accuracy()) {
 
-			if (predicted_pos.dist(origin) > 0.01f) {
-				Com_Printf("^1restart needed\n");
+			if (predicted_pos.dist(origin) > lineup_dist) {
+				//Com_Printf("^1restart needed\n");
 				restart_required = true;
 
 			}
 			else {
-				Com_Printf("^2gg\n");
+				//Com_Printf("^2gg\n");
 				finished = true;
 			}
 
@@ -44,12 +53,6 @@ void Lineup::move(usercmd_s* cmd) noexcept
 	update_origin();
 
 	yaw2target = AngleNormalize180((dst - fvec3(origin)).toangles().y);
-
-
-	if (GetAsyncKeyState(VK_NUMPAD7) & 1) {
-		std::cout << "yaw: " << AngleNormalize180(yaw2target - viewangles[YAW]) << '\n';
-
-	}
 
 	move_closer(cmd);
 
@@ -93,22 +96,62 @@ void Lineup::update_origin() noexcept
 }
 void Lineup::move_closer(usercmd_s* cmd) noexcept
 {
-	const clientInput_t cl = CL_GetInputsFromAngle(AngleNormalize180(yaw2target - viewangles[YAW]));
+	clientInput_t cl = CL_GetInputsFromAngle(AngleNormalize180(yaw2target - viewangles[YAW]));
 
-	if (abs(total_distance - distance_moved) < 300) {
+	float dist = dst.dist(cgs->predictedPlayerState.origin);
+
+
+	if (dist < 100) {
+		//if(rng_crouch)
+		//	cmd->buttons |= cmdEnums::crouch;
 		fvec3 predicted_pos = predict_stop_position();
-		if (dst.dist(predicted_pos) <= 0.01f) {
+
+		float xy_dist = fvec2(dst).dist(fvec2(predicted_pos));
+		float z_dist = std::abs(predicted_pos.z - dst.z);
+
+		if (xy_dist <= lineup_dist && z_dist < 100) {
 			time_until_prediction_check = 8;
-			std::cout << "predicted_stopping_pos: " << predicted_pos << '\n';
-			Com_Printf("predicted: { ^2%.6f, %.6f, %.6f ^7}\n", predicted_pos.x, predicted_pos.y, predicted_pos.z);
-			//finished = true;
 			return;
 		}
+
+		float moveDirection = (predicted_pos - dst).toangles().y;
+
+		cl = CL_GetInputsFromAngle(AngleNormalize180(moveDirection - viewangles[YAW]));
+
+		cmd->forwardmove = -cl.forwardmove;
+		cmd->rightmove = -cl.rightmove;
+
+		return;
+
 	}
+
+	//float speed = cgs->predictedPlayerState.speed;
+	//float my_vel = fvec2(clients->cgameVelocity).mag();
+
+	//if (my_vel > 15 && my_vel > dist*4 && dist < speed/1.2f && distance_moved < total_distance) {
+	//	cmd->forwardmove = -cl.forwardmove;
+	//	cmd->rightmove = -cl.rightmove;
+	//	return;
+	//}
+
 	cmd->forwardmove = cl.forwardmove;
 	cmd->rightmove = cl.rightmove;
 
 
+}
+bool Lineup::can_pathfind_to_target() noexcept
+{
+	float dist = dst.dist(clients->cgameOrigin);
+	if (dist < 10)
+		return true;
+
+	fvec3 o = clients->cgameOrigin;
+	o.z += 60;
+
+	trace_t trace;
+	CG_TracePoint(vec3_t{ 1,1,1 }, &trace, o, vec3_t{-1,-1,-1}, dst, cgs->clientNum, MASK_PLAYERSOLID, 0, 0);
+
+	return trace.fraction >= 0.98f;
 }
 fvec3 Lineup::predict_stop_position()
 {
@@ -140,42 +183,5 @@ fvec3 Lineup::predict_stop_position()
 	}
 	predicted_pos = pm.ps->origin;
 	return predicted_pos;
-
-}
-void lineup_testing_func(usercmd_s* cmd)
-{
-	static std::unique_ptr<Lineup> lineup;
-
-	if (GetAsyncKeyState(VK_NUMPAD8) & 1) {
-
-		if (lineup == nullptr) {
-			lineup = std::move(std::unique_ptr<Lineup>(new Lineup({ 726, -1583, 384.125f }, { 45, 235, 0 })));
-			Com_Printf("start!\n");
-
-		}
-		else {
-			lineup.reset();
-			Com_Printf("stop!\n");
-		}
-
-	}
-
-	if (lineup) {
-
-		lineup->move(cmd);
-
-		if (lineup->has_finished()) {
-			lineup.reset();
-			Com_Printf("angles finished!\n");
-
-		}
-		else if (lineup->needs_restart()) {
-			lineup.reset();
-			lineup = std::move(std::unique_ptr<Lineup>(new Lineup({ 726, -1583, 384.125f }, { 45, 235, 0 })));
-
-
-		}
-
-	}
 
 }

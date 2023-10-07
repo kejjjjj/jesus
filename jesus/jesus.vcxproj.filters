@@ -70,6 +70,9 @@
     <Filter Include="Source Files\geom">
       <UniqueIdentifier>{45d9aa17-3707-48e0-a954-b95ed349e977}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gscr">
+      <UniqueIdentifier>{01c25512-dc70-490c-bbe0-dc60beaa770d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -201,9 +204,6 @@
     <ClInclude Include="cl_input.hpp">
       <Filter>Source Files\cl</Filter>
     </ClInclude>
-    <ClInclude Include="lineup.hpp">
-      <Filter>Source Files\lineup</Filter>
-    </ClInclude>
     <ClInclude Include="fs_utilities.hpp">
       <Filter>Source Files\msc</Filter>
     </ClInclude>
@@ -212,6 +212,18 @@
     </ClInclude>
     <ClInclude Include="geom_shapes.hpp">
       <Filter>Source Files\geom</Filter>
+    </ClInclude>
+    <ClInclude Include="lineup.hpp">
+      <Filter>Source Files\lineup</Filter>
+    </ClInclude>
+    <ClInclude Include="scr_menuresponse.hpp">
+      <Filter>Source Files\gscr</Filter>
+    </ClInclude>
+    <ClInclude Include="cl_main.hpp">
+      <Filter>Source Files\cl</Filter>
+    </ClInclude>
+    <ClInclude Include="g_client.hpp">
+      <Filter>Source Files\g</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -352,6 +364,15 @@
     </ClCompile>
     <ClCompile Include="geom_shapes.cpp">
       <Filter>Source Files\geom</Filter>
+    </ClCompile>
+    <ClCompile Include="scr_menuresponse.cpp">
+      <Filter>Source Files\gscr</Filter>
+    </ClCompile>
+    <ClCompile Include="cl_main.cpp">
+      <Filter>Source Files\cl</Filter>
+    </ClCompile>
+    <ClCompile Include="g_client.cpp">
+      <Filter>Source Files\g</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

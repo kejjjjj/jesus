@@ -11,5 +11,7 @@ void CL_FixServerTime(usercmd_s* cmd);
 
 void CL_WritePacket();
 
+void CL_MonitorEvents();
+void CL_OnRespawn();
 
 void CL_ParseSnapshot(msg_t* msg);

@@ -73,7 +73,7 @@ void Playback::doPlayback(usercmd_s* cmd) noexcept
 	//CL_SetPlayerAngles(cmd, delta_angles, { SHORT2ANGLE(it->angles[0]), SHORT2ANGLE(it->angles[1]), SHORT2ANGLE(it->angles[2]) });
 
 	cmd->serverTime = refTime + ((it)->serverTime - data.front().serverTime);
-	cmd->weapon = (it)->weapon;
+	//cmd->weapon = (it)->weapon;
 	cmd->offHandIndex = (it)->offhand;
 	com_maxfps->current.integer = (it)->FPS;
 

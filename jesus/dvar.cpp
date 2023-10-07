@@ -15,7 +15,7 @@ dvar_s* Dvar_Register(const char* name, dvar_type type, int flags, const char* d
     dvar_s* dvar = Dvar_FindMalleableVar(name);
 
     if (dvar) {
-        Dvar_Reregister(dvar, name, type, flags, defaultValue, domain);
+        Dvar_Reregister(dvar, flags, name, type, description, defaultValue, domain);
         return dvar;
     }
 
@@ -27,20 +27,44 @@ dvar_s* Dvar_RegisterNew(const char* name, dvar_type _type, int flags, const cha
 {
     return engine_call<dvar_s * __cdecl>(false, 0x056C130, name, _type, flags, description, defaultValue, domain);
 }
-void Dvar_Reregister(dvar_s* dvar, const char* name, dvar_type _type, int flags, dvar_value defaultValue, dvar_limits domain)
+void Dvar_Reregister(dvar_s* dvar, int flags, const char* name, dvar_type _type, const char* desc, dvar_value defaultValue, dvar_limits _domain)
 {
+
+
     __asm {
-        mov eax, dvar;
-        mov edi, flags;
-        push domain;
+        push _domain;
         push defaultValue;
+        push desc;
         push _type;
         push name;
-        push flags;
-        push dvar;
+        mov eax, dvar;
+        mov edi, flags;
         mov esi, 0x56BFF0;
         call esi;
-        add esp, 24;
+        add esp, 20;
 
     }
+}
+dvar_s* Dvar_RegisterVariant(const char* dvarName, dvar_type _type, int flags, const char* description, dvar_value defaultValue, dvar_limits limits)
+{
+    dvar_s* r = 0;
+
+    __asm {
+        mov eax, dvarName;
+        push limits;
+        push defaultValue;
+        push description;
+        push flags;
+        push _type;
+        mov esi, 0x56C350;
+        call esi;
+        add esp, 20;
+        mov r, eax;
+    }
+
+    return r;
+}
+dvar_s* Dvar_RegisterFloat(const char* name, float value, float min, float max, int flags, const char* description)
+{
+    return engine_call<dvar_s * __cdecl>(false, 0x56C460, name, value, min, max, flags, description);
 }

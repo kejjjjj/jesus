@@ -154,6 +154,7 @@
     <ClInclude Include="cg_offsets.hpp" />
     <ClInclude Include="cl_client.hpp" />
     <ClInclude Include="cl_input.hpp" />
+    <ClInclude Include="cl_main.hpp" />
     <ClInclude Include="com_channel.hpp" />
     <ClInclude Include="com_vector.hpp" />
     <ClInclude Include="dvar.hpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="e_utilities.hpp" />
     <ClInclude Include="fs_utilities.hpp" />
     <ClInclude Include="geom_shapes.hpp" />
+    <ClInclude Include="g_client.hpp" />
     <ClInclude Include="g_weapon.hpp" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -190,6 +192,7 @@
     <ClInclude Include="recording.hpp" />
     <ClInclude Include="r_drawtools.hpp" />
     <ClInclude Include="r_renderer.hpp" />
+    <ClInclude Include="scr_menuresponse.hpp" />
     <ClInclude Include="sys_tools.hpp" />
     <ClInclude Include="typedefs.hpp" />
   </ItemGroup>
@@ -201,6 +204,7 @@
     <ClCompile Include="cg_init.cpp" />
     <ClCompile Include="cl_client.cpp" />
     <ClCompile Include="cl_input.cpp" />
+    <ClCompile Include="cl_main.cpp" />
     <ClCompile Include="com_channel.cpp" />
     <ClCompile Include="com_vector.cpp" />
     <ClCompile Include="dllmain.cpp" />
@@ -210,6 +214,7 @@
     <ClCompile Include="e_utilities.cpp" />
     <ClCompile Include="fs_utilities.cpp" />
     <ClCompile Include="geom_shapes.cpp" />
+    <ClCompile Include="g_client.cpp" />
     <ClCompile Include="g_weapon.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -278,6 +283,7 @@
     <ClCompile Include="r_drawtools.cpp" />
     <ClCompile Include="r_endscene.cpp" />
     <ClCompile Include="r_renderer.cpp" />
+    <ClCompile Include="scr_menuresponse.cpp" />
     <ClCompile Include="sys_tools.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

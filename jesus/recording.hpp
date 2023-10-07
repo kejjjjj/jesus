@@ -19,12 +19,24 @@ struct playback_cmd
 	float camera_yaw;
 };
 
+
+
 struct recording_io_data
 {
-	float moveSpeedScale = 1.f;
+	struct requirements_s {
+		int g_speed = 190;
+		float jump_height = 39.f;
+		float moveSpeedScale = 1.f;
+		//bool rpgUsed = false;
+		//bool jumpSlowdown = false;
+	};
+
+	requirements_s requirements;
 	std::vector<playback_cmd> data;
 
 };
+
+#define MIN_LINEUP_DISTANCE 500.f
 
 class Recorder
 {
@@ -33,7 +45,7 @@ public:
 	void StartRecording(playerState_s* ps) noexcept;
 	bool isRecording() const noexcept { return recording; }
 	void StopRecording() noexcept { recording = false; }
-
+	void clearData() noexcept { data.clear(); }
 	friend class MovementRecorder;
 
 
@@ -83,9 +95,12 @@ public:
 	static MovementRecorder& getInstance() { static MovementRecorder r; return r; }
 
 	Recorder recorder;
-	Playback playback;
+	Playback* playback;
 
 	std::list<std::unique_ptr<Playback>> playbacks;
+	std::list<std::unique_ptr<recording_io_data>> playback_data;
+
+	std::unique_ptr<Playback> temp_playback;
 
 	void OnUserCmd(usercmd_s* cmd);
 	void DrawPlayback();
@@ -99,7 +114,15 @@ public:
 	dvar_s* recorder_lineupDistance = 0;
 	void LoadRecordings(const std::string& mapname);
 
+	std::optional<int> queued_recorder_time;
+
+	void OnDisconnect() noexcept;
+	void OnRespawn(playerState_s* ps) noexcept;
 private:
+	Playback* GetClosestRecording() const noexcept;
+
+	bool playback_exists() const noexcept { return playbacks.empty() == false || temp_playback ; }
+
 	void Save2File();
 	recording_io_data ReadRecording(std::fstream& f, const std::string& file);
 	void OnRecorderCmd(usercmd_s* cmd);

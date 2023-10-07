@@ -16,13 +16,17 @@ void MovementRecorder::Save2File()
 	
 	CG_CreateSubdirectory(path);
 
-	path += "\\" + std::to_string(cgs->predictedPlayerState.speed);
-
-	CG_CreateSubdirectory(path);
-
-	path += "\\" +  std::to_string(fs::files_in_directory(path).size() + 1) + ".kej";
 
 	std::string real_path = fs::root_path() + "\\" + path;
+
+	size_t numfiles = fs::files_in_directory(real_path).size();
+
+	std::cout << "there are " << numfiles << " files in " << std::quoted(real_path) << '\n';
+
+	path += "\\" + std::to_string(numfiles + 1) + ".kej";
+
+	real_path = fs::root_path() + "\\" + path;
+
 
 	std::ofstream o(real_path, static_cast<int>(fs::fileopen::FILE_OUT));
 
@@ -33,11 +37,18 @@ void MovementRecorder::Save2File()
 	
 	recording_io_data data;
 
-	data.moveSpeedScale = cgs->predictedPlayerState.moveSpeedScaleMultiplier;
+	recording_io_data::requirements_s r;
 
-	IO_WriteData<float>(o, cgs->predictedPlayerState.moveSpeedScaleMultiplier);
+	r.moveSpeedScale = cgs->predictedPlayerState.moveSpeedScaleMultiplier;
+	r.g_speed = cgs->predictedPlayerState.speed;
+	//r.jumpSlowdown = Dvar_FindMalleableVar("jump_slowdownEnable")->current.enabled;
+	r.jump_height = Dvar_FindMalleableVar("jump_height")->current.value;
+
+	std::cout << "first origin: " << playback->data_original.front().origin << '\n';
+
+	IO_WriteData<recording_io_data::requirements_s >(o, r);
 	
-	for (auto& data : recorder.data) {
+	for (auto& data : playback->data_original) {
 		IO_WriteData<playback_cmd>(o, data);
 	}
 
@@ -49,7 +60,7 @@ void MovementRecorder::Save2File()
 void MovementRecorder::LoadRecordings(const std::string& mapname)
 {
 	int speed = cgs->predictedPlayerState.speed;
-	std::string path = fs::root_path() + "\\recorder\\" + mapname + "\\" + std::to_string(speed);
+	std::string path = fs::root_path() + "\\recorder\\" + mapname;
 
 	auto files = fs::files_in_directory(path);
 
@@ -58,43 +69,40 @@ void MovementRecorder::LoadRecordings(const std::string& mapname)
 
 			fs::reset();
 
-			std::fstream f(file);
+			std::fstream f(file, static_cast<std::ios_base::openmode>(fs::fileopen::FILE_IN));
 
 			if (!f.is_open()) {
 				FatalError(std::format("an error occurred while trying to open \"{}\"!\nreason: {}", file, fs::get_last_error()));
 				return;
 			}
 
-			auto data = ReadRecording(f, file);
+			if (fs::get_extension(file) == ".kej") {
 
-			if (data.moveSpeedScale == cgs->predictedPlayerState.moveSpeedScaleMultiplier)
-				playbacks.push_back(std::move(std::unique_ptr<Playback>(new Playback(data.data))));
+				auto data = ReadRecording(f, file);
+
+				//if (data.moveSpeedScale == cgs->predictedPlayerState.moveSpeedScaleMultiplier)
+				playback_data.push_back(std::move(std::unique_ptr<recording_io_data>(new recording_io_data(data))));
+			}
 
 			f.close();
 
 		});
 
-	std::cout << "total loaded: " << playbacks.size() << '\n';
-
-	if(playbacks.empty() == false)
-		playback.data_original = playbacks.front()->data_original;
+	std::cout << "total loaded: " << playback_data.size() << '\n';
 
 }
 
 recording_io_data MovementRecorder::ReadRecording(std::fstream& f, const std::string& file)
 {
 	recording_io_data io;
-	io.moveSpeedScale = IO_ReadBlock<float>(f).value();
-
-	//fs::get(f);
+	recording_io_data::requirements_s r;
+	r = IO_ReadBlock<recording_io_data::requirements_s>(f).value();
 
 
 	while (f.good() && !f.eof()) {
 
 		if(auto v = IO_ReadBlock<playback_cmd>(f))
 			io.data.push_back(v.value());
-		//fs::get(f);
-
 	}
 	return io;
 
