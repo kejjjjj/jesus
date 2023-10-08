@@ -44,8 +44,8 @@ void __cdecl Renderer::CG_DrawActive()
 
 	mr.DrawPlayback();
 
-	if (test_playback)
-		test_playback->DrawPlayback();
+	if (prediction_playback)
+		prediction_playback->DrawPlayback();
 
 	return detour_func.cast_call<void (__cdecl*)()>();
 }

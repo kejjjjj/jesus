@@ -28,6 +28,8 @@ void CL_FinishMove(usercmd_s* cmd)
 
 	CL_FixServerTime(cmd);
 
+	CL_PredictBounce(cmd);
+
 
 	mr.OnUserCmd(cmd);
 
@@ -40,67 +42,23 @@ void CL_FinishMove(usercmd_s* cmd)
 
 	if (kej_bhop && kej_bhop->current.enabled && (cmd->buttons & cmdEnums::jump) != 0) {
 			
-		if (cmd->serverTime - cgs->predictedPlayerState.jumpTime >= 500 
-			&& cgs->predictedPlayerState.groundEntityNum == 1023 
-			&& CG_GetDistanceToGround(&cgs->predictedPlayerState) < 100)
+		usercmd_s* oldcmd = CL_GetUserCmd(clients->cmdNumber - 1);
+
+		if ((cmd->buttons & cmdEnums::jump) != 0 && (oldcmd->buttons & cmdEnums::jump) != 0)
 			cmd->buttons -= cmdEnums::jump;
 
-		else if(cmd->serverTime - cgs->predictedPlayerState.jumpTime < 500 && cgs->predictedPlayerState.groundEntityNum == 1022)
-			cmd->buttons -= cmdEnums::jump;
+		//if (cmd->serverTime - cgs->predictedPlayerState.jumpTime >= 500 
+		//	&& cgs->predictedPlayerState.groundEntityNum == 1023 
+		//	&& CG_GetDistanceToGround(&cgs->predictedPlayerState) < 100)
+		//	cmd->buttons -= cmdEnums::jump;
+
+		//else if(cmd->serverTime - cgs->predictedPlayerState.jumpTime < 500 && cgs->predictedPlayerState.groundEntityNum == 1022)
+		//	cmd->buttons -= cmdEnums::jump;
 
 
 		
 	}
 
-	static dvar_s* kej_easyBounces = Dvar_FindMalleableVar("kej_easyBounces");
-
-	if (kej_easyBounces && kej_easyBounces->current.enabled) {
-		static bool playback_active = false;
-		static bool stop_predicting = false;
-		static std::list<playback_cmd>::iterator pb_it;
-		static std::list<playback_cmd>::iterator pb_end;
-		static std::optional<std::list<playback_cmd>> results;
-
-		bool bplayback = test_playback && test_playback->isPlayback();
-
-		if (stop_predicting == false && !mr.playback)
-			results = RealTimePrediction(&cgs->predictedPlayerState, cmd);
-
-		if (results) {
-			pb_it = results.value().begin();
-			test_playback = new Playback(results.value());
-
-			test_playback->StartPlayback(cmd->serverTime, &cgs->predictedPlayerState, cmd, *pb_it, false);
-			stop_predicting = true;
-			results = std::nullopt;
-
-
-			auto current = test_playback->CurrentCmd();
-
-			if (!current)
-				return;
-
-			float dist = current->origin.dist(clients->cgameOrigin);
-
-			//Com_Printf("start dist: %.6f\n", dist);
-			//bplayback = true;
-		}
-
-		if (bplayback) {
-			test_playback->doPlayback(cmd);
-
-			if (!test_playback->isPlayback()) {
-				//Com_Printf("bunce!\n");
-				delete test_playback;
-				test_playback = 0;
-			}
-
-
-		}
-
-		if (cgs->predictedPlayerState.groundEntityNum == 1022 && !bplayback)
-			stop_predicting = false;
-	}
 	return;
 
 }

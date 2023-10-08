@@ -25,10 +25,11 @@ void RB_DrawPolyInteriors(int n_points, std::vector<fvec3>& points, const BYTE* 
 	//	memcpy(material.stateBitsTable, rgp->whiteMaterial->stateBitsTable, sizeof(GfxStateBits));
 	//	once = false;
 	//}
+	static unsigned int loadBits[2] = { material.stateBitsTable->loadBits[0], material.stateBitsTable->loadBits[1] };
+	static GfxStateBits bits = { .loadBits = { material.stateBitsTable->loadBits[0], material.stateBitsTable->loadBits[1] } };
 
 	memcpy(material.stateBitsTable, rgp->whiteMaterial->stateBitsTable, sizeof(GfxStateBits));
-
-
+	material.stateBitsTable = &bits;
 	constexpr MaterialTechniqueType tech = MaterialTechniqueType::TECHNIQUE_UNLIT;
 	static uint32_t ogBits = material.stateBitsTable->loadBits[1];
 

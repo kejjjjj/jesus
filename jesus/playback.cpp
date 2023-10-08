@@ -133,7 +133,7 @@ void Playback::TrimIdleFrames()
 }
 void Playback::DrawPlayback()
 {
-	return;
+	//return;
 	if (!isPlayback())
 		return;
 

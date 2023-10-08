@@ -126,10 +126,12 @@ public:
 	static void OnToggleRecording();
 	static void OnStartPlayback();
 	static void OnSaveRecording();
+	static void OnPrintRecordings();
 
 	static void RB_OnRenderPositions();
 
 	dvar_s* recorder_lineupDistance = 0;
+	dvar_s* recorder_showOrigins = 0;
 	void LoadRecordings(const std::string& mapname);
 
 	std::optional<int> queued_recorder_time;
@@ -155,5 +157,3 @@ private:
 	
 
 };
-
-inline Playback* test_playback = 0;

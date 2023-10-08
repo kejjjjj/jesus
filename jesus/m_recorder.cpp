@@ -60,7 +60,7 @@ void MovementRecorder::OnSaveRecording()
 		return Com_Printf("^1Stop the playback before saving!\n");
 
 
-	r.temp_playback->TrimIdleFrames();
+	//r.temp_playback->TrimIdleFrames();
 
 	r.playback = r.temp_playback.get();
 
@@ -69,7 +69,42 @@ void MovementRecorder::OnSaveRecording()
 	r.recorder.data.clear();
 	r.temp_playback.reset();
 }
+void MovementRecorder::OnPrintRecordings()
+{
+	if (NOT_SERVER)
+		return;
 
+	decltype(auto) r = getInstance();
+
+	const float moveSpeedScaleMultiplier = cgs->predictedPlayerState.moveSpeedScaleMultiplier;
+	const int speed = cgs->predictedPlayerState.speed;
+	bool slowdown = Dvar_FindMalleableVar("jump_slowdownEnable")->current.enabled;
+
+	for (auto& i : r.playback_data) {
+
+		recording_io_data::requirements_s& r = i->requirements;
+
+
+		if (r.g_speed == speed && r.moveSpeedScale == moveSpeedScaleMultiplier && r.jumpSlowdown == slowdown)
+				Com_Printf("^2(%i == %i && %.6f == %.6f && %i == %i)\n", r.g_speed, speed, r.moveSpeedScale, moveSpeedScaleMultiplier, r.jumpSlowdown, slowdown);
+		else {
+			std::string buf;
+
+			if (r.g_speed != speed) {
+				buf += std::format(" ^1g_speed ({}) != {}", speed, r.g_speed);
+			}if (r.moveSpeedScale != moveSpeedScaleMultiplier) {
+				buf += std::format(" ^1moveSpeedScaleMultiplier ({}) != {}", moveSpeedScaleMultiplier, r.moveSpeedScale);
+			}
+			if (r.jumpSlowdown != slowdown) {
+				buf += std::format(" ^1jumpSlowdown ({}) != {}", slowdown, r.jumpSlowdown);
+			}
+
+			buf += "\n";
+
+			Com_Printf(buf.c_str());
+		}
+	}
+}
 void MovementRecorder::OnRecorderCmd(usercmd_s* cmd)
 {
 	static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
@@ -242,7 +277,7 @@ void MovementRecorder::DrawPlayback()
 		return;
 	}
 
-	//return;
+	return;
 
 	if (!playback || !playback->isPlayback())
 		return;
@@ -263,7 +298,13 @@ void MovementRecorder::DrawPlayback()
 
 void MovementRecorder::RB_OnRenderPositions()
 {
+
+
 	decltype(auto) r = getInstance();
+
+	if (r.recorder_showOrigins->current.enabled == false) {
+		return;
+	}
 
 	std::uint8_t c[4];
 
@@ -271,13 +312,27 @@ void MovementRecorder::RB_OnRenderPositions()
 
 	((char(__fastcall*)(const float* in, uint8_t * out))0x493530)(vec4_t{col.r/255.f,col.g / 255.f,col.b / 255.f,0.3f}, c);
 
+	GfxPointVertex vtx[2];
 
 	for (auto& i : r.playbacks) {
 
 		const fvec3& origin = i->data_original.front().origin;
+		const fvec3& angles = { 0, i->data_original.front().viewangles.y, 0 };
+
 		auto pts = Geom_CreatePyramid(origin, {7,7, 14}, fmodf((Sys_MilliSeconds() / 60.f), 360.f));
 
 		RB_DrawPolyInteriors(pts.size(), pts, c, true, true);
+
+		//fvec3 end = origin + angles.toforward() * 25;
+		//end.z += 14;
+
+		//VectorCopy((float*)&origin, vtx[0].xyz);
+		//VectorCopy((float*)&end, vtx[0].xyz);
+
+
+		//RB_AddDebugLine(vtx, true, (float*)&origin, end, c, 0);
+
+		//RB_DrawLines3D(1, 3, vtx, true);
 
 	}
 

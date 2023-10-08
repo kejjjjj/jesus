@@ -37,10 +37,13 @@ void CG_Init()
     Cmd_AddCommand("recorder_record", recorder.OnToggleRecording);
     Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);
     Cmd_AddCommand("recorder_playback", recorder.OnStartPlayback);
+    Cmd_AddCommand("recorder_printAll", recorder.OnPrintRecordings);
 
 
     recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,
         "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback");
+
+    recorder.recorder_showOrigins = Dvar_RegisterBool("recorder_showOrigins", dvar_flags::saved, true, "draws a cone at the lineup positions");
 
     Dvar_RegisterBool("kej_bhop", dvar_flags::saved, false, "bhop when holding spacebar");
     Dvar_RegisterBool("kej_easyBounces", dvar_flags::saved, false, "makes bouncing a lot easier");

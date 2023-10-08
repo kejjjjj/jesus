@@ -21,12 +21,17 @@ void MovementRecorder::Save2File()
 
 	size_t numfiles = fs::files_in_directory(real_path).size();
 
-	std::cout << "there are " << numfiles << " files in " << std::quoted(real_path) << '\n';
+	std::string folder_path = path;
 
-	path += "\\" + std::to_string(numfiles + 1) + ".kej";
 
-	real_path = fs::root_path() + "\\" + path;
+	do {
+		++numfiles;
+		path = folder_path + "\\" + std::to_string(numfiles) + ".kej";
+		real_path = fs::root_path() + "\\" + path;
+		++numfiles;
+	} while (fs::file_exists(real_path));
 
+	
 
 	std::ofstream o(real_path, static_cast<int>(fs::fileopen::FILE_OUT));
 
