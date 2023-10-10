@@ -102,8 +102,6 @@ void Lineup::move_closer(usercmd_s* cmd) noexcept
 
 
 	if (dist < 100) {
-		//if(rng_crouch)
-		//	cmd->buttons |= cmdEnums::crouch;
 		fvec3 predicted_pos = predict_stop_position();
 
 		float xy_dist = fvec2(dst).dist(fvec2(predicted_pos));

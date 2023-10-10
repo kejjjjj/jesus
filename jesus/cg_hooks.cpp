@@ -23,7 +23,7 @@ void CG_CreateHooks()
 	decltype(auto) hooktable = HookTable::getInstance();
 	decltype(auto) renderer = Renderer::getInstance();
 
-//	hooktable.insert(hookEnums_e::HOOK_ENDSCENE,			hook::hookobj<void*>((renderer.endscene_getter()),	renderer.EndSceneRenderer,		TRUE));
+	//hooktable.insert(hookEnums_e::HOOK_ENDSCENE,			hook::hookobj<void*>((renderer.endscene_getter()),	renderer.EndSceneRenderer,		TRUE));
 	hooktable.insert(hookEnums_e::HOOK_DRAWACTIVE,			hook::hookobj<void*>(is_cod4x() ? is_cod4x() + 0x5464 : 0x42F7F0, renderer.CG_DrawActive, TRUE));
 	
 

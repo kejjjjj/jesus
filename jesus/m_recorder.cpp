@@ -379,6 +379,9 @@ void MovementRecorder::OnDisconnect() noexcept
 }
 void MovementRecorder::OnLoadFromMemory(playerState_s* ps) noexcept
 {
+	if (NOT_SERVER)
+		return;
+
 	const float moveSpeedScaleMultiplier = ps->moveSpeedScaleMultiplier;
 	const int speed = ps->speed;
 	bool slowdown = Dvar_FindMalleableVar("jump_slowdownEnable")->current.enabled;

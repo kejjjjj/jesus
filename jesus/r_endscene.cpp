@@ -8,6 +8,7 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 {
 	static Renderer& renderer = Renderer::getInstance();
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_ENDSCENE);
+	static BouncePrediction& bp = BouncePrediction::getInstance();
 
 
 	if (!ImGui::GetCurrentContext()) {
@@ -18,6 +19,9 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 	}
 
 	if (renderer.begin_frame()) {
+
+		//bp.RB_ShowPath();
+
 
 		renderer.end_frame();
 	}
@@ -44,8 +48,8 @@ void __cdecl Renderer::CG_DrawActive()
 
 	mr.DrawPlayback();
 
-	if (prediction_playback)
-		prediction_playback->DrawPlayback();
+	//if (prediction_playback)
+	//	prediction_playback->DrawPlayback();
 
 	return detour_func.cast_call<void (__cdecl*)()>();
 }

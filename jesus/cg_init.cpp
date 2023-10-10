@@ -38,6 +38,7 @@ void CG_Init()
     Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);
     Cmd_AddCommand("recorder_playback", recorder.OnStartPlayback);
     Cmd_AddCommand("recorder_printAll", recorder.OnPrintRecordings);
+    Cmd_AddCommand("recorder_reloadPlaybacks", []() { return MovementRecorder::getInstance().OnLoadFromMemory(&cgs->predictedPlayerState); });
 
 
     recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,

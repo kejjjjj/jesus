@@ -20,45 +20,41 @@ public:
 	void do_playback(usercmd_s* cmd);
 
 private:
-
+	void move_closer(usercmd_s* cmd);
+	bool move_forward(usercmd_s* cmd);
+	bool move_sideways(usercmd_s* cmd);
+	bool move_wait_for_prediction() noexcept {
+		if (test_prediction)
+		{
+			test_prediction--;
+			return true;
+		}
+		return false;
+	}
 	bool is_step_ele(const fvec3& fwd_angles) const noexcept;
-
-	void init(const float start, const float destination, const Axis_t axis, const cardinalDirection_e direction);
-	float start_simulation();
-	bool step_is_too_big(const float new_position);
-	void forward_on_exceeded(const float new_position) noexcept;
-	void angled_on_exceeded(const float new_position) noexcept;
-	float get_fitness_for_move(const float new_position) noexcept;
-	float get_overstep_fitness(const float new_position) noexcept;
-	void update_deltas(usercmd_s* cmd, const float new_position);
-	void on_destination_reached(usercmd_s* cmd);
-	void on_impossible_coordinate(usercmd_s* cmd, const float new_position);
 	void reset_prediction() noexcept;
+	void update_origin() noexcept;
 
+	float P_PredictNextPosition(usercmd_s* cmd, char forwardmove, char rightmove);
+	bool prediction_failed() const noexcept { return origin != predicted_origin; };
+	void init(const float start, const float destination, const Axis_t axis, const cardinalDirection_e direction);
 
-	float get_new_delta() const noexcept;
-	void update_stats(const float new_position);
-	float get_distance_to_end() const noexcept { return distanceMoved <= 0.125 ? 0.125f - distanceMoved : distanceMoved; }
 	bool initialized = false;
 	bool step_ele = false;
 
 	Axis_t destinationAxis = Axis_t::X;
 	float destination = 0.f;
 	float start = 0.f;
-	float distanceMoved = 0.f;
-	float position = 0.f;
+	float distance_moved = 0.f;
+	float origin = 0.f;
+	float old_origin = 0.f;
 	float positionZ = 0.f;
-	float predicted_position = 0.f;
-	float base_angle = 0.f;
-
-	bool moveForward = true;
-	float current_delta = 90.f;
-	float lowest_delta = 0.f;
-	float best_delta = 0.f;
-	float best_fitness = 0.f;
-	float delta_increment = 0.01f;
-	float backup_delta = 0.f;
+	float predicted_origin = 0.f;
+	
+	int test_prediction = 8;
+	bool bmove_forward = true;
 	float total_distance = 0.f;
+	int frameTime = 5;
 	pmove_t pm;
 	pml_t pml;
 	playerState_s ps;
@@ -69,9 +65,4 @@ private:
 
 	Playback playback;
 	std::list<playback_cmd> cmds;
-	int testPlayback = 0;
-
-
-	int frameTime = (1000 / 200); //start with 200fps and then start increasing from there
-
 };

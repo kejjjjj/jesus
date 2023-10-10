@@ -25,15 +25,16 @@ void CL_FinishMove(usercmd_s* cmd)
 
 	static MovementRecorder& mr = MovementRecorder::getInstance();
 	static Elebot& elebot = Elebot::getInstance();
+	static BouncePrediction& bp = BouncePrediction::getInstance();
 
 	CL_FixServerTime(cmd);
 
-	CL_PredictBounce(cmd);
+	bp.PredictBounce(cmd);
 
 
 	mr.OnUserCmd(cmd);
 
-	//elebot.move(cmd);
+	elebot.move(cmd);
 	//elebot.do_playback(cmd);
 
 	CL_MonitorEvents();
@@ -103,9 +104,6 @@ void CL_MonitorEvents()
 	float health = CG_CalcPlayerHealth(&cgs->predictedPlayerState);
 	
 	static MovementRecorder& mr = MovementRecorder::getInstance();
-
-	if (GetAsyncKeyState(VK_NUMPAD0) & 1)
-		std::cout << health << ", " << mr.playbacks.size() << '\n';
 
 	if (health && mr.playbacks.empty()) {
 

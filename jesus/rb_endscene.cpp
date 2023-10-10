@@ -199,7 +199,6 @@ char RB_DrawDebug(GfxViewParms* viewParms)
 
 	//RB_ShowCollision(viewParms);
 	
-
 	return detour_func.cast_call<char(*)(GfxViewParms*)>(viewParms);
 }
 
