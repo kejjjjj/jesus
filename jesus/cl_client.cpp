@@ -60,6 +60,19 @@ void CL_FinishMove(usercmd_s* cmd)
 		
 	}
 
+	M_MovementCheats(cmd);
+
+	//static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
+
+	//static pmove_t pm;
+
+	//pm.cmd.forwardmove = cmd->forwardmove;
+	//pm.cmd.rightmove = cmd->rightmove;
+	//pm.ps = &cgs->predictedPlayerState;
+
+	//if (com_maxfps)
+	//	com_maxfps->current.integer = FPS_GetIdeal(&pm);
+
 	return;
 
 }

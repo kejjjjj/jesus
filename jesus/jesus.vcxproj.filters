@@ -79,6 +79,15 @@
     <Filter Include="Source Files\pm">
       <UniqueIdentifier>{6e63fce2-3954-42ca-9fb2-1c10070b8059}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\cod4x">
+      <UniqueIdentifier>{23155abc-eefe-4672-8531-4b8b43d7d862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\clients">
+      <UniqueIdentifier>{b190d1b7-1512-4375-8cfb-3cfdffa36fc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hacks">
+      <UniqueIdentifier>{82424fe1-327b-4429-b711-3c354e02cbb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -237,6 +246,18 @@
     <ClInclude Include="pm_fps.hpp">
       <Filter>Source Files\pm</Filter>
     </ClInclude>
+    <ClInclude Include="cod4x.hpp">
+      <Filter>Source Files\cod4x</Filter>
+    </ClInclude>
+    <ClInclude Include="visuals.hpp">
+      <Filter>Source Files\hacks</Filter>
+    </ClInclude>
+    <ClInclude Include="g_entity.hpp">
+      <Filter>Source Files\clients</Filter>
+    </ClInclude>
+    <ClInclude Include="movement.hpp">
+      <Filter>Source Files\hacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -391,6 +412,18 @@
     </ClCompile>
     <ClCompile Include="pm_fps.cpp">
       <Filter>Source Files\pm</Filter>
+    </ClCompile>
+    <ClCompile Include="cod4x.cpp">
+      <Filter>Source Files\cod4x</Filter>
+    </ClCompile>
+    <ClCompile Include="visuals.cpp">
+      <Filter>Source Files\hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="g_entity.cpp">
+      <Filter>Source Files\clients</Filter>
+    </ClCompile>
+    <ClCompile Include="movement.cpp">
+      <Filter>Source Files\hacks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -23,6 +23,8 @@ private:
 	void move_closer(usercmd_s* cmd);
 	bool move_forward(usercmd_s* cmd);
 	bool move_sideways(usercmd_s* cmd);
+	float eval_angle(usercmd_s* cmd) noexcept;
+	bool is_interrupted() const noexcept;
 	bool move_wait_for_prediction() noexcept {
 		if (test_prediction)
 		{
@@ -35,7 +37,7 @@ private:
 	void reset_prediction() noexcept;
 	void update_origin() noexcept;
 
-	float P_PredictNextPosition(usercmd_s* cmd, char forwardmove, char rightmove);
+	float P_PredictNextPosition(usercmd_s* cmd, char forwardmove, char rightmove, float yaw);
 	bool prediction_failed() const noexcept { return origin != predicted_origin; };
 	void init(const float start, const float destination, const Axis_t axis, const cardinalDirection_e direction);
 
@@ -50,7 +52,11 @@ private:
 	float old_origin = 0.f;
 	float positionZ = 0.f;
 	float predicted_origin = 0.f;
+
+	std::optional<float> angle_delta;
 	
+	int& fps = Dvar_FindMalleableVar("com_maxfps")->current.integer;
+
 	int test_prediction = 8;
 	bool bmove_forward = true;
 	float total_distance = 0.f;

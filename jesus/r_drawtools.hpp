@@ -28,7 +28,7 @@ void CG_DrawRotatedPic(int vertical, int horizontal, ScreenPlacement* scrPlace, 
 ScreenPlacement* ScrPlace_ApplyRect(float* x, float* w, float* y, float* h, ScreenPlacement* placement, int horizontal, int vertical);
 void CG_DrawRotatedPicPhysical(ScreenPlacement* scrPlace, float x, float y, float w, float h, float angle, float* color, Material* material);
 
-ScreenPlacement* CG_GetScreenPlacement(int LocalClientNum);
+ScreenPlacement* CG_GetScreenPlacement();
 
 std::optional<ivec2> WorldToScreen(const fvec3& location);
 

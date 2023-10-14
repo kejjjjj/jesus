@@ -243,3 +243,47 @@ void CG_CreateSubdirectory(const std::string& name)
 		}
 	}
 }
+
+void GetViewAxisProjections(float* start, float* end, refdef_s* refdef)
+{
+	__asm
+	{
+		push refdef;
+		mov edx, start;
+		mov ecx, end;
+		mov esi, 0x42D650;
+		call esi;
+		add esp, 0x4;
+	}
+
+
+}
+
+int R_TextWidth(const char* text, int maxChars, Font_s* font)
+{
+	int r = 0;
+	__asm
+	{
+		push font;
+		push maxChars;
+		mov eax, text;
+		mov esi, 0x5F1EE0;
+		call esi;
+		add esp, 0x8;
+		mov r, eax;
+	}
+
+	return r;
+}
+
+float ScaleFontByDistance(float dist)
+{
+	float d_max = 10000.0;
+	float scale_max = 7.f;
+
+	dist = std::max(0.0f, std::min(d_max, dist));
+	
+	float scale = 2.f - scale_max * (dist / (d_max));
+
+	return std::clamp(scale, 0.1f, 2.f);
+}

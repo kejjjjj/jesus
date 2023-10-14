@@ -50,6 +50,10 @@ void CG_CreateHooks()
 
 	//hooktable.insert(hookEnums_e::HOOK_ENDSCENE_FIX, hook::hookobj<void*>(0x6496CF, RB_FixEndscene, TRUE));
 
+	if (auto cod4x = is_cod4x()) {
+		hooktable.insert(hookEnums_e::HOOK_COD4X_SCREENSHOT, hook::hookobj<void*>(cod4x + 0x12D6B, COD4X::getInstance().MSG_ParseServerCommand, TRUE));
+
+	}
 
 }
 void CG_ReleaseHooks()

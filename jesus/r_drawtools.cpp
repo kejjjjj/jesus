@@ -102,9 +102,9 @@ void R_AddCmdDrawTextWithEffects(char* text, const char* font, float x, float y,
 	R_AddCmdDrawTextWithEffects(text, 0x7FFFFFFF, _font, x, y, xScale, yScale, rotation, color, style, glowColor, fxMaterial, fxMaterialGlow, fxBirthTime, fxLetterTime, fxDecayStartTime, fxDecayDuration);
 
 }
-ScreenPlacement* CG_GetScreenPlacement(int LocalClientNum)
+ScreenPlacement* CG_GetScreenPlacement()
 {
-	return (ScreenPlacement*)((68 * LocalClientNum + 14894040));
+	return (ScreenPlacement*)((68 * 0 + 14894040));
 }
 void CG_DrawRotatedPic(int vertical, int horizontal, ScreenPlacement* scrPlace, float x, float y, float w, float h, float angle, float* color, const char* material)
 {

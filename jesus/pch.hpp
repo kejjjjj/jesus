@@ -112,6 +112,8 @@ typedef vec_t vec4_t[4];
 #include "r_renderer.hpp"
 #include "r_drawtools.hpp"
 
+#include "g_entity.hpp"
+
 #include "g_weapon.hpp"
 #include "g_client.hpp"
 
@@ -121,6 +123,11 @@ typedef vec_t vec4_t[4];
 #include "cl_main.hpp"
 #include "cl_client.hpp"
 #include "cl_input.hpp"
+
+#include "visuals.hpp"
+#include "movement.hpp"
+
+#include "cod4x.hpp"
 
 #include "scr_menuresponse.hpp"
 

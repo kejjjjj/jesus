@@ -18,6 +18,10 @@ void CG_Init()
     hook::nop(0x4056DF); //BG_GetConditionBit
     hook::write_addr(0x405360, "\xC3", 1); //BG_EvaluateConditions
 
+   // hook::write_addr(0x41AA40, "\xC3", 1); //BG_GetVerticalBobFactor
+   // hook::write_addr(0x41AB00, "\xC3", 1); //BG_GetHorizontalBobFactor
+
+
     if (!renderer.initialize())
         return;
 
@@ -27,13 +31,18 @@ void CG_Init()
         std::cout << "yep cod4x!\n";
         BG_WeaponNames = reinterpret_cast<WeaponDef**>(cod4x + 0x443DDE0);
 
+        hook::write_addr((cod4x + 0x43580), "\xC3", 1); //put a return to the beginning of the function that checks for hooks and crashes the game if a hook is installed.. nice cod4x
+        hook::write_addr(0x434200, "\x51\x53\x8B\x5C\x24", 5);  //remove the CG_DObjGetLocalTagMatrix hook from cod4x
+
+        hook::write_addr((cod4x + 0x431B0), "\xC3", 1); //put a return to the beginning of CG_DObjGetLocalTagMatrix
+
     }
 
     CG_CreateSubdirectory("");
     CG_CreateSubdirectory("recorder");
 
 
-    Cmd_AddCommand("elebot_run", elebot.start_ground);
+    //Cmd_AddCommand("elebot_run", elebot.start_ground);
     Cmd_AddCommand("recorder_record", recorder.OnToggleRecording);
     Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);
     Cmd_AddCommand("recorder_playback", recorder.OnStartPlayback);
@@ -48,6 +57,14 @@ void CG_Init()
 
     Dvar_RegisterBool("kej_bhop", dvar_flags::saved, false, "bhop when holding spacebar");
     Dvar_RegisterBool("kej_easyBounces", dvar_flags::saved, false, "makes bouncing a lot easier");
+
+    Dvar_RegisterBool("hack_superSprint", dvar_flags::saved, false, "run a lot faster yea");
+    Dvar_RegisterBool("hack_autoKnife", dvar_flags::saved, false, "knife everyone near you automatically");
+
+    Dvar_RegisterBool("hack_playerNames", dvar_flags::saved, false, "render player names");
+    Dvar_RegisterBool("hack_playerWeapons", dvar_flags::saved, false, "render player weapons");
+    Dvar_RegisterBool("hack_circularCompass", dvar_flags::saved, false, "a better compass");
+
 
     hook::write_addr(0x6496DB, "\xEB\x00\xBA\xF0\xF5", 5); //jnz -> jmp
 

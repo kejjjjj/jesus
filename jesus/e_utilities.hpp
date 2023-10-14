@@ -36,3 +36,8 @@ Material* FindMaterialByName(const std::string& mtl);
 
 
 void CG_CreateSubdirectory(const std::string& name);
+
+void GetViewAxisProjections(float* start, float* end, refdef_s* refdef);
+int R_TextWidth(const char* text, int maxChars, Font_s* font);
+
+float ScaleFontByDistance(float dist);

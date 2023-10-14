@@ -155,6 +155,7 @@
     <ClInclude Include="cl_client.hpp" />
     <ClInclude Include="cl_input.hpp" />
     <ClInclude Include="cl_main.hpp" />
+    <ClInclude Include="cod4x.hpp" />
     <ClInclude Include="com_channel.hpp" />
     <ClInclude Include="com_vector.hpp" />
     <ClInclude Include="dvar.hpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="fs_utilities.hpp" />
     <ClInclude Include="geom_shapes.hpp" />
     <ClInclude Include="g_client.hpp" />
+    <ClInclude Include="g_entity.hpp" />
     <ClInclude Include="g_weapon.hpp" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -187,6 +189,7 @@
     <ClInclude Include="mh\hde\table64.h" />
     <ClInclude Include="mh\MinHook.h" />
     <ClInclude Include="mh\trampoline.h" />
+    <ClInclude Include="movement.hpp" />
     <ClInclude Include="pch.hpp" />
     <ClInclude Include="pm_fps.hpp" />
     <ClInclude Include="rb_endscene.hpp" />
@@ -197,6 +200,7 @@
     <ClInclude Include="scr_menuresponse.hpp" />
     <ClInclude Include="sys_tools.hpp" />
     <ClInclude Include="typedefs.hpp" />
+    <ClInclude Include="visuals.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bg_pmove.cpp" />
@@ -207,6 +211,7 @@
     <ClCompile Include="cl_client.cpp" />
     <ClCompile Include="cl_input.cpp" />
     <ClCompile Include="cl_main.cpp" />
+    <ClCompile Include="cod4x.cpp" />
     <ClCompile Include="com_channel.cpp" />
     <ClCompile Include="com_vector.cpp" />
     <ClCompile Include="dllmain.cpp" />
@@ -217,6 +222,7 @@
     <ClCompile Include="fs_utilities.cpp" />
     <ClCompile Include="geom_shapes.cpp" />
     <ClCompile Include="g_client.cpp" />
+    <ClCompile Include="g_entity.cpp" />
     <ClCompile Include="g_weapon.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -271,6 +277,7 @@
     <ClCompile Include="mh\trampoline.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="movement.cpp" />
     <ClCompile Include="m_recorder.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -289,6 +296,7 @@
     <ClCompile Include="r_renderer.cpp" />
     <ClCompile Include="scr_menuresponse.cpp" />
     <ClCompile Include="sys_tools.cpp" />
+    <ClCompile Include="visuals.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
