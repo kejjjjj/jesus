@@ -39,5 +39,6 @@ void CG_CreateSubdirectory(const std::string& name);
 
 void GetViewAxisProjections(float* start, float* end, refdef_s* refdef);
 int R_TextWidth(const char* text, int maxChars, Font_s* font);
+unsigned short SL_GetStringOfSize(const char* str);
 
 float ScaleFontByDistance(float dist);

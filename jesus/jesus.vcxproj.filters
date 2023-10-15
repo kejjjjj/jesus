@@ -258,6 +258,9 @@
     <ClInclude Include="movement.hpp">
       <Filter>Source Files\hacks</Filter>
     </ClInclude>
+    <ClInclude Include="g_penetration.hpp">
+      <Filter>Source Files\g</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -424,6 +427,9 @@
     </ClCompile>
     <ClCompile Include="movement.cpp">
       <Filter>Source Files\hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="g_penetration.cpp">
+      <Filter>Source Files\g</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

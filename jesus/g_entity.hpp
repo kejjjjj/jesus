@@ -2,6 +2,9 @@
 
 #include "pch.hpp"
 
+std::optional<fvec3> AimTarget_GetTagPos(centity_s* entity, int16_t tagName);
+
+
 struct entity_s
 {
 	entity_s() = delete;
@@ -24,7 +27,8 @@ struct entity_s
 	fvec3 getOrigin() const noexcept;
 	char* getName() const noexcept;
 	int getWeapon() const noexcept;
-
+	std::optional<fvec3> GetTagPosition(const int16_t tag) const noexcept;
+	int getID() const noexcept { return clientNum; }
 private:
 	int clientNum;
 	centity_s* cent;

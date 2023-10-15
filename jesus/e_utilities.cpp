@@ -275,7 +275,19 @@ int R_TextWidth(const char* text, int maxChars, Font_s* font)
 
 	return r;
 }
-
+unsigned short SL_GetStringOfSize(const char* str)
+{
+	int Unknown = 1;
+	int _length = strlen(str) + 1;
+	_asm {
+		push	_length
+		push	Unknown
+		push	str
+		mov	eax, 0x518290
+		call	eax
+		add	esp, 0xC
+	}
+}
 float ScaleFontByDistance(float dist)
 {
 	float d_max = 10000.0;

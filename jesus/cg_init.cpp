@@ -18,6 +18,9 @@ void CG_Init()
     hook::nop(0x4056DF); //BG_GetConditionBit
     hook::write_addr(0x405360, "\xC3", 1); //BG_EvaluateConditions
 
+    hook::write_addr(0x458110, "\xC3", 1); //CG_SpawnTracer
+
+
    // hook::write_addr(0x41AA40, "\xC3", 1); //BG_GetVerticalBobFactor
    // hook::write_addr(0x41AB00, "\xC3", 1); //BG_GetHorizontalBobFactor
 

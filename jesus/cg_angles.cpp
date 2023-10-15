@@ -286,3 +286,26 @@ float AngularDistance(float value1, float value2) {
 	}
 	return std::abs(diff);
 }
+
+bool PointWithinLine(const fvec3& start, const fvec3& end, const fvec3& point, float radius)
+{
+	float distance = start.dist(end);
+
+	float u = ((point.x - start.x) * (end.x - start.x) +
+		(point.y - start.y) * (end.y - start.y) +
+		(point.z - start.z) * (end.z - start.z)) / (distance * distance);
+
+	if (u < 0.0 || u > 10.0) {
+		// Closest point is outside the line segment
+		return false;
+	}
+
+	fvec3 closestPoint;
+	closestPoint.x = start.x + u * (end.x - start.x);
+	closestPoint.y = start.y + u * (end.y - start.y);
+	closestPoint.z = start.z + u * (end.z - start.z);
+
+	float closestDistance = point.dist(closestPoint);
+
+	return closestDistance <= radius;
+}

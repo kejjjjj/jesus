@@ -166,6 +166,7 @@
     <ClInclude Include="geom_shapes.hpp" />
     <ClInclude Include="g_client.hpp" />
     <ClInclude Include="g_entity.hpp" />
+    <ClInclude Include="g_penetration.hpp" />
     <ClInclude Include="g_weapon.hpp" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="geom_shapes.cpp" />
     <ClCompile Include="g_client.cpp" />
     <ClCompile Include="g_entity.cpp" />
+    <ClCompile Include="g_penetration.cpp" />
     <ClCompile Include="g_weapon.cpp" />
     <ClCompile Include="ImGui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

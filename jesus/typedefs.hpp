@@ -222,9 +222,9 @@ struct vec3
 			else {
 				yaw = 270;
 			}
-			if (yaw < 0) {
-				yaw += 360;
-			}
+			//if (yaw < 0) {
+			//	yaw += 360;
+			//}
 
 			forward = sqrt(x * x + y * y);
 			pitch = (atan2(z, forward) * 180 / 3.14159265358979323846f);

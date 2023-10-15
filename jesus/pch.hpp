@@ -113,6 +113,7 @@ typedef vec_t vec4_t[4];
 #include "r_drawtools.hpp"
 
 #include "g_entity.hpp"
+#include "g_penetration.hpp"
 
 #include "g_weapon.hpp"
 #include "g_client.hpp"

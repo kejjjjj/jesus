@@ -15,9 +15,6 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 	
 	if (cod4x.attempted_screenshot()) {
 		canSS = true; //clear the screen with one clean frame
-
-		//tähän kohtaa renderaa kuva neekerin kyrvästä
-
 		return detour_func.cast_call<long(__stdcall*)(IDirect3DDevice9*)>(device);
 
 	}

@@ -2,8 +2,8 @@
 
 int COD4X::MSG_ParseServerCommand(DWORD* packet)
 {
-	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_COD4X_SCREENSHOT);
-    decltype(auto) x = getInstance();
+	static decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_COD4X_SCREENSHOT);
+    static decltype(auto) x = getInstance();
 
     if(NOT_SERVER)
         return detour_func.cast_call<int(*)(DWORD*)>(packet);
@@ -30,8 +30,12 @@ int COD4X::MSG_ParseServerCommand(DWORD* packet)
 }
 void COD4X::send_screenshot() noexcept
 {
+    std::cout << "sending clean screenshot...";
     ((void(*)(DWORD * serverpacket, DWORD packet))(is_cod4x() + 0xEA610))(serverPacket, serverPacket_code); 
     serverPacket = 0;
     serverPacket_code = 0;
     notify_screenshot = false;
+
+    std::cout << "  done!\n";
+
 }

@@ -1,5 +1,31 @@
 #include "pch.hpp"
 
+std::optional<fvec3> AimTarget_GetTagPos(centity_s* entity, int16_t tagName)
+{
+	if (entity->nextState.eType != ET_PLAYER)
+		return false;
+
+	static vec3_t out{1,1,1};
+
+	static const DWORD fn = 0x4024B0;
+	int returnval(0);
+	__asm {
+		lea edx, out;
+		push edx;
+		mov eax, 0;
+		mov ecx, entity;
+		movzx esi, tagName;
+		call fn;
+		add esp, 0x4;
+		mov returnval, eax;
+	}
+
+	if (!returnval)
+		return std::nullopt;
+
+	return out;
+}
+
 bool entity_s::isValid() const noexcept
 {
 	if (!cent || !info)
@@ -57,4 +83,11 @@ char* entity_s::getName() const noexcept
 int entity_s::getWeapon() const noexcept
 {
 	return cent->nextState.weapon;
+}
+
+std::optional<fvec3> entity_s::GetTagPosition(const int16_t tag) const noexcept
+{
+
+	return AimTarget_GetTagPos(this->cent, tag);
+
 }

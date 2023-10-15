@@ -54,4 +54,6 @@ float AngleDelta(float angle1, float angle2);
 
 float AngularDistance(float value1, float value2);
 
+bool PointWithinLine(const fvec3& start, const fvec3& end, const fvec3& point, float radius);
+
 std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml);

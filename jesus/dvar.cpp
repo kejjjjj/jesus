@@ -100,6 +100,7 @@ void GetDvarIntValue(Operand* result, Operand* source)
     detour_func.cast_call<void(*)(Operand*, Operand*)>(source, result);
 
     if (source->dataType == expDataType::VAL_STRING) {
+        //printf("%s\n", source->internals.string);
         if (!strcmp(source->internals.string, "com_maxfps")) {
             result->internals.intVal = 69;
         }
