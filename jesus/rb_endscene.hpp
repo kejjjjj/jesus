@@ -13,3 +13,6 @@ char RB_DrawLines3D(int count, int width, GfxPointVertex* verts, char depthTest)
 void RB_DrawTriangleOutline(vec3_t points[3], vec4_t color, int width = 3, bool depthTest = false);
 int RB_AddDebugLine(GfxPointVertex* verts, char depthTest, const vec_t* start, vec_t* end, const BYTE* color, int vertCount);
 void R_ConvertColorToBytes(const vec4_t in, uint8_t* out);
+void R_AddDebugBox(const float* mins, const float* maxs, DebugGlobals* debugGlobaksEntry, float* color);
+
+HRESULT R_DrawXModelSkinnedCached(GfxCmdBufSourceState* src, GfxCmdBufState* state, GfxModelSkinnedSurface* modelSurf);

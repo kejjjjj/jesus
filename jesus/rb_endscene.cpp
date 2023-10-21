@@ -201,6 +201,11 @@ char RB_DrawDebug(GfxViewParms* viewParms)
 
 	r.RB_OnRenderPositions();
 
+	vec3_t mins = { -500, -500, -500 };
+	vec3_t maxs = { 500, 500, 500 };
+
+	R_AddDebugBox(mins, maxs, &frontEndDataOut->debugGlobals, (float*)0x6B4558);
+
 	//RB_ShowCollision(viewParms);
 	
 	return detour_func.cast_call<char(*)(GfxViewParms*)>(viewParms);
@@ -220,4 +225,63 @@ void RB_DrawTriangleOutline(vec3_t points[3], vec4_t color, int width, bool dept
 
 	RB_DrawLines3D(3, width, verts, depthTest);
 
+}
+void R_AddDebugBox(const float* mins, const float* maxs, DebugGlobals* debugGlobalsEntry, float* color)
+{
+	__asm
+	{
+		push color;
+		push debugGlobalsEntry;
+		mov edx, maxs;
+		mov eax, mins;
+		mov esi, 0x60DC60;
+		call esi;
+		add esp, 0x8;
+	}
+}
+
+HRESULT R_DrawXModelSkinnedCached(GfxCmdBufSourceState* src, GfxCmdBufState* state, GfxModelSkinnedSurface* modelSurf)
+{
+	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_XMODEL_SKINNED);
+	static LPDIRECT3DTEXTURE9 tex_Z;
+
+	if (Dvar_FindMalleableVar("hack_chams")->current.enabled == false || COD4X::getInstance().attempted_screenshot())
+		return detour_func.cast_call<HRESULT(*)(GfxCmdBufSourceState *, GfxCmdBufState*, GfxModelSkinnedSurface*)>(src, state, modelSurf);
+
+	if (!tex_Z) {
+		BYTE col[60]{};
+		
+		const auto R_GetD3D9TextureDataWithColor = [](BYTE r, BYTE g, BYTE b, BYTE* buffer) -> void {
+			BYTE col[60] =
+			{
+				  0x42, 0x4D, 0x3A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				  0x00, 0x36, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00,
+				  0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+				  0x00, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00,
+				  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+				  b, g, r, 0x00, 0x00, 0x00
+			};
+
+			memcpy_s(buffer, 60, &col, 60);
+		};
+
+		R_GetD3D9TextureDataWithColor(255, 0, 0, col);
+		D3DXCreateTextureFromFileInMemory(cg::dx->device, (LPCVOID)&col, 60, &tex_Z);
+	}
+
+	cg::dx->device->SetRenderState(D3DRS_ZENABLE, false);
+	cg::dx->device->SetTexture(0, tex_Z);
+	detour_func.cast_call<HRESULT(*)(GfxCmdBufSourceState*, GfxCmdBufState*, GfxModelSkinnedSurface*)>(src, state, modelSurf);
+
+
+	cg::dx->device->SetRenderState(D3DRS_ZENABLE, true);
+	cg::dx->device->SetTexture(0, tex_Z);
+
+
+	detour_func.cast_call<HRESULT(*)(GfxCmdBufSourceState*, GfxCmdBufState*, GfxModelSkinnedSurface*)>(src, state, modelSurf);
+
+	cg::dx->device->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	
+	return S_OK;
 }

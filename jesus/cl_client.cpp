@@ -26,52 +26,25 @@ void CL_FinishMove(usercmd_s* cmd)
 	static MovementRecorder& mr = MovementRecorder::getInstance();
 	static Elebot& elebot = Elebot::getInstance();
 	static BouncePrediction& bp = BouncePrediction::getInstance();
+	static entities_s& entities = entities_s::get();
 
 	CL_FixServerTime(cmd);
-
 	bp.PredictBounce(cmd);
-
-
 	mr.OnUserCmd(cmd);
-
 	elebot.move(cmd);
-	//elebot.do_playback(cmd);
-
 	CL_MonitorEvents();
+
+	entities.update_all(clients->snap.numClients);
 
 	static dvar_s* kej_bhop = Dvar_FindMalleableVar("kej_bhop");
 
 	if (kej_bhop && kej_bhop->current.enabled && (cmd->buttons & cmdEnums::jump) != 0) {
-			
 		usercmd_s* oldcmd = CL_GetUserCmd(clients->cmdNumber - 1);
-
 		if ((cmd->buttons & cmdEnums::jump) != 0 && (oldcmd->buttons & cmdEnums::jump) != 0)
 			cmd->buttons -= cmdEnums::jump;
-
-		//if (cmd->serverTime - cgs->predictedPlayerState.jumpTime >= 500 
-		//	&& cgs->predictedPlayerState.groundEntityNum == 1023 
-		//	&& CG_GetDistanceToGround(&cgs->predictedPlayerState) < 100)
-		//	cmd->buttons -= cmdEnums::jump;
-
-		//else if(cmd->serverTime - cgs->predictedPlayerState.jumpTime < 500 && cgs->predictedPlayerState.groundEntityNum == 1022)
-		//	cmd->buttons -= cmdEnums::jump;
-
-
-		
 	}
 
 	M_MovementCheats(cmd);
-
-	//static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
-
-	//static pmove_t pm;
-
-	//pm.cmd.forwardmove = cmd->forwardmove;
-	//pm.cmd.rightmove = cmd->rightmove;
-	//pm.ps = &cgs->predictedPlayerState;
-
-	//if (com_maxfps)
-	//	com_maxfps->current.integer = FPS_GetIdeal(&pm);
 
 	return;
 

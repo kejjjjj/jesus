@@ -3,11 +3,12 @@
 void CG_AdjustFrom640(float& x, float& y, float& w, float& h)
 {
 	const float scale = (float)cgs->refdef.width / 640.f;
+	const float scaleY = (float)cgs->refdef.height / 480.f;
 
 	x *= scale;
-	y *= scale;
+	y *= scaleY;
 	w *= scale;
-	h *= scale;
+	h *= scaleY;
 }
 Material* R_RegisterMaterial(const char* mtl)
 {
@@ -54,6 +55,18 @@ void R_AddCmdDrawStretchPic(Material* material, float x, float y, float w, float
 		call	R_AddCmdDrawStretchPic_func;
 		add		esp, 24h;
 		popad;
+	}
+}
+void R_AddCmdDrawQuadPic(const float* verts, float* color, Material* material)
+{
+	__asm
+	{
+		push material;
+		mov ecx, color;
+		mov edx, verts;
+		mov esi, 0x5F7230;
+		call esi;
+		add esp, 0x4;
 	}
 }
 char* __cdecl R_AddCmdDrawText(const char* text, int maxChars, Font_s* font, float x, float y, float xScale, float yScale, float rotation, float* color, int style)
@@ -287,7 +300,18 @@ void R_DrawText(const char* text, float x, float y, float xScale, float yScale, 
 {
 	R_DrawText(text, "fonts/smalldevfont", x, y, xScale, yScale, rotation, color, style);
 }
+void R_DrawLine(const fvec2& a, const fvec2& b, float thickness, float* color)
+{
+	float verts[8];
+	for (int i = 0; i < 8; i++) {
+		verts[i] = i * 100;
+	}
 
+	Material* m = R_RegisterMaterial("$white");
+
+	R_AddCmdDrawQuadPic(verts, vec4_t{ 1,1,0,1 }, m);
+
+}
 std::optional<ivec2> WorldToScreen(const fvec3& location)
 {
 	const refdef_s* refdef = &cgs->refdef;

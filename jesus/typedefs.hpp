@@ -303,7 +303,12 @@ inline std::ostream& operator<<(std::ostream& os, fvec3 const& v) {
 inline std::ostream& operator<<(std::ostream& os, ivec3 const& v) {
 	return os << "{ " << v.x << ", " << v.y << ", " << v.z << " }";
 }
-
+inline std::ostream& operator<<(std::ostream& os, fvec2 const& v) {
+	return os << "{ " << v.x << ", " << v.y << " }";
+}
+inline std::ostream& operator<<(std::ostream& os, ivec2 const& v) {
+	return os << "{ " << v.x << ", " << v.y << " }";
+}
 struct Quaternion {
 	float w;
 	float x;

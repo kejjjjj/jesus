@@ -4,6 +4,13 @@
 
 std::optional<fvec3> AimTarget_GetTagPos(centity_s* entity, int16_t tagName);
 
+struct killable_entity
+{
+	int clientNum;
+	char* tagName;
+	fvec3 angles2target;
+	fvec3 bone;
+};
 
 struct entity_s
 {
@@ -29,8 +36,22 @@ struct entity_s
 	int getWeapon() const noexcept;
 	std::optional<fvec3> GetTagPosition(const int16_t tag) const noexcept;
 	int getID() const noexcept { return clientNum; }
+	std::optional<killable_entity> CanBeKilled() const noexcept;
+
 private:
 	int clientNum;
 	centity_s* cent;
 	clientInfo_t* info;
+};
+
+struct entities_s
+{
+	static entities_s& get() { static entities_s e; return e; }
+
+	void update_all(int newClients) noexcept;
+	entity_s* find(int idx) noexcept;
+private:
+
+	int numClients = 0;
+	std::vector<entity_s> entities;
 };

@@ -41,6 +41,8 @@ enum class hookEnums_e : short
 	HOOK_GET_DVAR_INT,
 	HOOK_ENDSCENE_FIX,
 
+	HOOK_XMODEL_SKINNED,
+
 	HOOK_COD4X_SCREENSHOT
 };
 

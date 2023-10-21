@@ -67,6 +67,9 @@ void CG_Init()
     Dvar_RegisterBool("hack_playerNames", dvar_flags::saved, false, "render player names");
     Dvar_RegisterBool("hack_playerWeapons", dvar_flags::saved, false, "render player weapons");
     Dvar_RegisterBool("hack_circularCompass", dvar_flags::saved, false, "a better compass");
+    Dvar_RegisterBool("hack_killableEnemy", dvar_flags::saved, false, "draws information if you can kill an enemy from your current position");
+
+    Dvar_RegisterBool("hack_chams", dvar_flags::saved, false, "wooow u can see them thru walls!");
 
 
     hook::write_addr(0x6496DB, "\xEB\x00\xBA\xF0\xF5", 5); //jnz -> jmp

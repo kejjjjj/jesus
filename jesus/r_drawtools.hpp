@@ -10,9 +10,13 @@ Font_s* R_RegisterFont(const char* fontname);
 char* __cdecl R_AddCmdDrawText(const char* text, int maxChars, Font_s* font, float x, float y, float xScale, float yScale, float rotation, float* color, int style);
 
 void R_AddCmdDrawStretchPic(Material* material, float x, float y, float w, float h, float s0, float t0, float s1, float t1, const float* color);
+void R_AddCmdDrawQuadPic(const float* verts, float* color, Material* material);
+
 void R_DrawRect(const char* material, float x, float y, float w, float h, const float* color);
 void R_DrawText(const char* text, const char* font, float x, float y, float xScale, float yScale, float rotation, float* color, int style);
 void R_DrawText(const char* text, float x, float y, float xScale, float yScale, float rotation, float* color, int style);
+
+void R_DrawLine(const fvec2& a, const fvec2& b, float thickness, float* color);
 
 void R_AddCmdDrawTextWithEffects(char* text, int maxChars, Font_s* font, float x, float y, float xScale, float yScale, float rotation,
 	const float* color, int style, const float* glowColor, Material* fxMaterial, Material* fxMaterialGlow,
@@ -53,15 +57,5 @@ private:
 	std::optional<ivec2> highB;
 	std::optional<ivec2> highC;
 	std::optional<ivec2> highD;
-
-	bool lowA_valid;
-	bool lowB_valid;
-	bool lowC_valid;
-	bool lowD_valid;
-
-	bool highA_valid;
-	bool highB_valid;
-	bool highC_valid;
-	bool highD_valid;
 
 };

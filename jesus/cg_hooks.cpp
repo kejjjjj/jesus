@@ -48,6 +48,8 @@ void CG_CreateHooks()
 
 	hooktable.insert(hookEnums_e::HOOK_GET_DVAR_INT, hook::hookobj<void*>(0x53C5C0, GetDvarIntValue, TRUE));
 
+	hooktable.insert(hookEnums_e::HOOK_XMODEL_SKINNED, hook::hookobj<void*>(0x646870, R_DrawXModelSkinnedCached, TRUE));
+
 	//hooktable.insert(hookEnums_e::HOOK_ENDSCENE_FIX, hook::hookobj<void*>(0x6496CF, RB_FixEndscene, TRUE));
 
 	if (auto cod4x = is_cod4x()) {

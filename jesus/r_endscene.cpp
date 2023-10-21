@@ -53,11 +53,16 @@ void __cdecl Renderer::CG_DrawActive()
 		return detour_func.cast_call<void(__cdecl*)()>();
 
 	for (int i = 0; i < clients->snap.numClients; i++) {
-		entity_s target(i);
-		R_OwnerDraw(&target);
 
-		if(target.isEnemy() && target.isValid() && !target.isMe())
-			M_AutoKnife(CL_GetUserCmd(clients->cmdNumber), &target);
+		entity_s* target = entities_s::get().find(i);
+
+		if (!target)
+			continue;
+
+		R_OwnerDraw(target);
+
+		if(target->isEnemy() && target->isValid() && !target->isMe())
+			M_AutoKnife(CL_GetUserCmd(clients->cmdNumber), target);
 	}
 
 	char buffer[128];
