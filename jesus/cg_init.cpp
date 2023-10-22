@@ -68,6 +68,7 @@ void CG_Init()
     Dvar_RegisterBool("hack_playerWeapons", dvar_flags::saved, false, "render player weapons");
     Dvar_RegisterBool("hack_circularCompass", dvar_flags::saved, false, "a better compass");
     Dvar_RegisterBool("hack_killableEnemy", dvar_flags::saved, false, "draws information if you can kill an enemy from your current position");
+    Dvar_RegisterBool("hack_silentAim", dvar_flags::saved, false, "aaaaaa");
 
     Dvar_RegisterBool("hack_chams", dvar_flags::saved, false, "wooow u can see them thru walls!");
 

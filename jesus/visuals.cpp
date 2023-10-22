@@ -179,11 +179,13 @@ void R_DrawKillable(entity_s* target)
 	fvec2 xy = xy_opt.value();
 	float a = 10, b = 10;
 
-	//CG_AdjustFrom640(xy.x, xy.y, a, b);
-
-	//CG_DrawRotatedPic(0, 0, CG_GetScreenPlacement(), xy.x, xy.y, 20, 20, 0.f, vec4_t{ 1,1,1,1 }, "compassping_friendly_mp");
-
 	R_AddCmdDrawTextWithEffects((char*)"w", "fonts/bigDevFont", xy.x, xy.y, 1.2f, 1.2f, 0.f, target->isEnemy() ? vec4_t{1, 0, 0, 1} : vec4_t{1,1,0,1}, 1, vec4_t{1,0,0,1}, 0, 0, 0, 0, 0, 0);
 
-	//R_AddCmdDrawStretchPic(BG_WeaponNames[target->getWeapon()]->ammoCounterIcon, xy.x, xy.y, 10, 10, 0, 0, 0, 0, vec4_t{ 1,1,1,1 });
+
+	if (Dvar_FindMalleableVar("hack_silentAim")->current.enabled) {
+		CL_GetUserCmd(clients->cmdNumber)->buttons |= cmdEnums::fire;
+		CL_SetSilentAngles(killable.value().angles2target);
+	}
+
+
 }

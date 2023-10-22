@@ -12,6 +12,7 @@ void CL_FixServerTime(usercmd_s* cmd)
 	clients->serverTime = cmd->serverTime;
 	first_time += 1000 / com_maxfps->current.integer == 0 ? 1 : com_maxfps->current.integer;
 }
+
 void CL_FinishMove(usercmd_s* cmd)
 {
 

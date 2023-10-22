@@ -302,14 +302,45 @@ void R_DrawText(const char* text, float x, float y, float xScale, float yScale, 
 }
 void R_DrawLine(const fvec2& a, const fvec2& b, float thickness, float* color)
 {
-	float verts[8];
-	for (int i = 0; i < 8; i++) {
-		verts[i] = i * 100;
+	struct vertex_angle {
+		float v[2];
+		float angle;
+	};
+
+	const fvec2 sub = b - a;
+	float line_angle = (std::atan2(-sub.y, -sub.x));
+	const fvec2 center = (a + b) * 0.5f;
+
+	vertex_angle verts[4];
+	float angles[4];
+
+	verts[0].v[0] = a.x;
+	verts[0].v[1] = a.y;
+	verts[0].angle = std::atan2(verts[0].v[1] - center.y, verts[0].v[0] - center.x);
+
+	verts[1].v[0] = b.x;
+	verts[1].v[1] = b.y;
+	verts[1].angle = std::atan2(verts[1].v[1] - center.y, verts[1].v[0] - center.x);
+
+	verts[2].v[0] = b.x + (std::cos((line_angle)) + 1) * thickness;
+	verts[2].v[1] = b.y - (std::sin((line_angle)) + 1) * thickness;
+	verts[2].angle = std::atan2(verts[2].v[1] - center.y, verts[2].v[0] - center.x);
+
+	verts[3].v[0] = a.x + (std::cos((line_angle)) + 1) * thickness;
+	verts[3].v[1] = a.y - (std::sin((line_angle)) + 1) * thickness;
+	verts[3].angle = std::atan2(verts[3].v[1] - center.y, verts[3].v[0] - center.x);
+
+	std::sort(verts, verts + 4, [](const vertex_angle& a, const vertex_angle& b) { return a.angle < b.angle; });
+
+	float v[4][2];
+
+	for (int i = 0; i < 4; i++) {
+		v[i][0] = verts[i].v[0];
+		v[i][1] = verts[i].v[1];
 	}
 
-	Material* m = R_RegisterMaterial("$white");
-
-	R_AddCmdDrawQuadPic(verts, vec4_t{ 1,1,0,1 }, m);
+	Material* m = R_RegisterMaterial("white");
+	R_AddCmdDrawQuadPic((float*)v, vec4_t{ 1,1,0,1 }, m);
 
 }
 std::optional<ivec2> WorldToScreen(const fvec3& location)
@@ -428,11 +459,8 @@ box_s::box_s(const fvec3& origin, const fvec3& mins, const fvec3& maxs)
 
 	//return box;
 }
-void box_s::R_DrawConstructedBoxEdges(vec4_t col) const
+void box_s::R_DrawConstructedBoxEdges(vec4_t col, float thickness) const
 {
-	if (!ImGui::GetCurrentContext())
-		return;
-
 	auto& low_a = lowA.has_value() ? lowA.value() : 0;
 	auto& low_b = lowB.has_value() ? lowB.value() : 0;
 	auto& low_c = lowC.has_value() ? lowC.value() : 0;
@@ -445,40 +473,40 @@ void box_s::R_DrawConstructedBoxEdges(vec4_t col) const
 
 
 	if (lowA && lowC)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_a.x, low_a.y), ImVec2(low_c.x, low_c.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_a.x, low_a.y), fvec2(low_c.x, low_c.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (lowB && lowD)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_b.x, low_b.y), ImVec2(low_d.x, low_d.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_b.x, low_b.y), fvec2(low_d.x, low_d.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (lowC && lowB)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_c.x, low_c.y), ImVec2(low_b.x, low_b.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_c.x, low_c.y), fvec2(low_b.x, low_b.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (lowD && lowA)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_d.x, low_d.y), ImVec2(low_a.x, low_a.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_d.x, low_d.y), fvec2(low_a.x, low_a.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (highA && highC)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_a.x, high_a.y), ImVec2(high_c.x, high_c.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(high_a.x, high_a.y), fvec2(high_c.x, high_c.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (highB && highD)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_b.x, high_b.y), ImVec2(high_d.x, high_d.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(high_b.x, high_b.y), fvec2(high_d.x, high_d.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (highC && highB)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_c.x, high_c.y), ImVec2(high_b.x, high_b.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(high_c.x, high_c.y), fvec2(high_b.x, high_b.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (highD && highA)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(high_d.x, high_d.y), ImVec2(high_a.x, high_a.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(high_d.x, high_d.y), fvec2(high_a.x, high_a.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (lowA && highA)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_a.x, low_a.y), ImVec2(high_a.x, high_a.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_a.x, low_a.y), fvec2(high_a.x, high_a.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (lowB && highB)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_b.x, low_b.y), ImVec2(high_b.x, high_b.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_b.x, low_b.y), fvec2(high_b.x, high_b.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (lowC && highC)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_c.x, low_c.y), ImVec2(high_c.x, high_c.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_c.x, low_c.y), fvec2(high_c.x, high_c.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 
 	if (lowD && highD)
-		ImGui::GetBackgroundDrawList()->AddLine(ImVec2(low_d.x, low_d.y), ImVec2(high_d.x, high_d.y), IM_COL32(col[0], col[1], col[2], col[3]), 1.f);
+		R_DrawLine(fvec2(low_d.x, low_d.y), fvec2(high_d.x, high_d.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
 }
 void box_s::R_DrawConstructedBox(vec4_t col) const
 {

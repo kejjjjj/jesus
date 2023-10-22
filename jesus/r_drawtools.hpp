@@ -44,7 +44,7 @@ struct box_s
 	box_s(const fvec3& origin, const fvec3& mins, const fvec3& maxs);
 
 	void R_DrawConstructedBox(vec4_t col) const;
-	void R_DrawConstructedBoxEdges(vec4_t col) const;
+	void R_DrawConstructedBoxEdges(vec4_t col, float thickness) const;
 
 private:
 
