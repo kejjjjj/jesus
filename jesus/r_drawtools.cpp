@@ -473,40 +473,40 @@ void box_s::R_DrawConstructedBoxEdges(vec4_t col, float thickness) const
 
 
 	if (lowA && lowC)
-		R_DrawLine(fvec2(low_a.x, low_a.y), fvec2(low_c.x, low_c.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_a.x, low_a.y), fvec2(low_c.x, low_c.y), thickness, col);
 
 	if (lowB && lowD)
-		R_DrawLine(fvec2(low_b.x, low_b.y), fvec2(low_d.x, low_d.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_b.x, low_b.y), fvec2(low_d.x, low_d.y), thickness, col);
 
 	if (lowC && lowB)
-		R_DrawLine(fvec2(low_c.x, low_c.y), fvec2(low_b.x, low_b.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_c.x, low_c.y), fvec2(low_b.x, low_b.y), thickness, col);
 
 	if (lowD && lowA)
-		R_DrawLine(fvec2(low_d.x, low_d.y), fvec2(low_a.x, low_a.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_d.x, low_d.y), fvec2(low_a.x, low_a.y), thickness, col);
 
 	if (highA && highC)
-		R_DrawLine(fvec2(high_a.x, high_a.y), fvec2(high_c.x, high_c.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(high_a.x, high_a.y), fvec2(high_c.x, high_c.y), thickness, col);
 
 	if (highB && highD)
-		R_DrawLine(fvec2(high_b.x, high_b.y), fvec2(high_d.x, high_d.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(high_b.x, high_b.y), fvec2(high_d.x, high_d.y), thickness, col);
 
 	if (highC && highB)
-		R_DrawLine(fvec2(high_c.x, high_c.y), fvec2(high_b.x, high_b.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(high_c.x, high_c.y), fvec2(high_b.x, high_b.y), thickness, col);
 
 	if (highD && highA)
-		R_DrawLine(fvec2(high_d.x, high_d.y), fvec2(high_a.x, high_a.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(high_d.x, high_d.y), fvec2(high_a.x, high_a.y), thickness, col);
 
 	if (lowA && highA)
-		R_DrawLine(fvec2(low_a.x, low_a.y), fvec2(high_a.x, high_a.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_a.x, low_a.y), fvec2(high_a.x, high_a.y), thickness, col);
 
 	if (lowB && highB)
-		R_DrawLine(fvec2(low_b.x, low_b.y), fvec2(high_b.x, high_b.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_b.x, low_b.y), fvec2(high_b.x, high_b.y), thickness, col);
 
 	if (lowC && highC)
-		R_DrawLine(fvec2(low_c.x, low_c.y), fvec2(high_c.x, high_c.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_c.x, low_c.y), fvec2(high_c.x, high_c.y), thickness, col);
 
 	if (lowD && highD)
-		R_DrawLine(fvec2(low_d.x, low_d.y), fvec2(high_d.x, high_d.y), thickness, vec4_t{col[0], col[1], col[2], col[3]});
+		R_DrawLine(fvec2(low_d.x, low_d.y), fvec2(high_d.x, high_d.y), thickness, col);
 }
 void box_s::R_DrawConstructedBox(vec4_t col) const
 {

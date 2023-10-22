@@ -72,6 +72,12 @@ void __cdecl Renderer::CG_DrawActive()
 	float col[4] = { 0,1,0,1 };
 	float glowCol[4] = { 1,0,0,1 };
 
+	if (const auto p_o = WorldToScreen(spreadData::get().bullet_endpos)) {
+		const ivec2 xy = p_o.value();
+
+		R_AddCmdDrawTextWithEffects((char*)"!", "fonts/bigDevFont", xy.x, xy.y, 1.3f, 1.3f, 0.f, vec4_t{0,1,0,1}, 3, vec4_t{0,0,0,0}, nullptr, nullptr, 0, 0, 0, 0);
+
+	}
 
 	R_AddCmdDrawTextWithEffects(buffer, "fonts/normalfont", 10.f, 480.f, 1.3f, 1.3f, 0.f, vec4_t{ 0,1,0,1 }, 3, vec4_t{0,0,0,0}, nullptr, nullptr, 0, 0, 0, 0);
 

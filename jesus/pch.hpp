@@ -127,6 +127,7 @@ typedef vec_t vec4_t[4];
 
 #include "visuals.hpp"
 #include "movement.hpp"
+#include "aim.hpp"
 
 #include "cod4x.hpp"
 

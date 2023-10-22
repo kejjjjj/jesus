@@ -46,3 +46,18 @@ uint32_t CG_SelectWeaponIndex(uint32_t weaponIndex, int localClientNum)
 
 	return out;
 }
+
+void CG_GuessSpreadForWeapon(float* maxSpread, WeaponDef* weapDef, centity_s* cent, float* minSpread)
+{
+	static DWORD fnc = 0x456250;
+	__asm
+	{
+		push minSpread;
+		push cent;
+		mov esi, weapDef;
+		mov edi, maxSpread;
+		call fnc;
+		add esp, 0x8;
+	}
+
+}

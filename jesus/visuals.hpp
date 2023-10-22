@@ -8,3 +8,4 @@ void R_DrawPlayerName(entity_s* target);
 void R_DrawPlayerWeapon(entity_s* target);
 void R_DrawCircularCompass(entity_s* target);
 void R_DrawKillable(entity_s* target);
+void R_DrawBounds(entity_s* target);

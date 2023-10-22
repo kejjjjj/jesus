@@ -230,6 +230,43 @@ bool BG_AdvanceTrace(BulletTraceResults* br, BulletFireParams* bpp, float fracti
 	}
 	return result;
 }
+
+void CG_BulletEndPosition2(float* upDir, float* end, int randSeed, float spread, float* start, float* dir, float* forwardDir, float* rightDir, float maxRange)
+{
+	decltype(auto) data = spreadData::get();
+
+	CG_BulletEndpos(upDir, end, randSeed, spread, start, dir, forwardDir, rightDir, maxRange);
+	data.bullet_endpos = end;
+	data.angles = (fvec3(end) - fvec3(start)).toangles();
+	data.weapon_fired = true;
+	data.dir = dir;
+	//std::cout << "spread: " << spread << '\n';
+
+}
+__declspec(naked) void __cdecl CG_BulletEndPosition(float* upDir, float* end, int randSeed, float spread, float* start, float* dir, float* forwardDir, float* rightDir, float maxRange)
+{
+	__asm
+	{
+		push ebp;
+		mov ebp, esp;
+		and esp, 0FFFFFFF8h;
+		sub esp, 10h;
+		push[ebp + 20h]; //maxRange
+		push[ebp + 1Ch]; //rightDir
+		push[ebp + 18h]; //forwardDir
+		push[ebp + 14h]; //dir
+		push[ebp + 10h]; //start
+		push[ebp + 0Ch]; //spread
+		push[ebp + 08h]; //randSeed
+		push edi; //end
+		push eax; //upDir
+		call CG_BulletEndPosition2;
+		add esp, 36;
+		mov esp, ebp;
+		pop ebp;
+		retn;
+	}
+}
 BulletTraceResults FireBulletPenetrate(centity_s* ignoreEnt, int clientNum, BulletFireParams* fireParams, WeaponDef* weapon, float* tracerStart, bool spawnTracer)
 {
 	int weaponIndex = 0;

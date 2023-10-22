@@ -261,6 +261,9 @@
     <ClInclude Include="g_penetration.hpp">
       <Filter>Source Files\g</Filter>
     </ClInclude>
+    <ClInclude Include="aim.hpp">
+      <Filter>Source Files\hacks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -430,6 +433,9 @@
     </ClCompile>
     <ClCompile Include="g_penetration.cpp">
       <Filter>Source Files\g</Filter>
+    </ClCompile>
+    <ClCompile Include="aim.cpp">
+      <Filter>Source Files\hacks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

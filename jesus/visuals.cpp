@@ -90,6 +90,7 @@ void R_OwnerDraw(entity_s* target)
 	R_DrawPlayerWeapon(target);
 	R_DrawCircularCompass(target);
 	R_DrawKillable(target);
+	R_DrawBounds(target);
 	//quick_test(target);
 
 	//CG_DrawRotatedPic(CG_GetScreenPlacement(cgs->clientNum), 400, 400, 50, 50, 0.f, vec4_t{ 1,1,1,1 }, R_RegisterMaterial("compassping_friendly_mp"));
@@ -187,5 +188,24 @@ void R_DrawKillable(entity_s* target)
 		CL_SetSilentAngles(killable.value().angles2target);
 	}
 
+
+}
+void R_DrawBounds(entity_s* target)
+{
+	if (Dvar_FindMalleableVar("hack_drawBounds")->current.enabled == false)
+		return;
+
+	fvec3 helmet;
+
+	if (auto p = target->GetTagPosition(SL_GetStringOfSize("j_helmet")))
+		helmet = p.value();
+	else
+		return;
+
+	fvec3 org = target->getOrigin();
+
+	box_s box(org, { -14,-14, 0 }, { 14,14, helmet.z - org.z });
+
+	box.R_DrawConstructedBoxEdges(target->isEnemy() ? vec4_t{1, 0, 0, 0.7f} : vec4_t{ 1,1,0,0.7f }, 2.f);
 
 }

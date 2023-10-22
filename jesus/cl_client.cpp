@@ -12,7 +12,52 @@ void CL_FixServerTime(usercmd_s* cmd)
 	clients->serverTime = cmd->serverTime;
 	first_time += 1000 / com_maxfps->current.integer == 0 ? 1 : com_maxfps->current.integer;
 }
+void test_spread(usercmd_s* cmd)
+{
+	static int next_cmd = cmd->serverTime + 8;
 
+	if(cmd->serverTime >= next_cmd)
+		next_cmd = cmd->serverTime + 8;
+
+	if ((cmd->buttons & cmdEnums::fire) == 0 || cgs->predictedPlayerState.weaponDelay != NULL)
+		return;
+
+	decltype(auto) spread_data = spreadData::get();
+	vec3_t end;
+	vec3_t dir;
+	fvec3 start = cgs->predictedPlayerState.origin;
+	start.z += cgs->predictedPlayerState.viewHeightCurrent;
+
+	float maxSpread, minSpread;
+
+
+	WeaponDef* weapon = BG_WeaponNames[cgs->predictedPlayerState.weapon];
+	
+	CG_GuessSpreadForWeapon(&maxSpread, weapon, &centity[cgs->clientNum], &minSpread);
+	
+	float damageRange = 8192.f;
+
+	if (weapon->weapClass == WEAPCLASS_SPREAD) {
+		damageRange = weapon->fMinDamageRange;
+	}
+
+	float spread = std::min<float>(start.mag(), 255.f) / 255.f;
+
+	spread = (maxSpread - weapon->fAdsSpread) * spread + weapon->fAdsSpread;
+
+	CG_BulletEndpos(cgs->refdef.viewaxis[2], end, cmd->serverTime+8, spread, start, dir, cgs->refdef.viewaxis[0], cgs->refdef.viewaxis[1], damageRange);
+
+	spread_data.bullet_endpos = end;
+
+	const fvec3 new_angle = fvec3(dir).toangles();
+	fvec3 deltas = new_angle - fvec3(cgs->predictedPlayerState.viewangles);
+	deltas.z = 0;
+
+	spread_data.resolved_angles = fvec3(cgs->predictedPlayerState.viewangles) - deltas;
+
+	CL_SetPlayerAngles(cmd, cgs->predictedPlayerState.delta_angles, fvec3(cgs->predictedPlayerState.viewangles) - deltas);
+	//CG_SetPlayerAngles(spread_data.resolved_angles);
+}
 void CL_FinishMove(usercmd_s* cmd)
 {
 
@@ -28,6 +73,7 @@ void CL_FinishMove(usercmd_s* cmd)
 	static Elebot& elebot = Elebot::getInstance();
 	static BouncePrediction& bp = BouncePrediction::getInstance();
 	static entities_s& entities = entities_s::get();
+	decltype(auto) spread_data = spreadData::get();
 
 	CL_FixServerTime(cmd);
 	bp.PredictBounce(cmd);
@@ -45,7 +91,18 @@ void CL_FinishMove(usercmd_s* cmd)
 			cmd->buttons -= cmdEnums::jump;
 	}
 
+	//if (spread_data.weapon_fired) {
+
+	//	fvec3 deltas = spread_data.dir.toangles() - fvec3(cgs->predictedPlayerState.viewangles);
+	//	cgs->oldTime -= 1;
+	//	CL_SetPlayerAngles(CL_GetUserCmd(clients->cmdNumber-1), cgs->predictedPlayerState.delta_angles, {0,0,0});
+
+	//	spread_data.weapon_fired = false;
+	//}
+
 	M_MovementCheats(cmd);
+
+	//test_spread(cmd);
 
 	return;
 

@@ -51,7 +51,8 @@ void CG_Init()
     Cmd_AddCommand("recorder_playback", recorder.OnStartPlayback);
     Cmd_AddCommand("recorder_printAll", recorder.OnPrintRecordings);
     Cmd_AddCommand("recorder_reloadPlaybacks", []() { return MovementRecorder::getInstance().OnLoadFromMemory(&cgs->predictedPlayerState); });
-
+    
+    Cmd_AddCommand("hack_norecoil", Cmd_NoRecoil_f);
 
     recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,
         "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback");
@@ -69,6 +70,7 @@ void CG_Init()
     Dvar_RegisterBool("hack_circularCompass", dvar_flags::saved, false, "a better compass");
     Dvar_RegisterBool("hack_killableEnemy", dvar_flags::saved, false, "draws information if you can kill an enemy from your current position");
     Dvar_RegisterBool("hack_silentAim", dvar_flags::saved, false, "aaaaaa");
+    Dvar_RegisterBool("hack_drawBounds", dvar_flags::saved, false, "draw hitboxes");
 
     Dvar_RegisterBool("hack_chams", dvar_flags::saved, false, "wooow u can see them thru walls!");
 
