@@ -129,6 +129,8 @@ typedef vec_t vec4_t[4];
 #include "movement.hpp"
 #include "aim.hpp"
 
+#include "cm_brush.hpp"
+
 #include "cod4x.hpp"
 
 #include "scr_menuresponse.hpp"

@@ -201,13 +201,47 @@ char RB_DrawDebug(GfxViewParms* viewParms)
 
 	r.RB_OnRenderPositions();
 
-	vec3_t mins = { -500, -500, -500 };
-	vec3_t maxs = { 500, 500, 500 };
+	//static std::vector<float> maxVerts(24);
+	//static std::vector<Poly> polygons(1);
 
-	R_AddDebugBox(mins, maxs, &frontEndDataOut->debugGlobals, (float*)0x6B4558);
+	//if (GetAsyncKeyState(VK_NUMPAD1) & 1) {
+	//	maxVerts.clear();
+	//	polygons.clear();
+	//	maxVerts.resize(24);
+	//	polygons.resize(1);
 
-	//RB_ShowCollision(viewParms);
-	
+	//	int idx = int(random(cm->numBrushes/2));
+	//	cbrush_t* brush = &cm->brushes[idx];
+
+	//	while (brush->numsides == 0) {
+	//		idx = int(random(cm->numBrushes/2));
+	//		brush = &cm->brushes[idx];
+	//	}
+	//	//Com_Printf("numsides: %i, index %i\n", brush->numsides, idx);
+	//	//std::cout << idx << " -> bounds: " << (fvec3(brush->maxs) - fvec3(brush->mins)).abs() << '\n';
+	//
+	//	int verts = CM_BuildWindingsForBrush(&brush[idx], polygons, maxVerts);
+
+	//	Poly* poly = &polygons.front();
+	//	int i = 0;
+	//	do
+	//	{ 
+	//		CM_DrawPoly(poly, vec4_t{1,0,0,1.f});
+	//		++poly;
+	//	} while (++i < brush->numsides + 6);
+
+	//	VectorCopy(polygons.front().pts[0], ps_loc->origin);
+
+	//}
+
+	//if (polygons.size() > 1) {
+	//	for (auto& i : polygons) {
+	//		CM_DrawPoly(&i, vec4_t{ 0,1,1,0.7f });
+	//	}
+	//}
+
+	RB_ShowCollision(viewParms);
+		
 	return detour_func.cast_call<char(*)(GfxViewParms*)>(viewParms);
 }
 
@@ -239,7 +273,17 @@ void R_AddDebugBox(const float* mins, const float* maxs, DebugGlobals* debugGlob
 		add esp, 0x8;
 	}
 }
-
+void CM_DrawPoly(Poly* poly, float* color)
+{
+	__asm
+	{
+		push color;
+		push poly;
+		mov esi, 0x597200;
+		call esi;
+		add esp, 0x8;
+	}
+}
 HRESULT R_DrawXModelSkinnedCached(GfxCmdBufSourceState* src, GfxCmdBufState* state, GfxModelSkinnedSurface* modelSurf)
 {
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_XMODEL_SKINNED);

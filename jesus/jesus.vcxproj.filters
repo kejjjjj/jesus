@@ -88,6 +88,9 @@
     <Filter Include="Source Files\hacks">
       <UniqueIdentifier>{82424fe1-327b-4429-b711-3c354e02cbb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\cm">
+      <UniqueIdentifier>{f0cb89db-600b-46a1-af4e-9be715b7d1bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.hpp">
@@ -264,6 +267,9 @@
     <ClInclude Include="aim.hpp">
       <Filter>Source Files\hacks</Filter>
     </ClInclude>
+    <ClInclude Include="cm_brush.hpp">
+      <Filter>Source Files\cm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -436,6 +442,9 @@
     </ClCompile>
     <ClCompile Include="aim.cpp">
       <Filter>Source Files\hacks</Filter>
+    </ClCompile>
+    <ClCompile Include="cm_brush.cpp">
+      <Filter>Source Files\cm</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -44,7 +44,7 @@ void CG_CreateHooks()
 	hooktable.insert(hookEnums_e::HOOK_SCR_OPENSCRIPTMENU, hook::hookobj<void*>(0x46D4CF, Script_OpenScriptMenu, TRUE));
 
 	hooktable.insert(hookEnums_e::HOOK_LOADMAP_LOADSCREEN, hook::hookobj<void*>(0x46A800, LoadMapLoadscreen, TRUE));
-	hooktable.insert(hookEnums_e::HOOK_CMD_EXECUTESINGLE, hook::hookobj<void*>(0x4F9AB0, Cmd_ExecuteSingleCommand, TRUE));
+	//hooktable.insert(hookEnums_e::HOOK_CMD_EXECUTESINGLE, hook::hookobj<void*>(0x4F9AB0, Cmd_ExecuteSingleCommand, TRUE));
 
 	hooktable.insert(hookEnums_e::HOOK_GET_DVAR_INT, hook::hookobj<void*>(0x53C5C0, GetDvarIntValue, TRUE));
 

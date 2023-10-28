@@ -156,6 +156,7 @@
     <ClInclude Include="cl_client.hpp" />
     <ClInclude Include="cl_input.hpp" />
     <ClInclude Include="cl_main.hpp" />
+    <ClInclude Include="cm_brush.hpp" />
     <ClInclude Include="cod4x.hpp" />
     <ClInclude Include="com_channel.hpp" />
     <ClInclude Include="com_vector.hpp" />
@@ -214,6 +215,7 @@
     <ClCompile Include="cl_client.cpp" />
     <ClCompile Include="cl_input.cpp" />
     <ClCompile Include="cl_main.cpp" />
+    <ClCompile Include="cm_brush.cpp" />
     <ClCompile Include="cod4x.cpp" />
     <ClCompile Include="com_channel.cpp" />
     <ClCompile Include="com_vector.cpp" />
