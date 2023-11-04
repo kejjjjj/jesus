@@ -54,6 +54,7 @@ void CG_Init()
     
     Cmd_AddCommand("hack_norecoil", Cmd_NoRecoil_f);
     Cmd_AddCommand("showcollision_brushes", Cmd_ShowBrushes_f);
+    Cmd_AddCommand("hmm", hmm_f);
 
     recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,
         "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback");

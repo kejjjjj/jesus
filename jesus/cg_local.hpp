@@ -3293,6 +3293,16 @@ struct Poly
 	float(*pts)[3];
 	unsigned int ptCount;
 };
+struct SimplePlaneIntersection
+{
+	float xyz[3];
+	int planeIndex[3];
+};
+struct adjacencyWinding_t
+{
+	int numsides;
+	int sides[12];
+};
 
 #pragma pack(push, 16)
 struct cbrush_t
