@@ -34,7 +34,7 @@ bool BouncePrediction::RealTimePrediction(playerState_s* ps, usercmd_s* cmd)
 
 	for (int i = 0; i < c.numInputs; i++) {
 
-		c.FPS = FPS_GetIdeal(&pm);
+		c.FPS = FPS_GetIdeal(pm.ps, &pm.cmd);
 		c.numInputs = c.FPS/1.5f;
 
 		float oldZ = pm.ps->velocity[2];
@@ -66,9 +66,7 @@ bool BouncePrediction::RealTimePrediction(playerState_s* ps, usercmd_s* cmd)
 
 void BouncePrediction::PredictBounce(usercmd_s* cmd)
 {
-	static dvar_s* kej_easyBounces = Dvar_FindMalleableVar("kej_easyBounces");
-
-	if (!kej_easyBounces || !kej_easyBounces->current.enabled)
+	if (find_evar<bool>("Easy Bounces")->get() == false)
 		return;
 
 	static bool playback_active = false;

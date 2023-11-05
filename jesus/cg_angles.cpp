@@ -279,6 +279,66 @@ std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml)
 
 	return std::nullopt;
 }
+std::optional<float> CG_GetOptYawDelta(playerState_s* ps, usercmd_s* cmd, usercmd_s* oldcmd)
+{
+	char forwardmove = cmd->forwardmove;
+	char rightmove = cmd->rightmove;
+
+	float speed = fvec2(ps->velocity).mag();
+
+	if (speed < 1 || forwardmove != 127 || rightmove == 0)
+		return std::nullopt;
+
+
+	float g_speed = ps->speed;
+	float FPS = 1000.f / (cmd->serverTime - oldcmd->serverTime);
+
+	float accel = FPS / g_speed * pow(333 / FPS, 2);
+
+	if (accel < 1)
+		accel = g_speed / FPS;
+
+	WeaponDef* weapon = BG_WeaponNames[ps->weapon];
+	trace_t groundTrace;
+
+	fvec3 end = ps->origin;
+	fvec3 start = ps->origin;
+	end.z -= 3.f;
+	start.z += 3.f;
+
+	CG_TracePoint(vec3_t{ 14,14, 12 }, &groundTrace, start, vec3_t{ -14,-14,0 }, end, ps->clientNum, MASK_PLAYERSOLID, 0, 0);
+
+	float diff = 0;
+	if (ps->groundEntityNum == 1022 && groundTrace.walkable) {
+		g_speed = ps->speed * (weapon->moveSpeedScale * (groundTrace.normal[2]));
+
+
+		if ((cmd->buttons & 8194) != 0) {
+			g_speed = (ps->speed / (weapon->moveSpeedScale * (groundTrace.normal[2])) * 1.5f) / 1.245060f;
+		}
+
+		//diff = acos((ps->speed - accel) / speed) * 180.f / PI;
+
+	}
+	diff = acos((g_speed - accel) / speed) * 180.f / PI;
+
+	const float velocitydirection = atan2(ps->velocity[1], ps->velocity[0]) * 180.f / PI;
+	const float accelerationAng = atan2(-rightmove, forwardmove) * 180.f / PI;
+
+	float yaw = ps->viewangles[YAW];
+
+	if (std::isnan(diff))
+		return std::nullopt;
+
+	if (rightmove > 0) {
+		return -AngleDelta(yaw + accelerationAng, (velocitydirection - diff));
+	}
+	else if (rightmove < 0) {
+		return -AngleDelta(yaw + accelerationAng, (velocitydirection + diff));
+	}
+
+	return std::nullopt;
+}
 float AngularDistance(float value1, float value2) {
 	float diff = fmod(value2 - value1 + 180, 360) - 180;
 	if (diff < -180) {

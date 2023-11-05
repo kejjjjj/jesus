@@ -50,6 +50,7 @@ void Resources::recreate_materials()
 	//load_image("automation", "automation.png");
 	load_image("clipmap", "clipmap.png");
 	load_image("cheats", "cheats.png");
+	load_image("movement", "movement.png");
 
 }
 void Resources::load_font(const char* name, const std::string& file_name, const float scale)

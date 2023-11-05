@@ -174,18 +174,16 @@ void R_DrawKillable(entity_s* target)
 		return;
 	}
 
-	//std::cout << xy_opt.value() << '\n';
-
-
 	fvec2 xy = xy_opt.value();
-	float a = 10, b = 10;
 
 	R_AddCmdDrawTextWithEffects((char*)"w", "fonts/bigDevFont", xy.x, xy.y, 1.2f, 1.2f, 0.f, target->isEnemy() ? vec4_t{1, 0, 0, 1} : vec4_t{1,1,0,1}, 1, vec4_t{1,0,0,1}, 0, 0, 0, 0, 0, 0);
 
 
-	if (Dvar_FindMalleableVar("hack_silentAim")->current.enabled) {
-		CL_GetUserCmd(clients->cmdNumber)->buttons |= cmdEnums::fire;
+	if (find_evar<bool>("Silent Aim")->get()) {
 		CL_SetSilentAngles(killable.value().angles2target);
+
+		if (find_evar<bool>("Auto Fire")->get())
+			CL_GetUserCmd(clients->cmdNumber)->buttons |= cmdEnums::fire;
 	}
 
 

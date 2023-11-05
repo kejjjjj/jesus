@@ -300,6 +300,9 @@
     <ClInclude Include="resources.hpp">
       <Filter>Source Files\resources</Filter>
     </ClInclude>
+    <ClInclude Include="elebot_air.hpp">
+      <Filter>Source Files\tools\elebot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -497,7 +500,7 @@
     <ClCompile Include="r_gui.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
-    <ClCompile Include="r_gui_automation.cpp">
+    <ClCompile Include="r_gui_movement.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
     <ClCompile Include="r_gui_c_items.cpp">
@@ -508,6 +511,9 @@
     </ClCompile>
     <ClCompile Include="r_gui_cheats.cpp">
       <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="elebot_air.cpp">
+      <Filter>Source Files\tools\elebot</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -130,7 +130,7 @@ class Gui_CategoryItems
 public:
 	Gui_CategoryItems(const std::string& _title) : title(_title) {};
 
-	void render();
+	int render(int horz_offset);
 
 	void append_item(std::unique_ptr<Gui_ItemBase> i) { items.push_back(std::move(i)); }
 
@@ -138,8 +138,8 @@ private:
 	Gui_CategoryItems(const Gui_CategoryItems&) = delete;
 	Gui_CategoryItems& operator=(const Gui_CategoryItems&) = delete;
 
-	void render_titlebar();
-	void render_body();
+	void render_titlebar(int horz_offset);
+	void render_body(int horz_offset);
 	std::string title;
 	std::list<std::unique_ptr<Gui_ItemBase>> items;
 

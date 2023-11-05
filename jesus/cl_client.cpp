@@ -81,6 +81,13 @@ void CL_FinishMove(usercmd_s* cmd)
 	elebot.move(cmd);
 	CL_MonitorEvents();
 
+	M_Strafebot(cmd, CL_GetUserCmd(clients->cmdNumber - 1));
+	M_AutoFPS(cmd);
+
+	if (GetAsyncKeyState(VK_NUMPAD0) & 1) {
+		elebot_evaluate_angles_midair(&cgs->predictedPlayerState);
+	}
+
 	entities.update_all(clients->snap.numClients);
 
 	static dvar_s* kej_bhop = Dvar_FindMalleableVar("kej_bhop");

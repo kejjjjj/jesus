@@ -5,7 +5,7 @@ void Gui::initialize()
 	decltype(auto) resources = Resources::getInstance();
 
 	cheats_create_hardcoded();
-	//automation_create_hardcoded();
+	movement_create_hardcoded();
 	geometry_create_hardcoded();
 
 	set_active(categories.front().get());
@@ -196,10 +196,10 @@ void Gui::right_categories()
 
 	ImGui::BeginChild("right_cat", ivec2(pos.x + size.x - 18, left_maxs.y - 5) - mins, false);
 
-
+	int horz_offset = 0;
 	for (auto& i : active_category->get_active()->get_items()) {
 
-		const_cast<Gui_CategoryItems&>(*i).render();
+		horz_offset += const_cast<Gui_CategoryItems&>(*i).render(horz_offset);
 	}
 
 

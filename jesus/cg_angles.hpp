@@ -57,3 +57,4 @@ float AngularDistance(float value1, float value2);
 bool PointWithinLine(const fvec3& start, const fvec3& end, const fvec3& point, float radius);
 
 std::optional<float> CG_GetOptYawDelta(pmove_t* pm, pml_t* pml);
+std::optional<float> CG_GetOptYawDelta(playerState_s* ps, usercmd_s* cmd, usercmd_s* oldcmd);

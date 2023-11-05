@@ -164,6 +164,7 @@
     <ClInclude Include="com_vector.hpp" />
     <ClInclude Include="dvar.hpp" />
     <ClInclude Include="elebot.hpp" />
+    <ClInclude Include="elebot_air.hpp" />
     <ClInclude Include="errors.hpp" />
     <ClInclude Include="evar.hpp" />
     <ClInclude Include="e_utilities.hpp" />
@@ -232,6 +233,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="dvar.cpp" />
     <ClCompile Include="elebot.cpp" />
+    <ClCompile Include="elebot_air.cpp" />
     <ClCompile Include="errors.cpp" />
     <ClCompile Include="e_utilities.cpp" />
     <ClCompile Include="fs_utilities.cpp" />
@@ -311,7 +313,7 @@
     <ClCompile Include="r_drawtools.cpp" />
     <ClCompile Include="r_endscene.cpp" />
     <ClCompile Include="r_gui.cpp" />
-    <ClCompile Include="r_gui_automation.cpp" />
+    <ClCompile Include="r_gui_movement.cpp" />
     <ClCompile Include="r_gui_cheats.cpp" />
     <ClCompile Include="r_gui_c_items.cpp" />
     <ClCompile Include="r_gui_geometry.cpp" />

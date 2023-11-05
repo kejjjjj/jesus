@@ -59,8 +59,8 @@ public:
 		return {up, -right, 0.f};
 	}
 
-	float right;
-	float up;
+	float right = 0.f;
+	float up = 0.f;
 };
 class prediction_viewangle_strafebot : public prediction_viewangle
 {
@@ -85,6 +85,8 @@ public:
 class prediction_viewangle_fixed_angle : public prediction_viewangle
 {
 public:
+	prediction_viewangle_fixed_angle(float _forward, float _right, float _up) : forward(_forward), right(_right), up(_up) {}
+	prediction_viewangle_fixed_angle() = default;
 	prediction_angle_enumerator get_type() const override
 	{
 		return prediction_angle_enumerator::FIXED_ANGLE;

@@ -2,12 +2,14 @@
 #include "pch.hpp"
 
 
-void Gui_CategoryItems::render()
+int Gui_CategoryItems::render(int horz_offset)
 {
-
-	ImGui::BeginChild("huuuh", ivec2(200, 400), true);
+	int horz_size = 200;
+	ImGui::BeginGroup();
+	ImGui::BeginChild("huuuh", ivec2(horz_size, 400), true);
 	child_mins = ImGui::GetWindowPos();
-	render_titlebar();
+	child_mins.x += horz_offset;
+	render_titlebar(horz_offset);
 	
 	decltype(auto) resources = Resources::getInstance();
 
@@ -15,18 +17,25 @@ void Gui_CategoryItems::render()
 	if (auto font = resources.FindFont(ARIAL_S))
 		ImGui::SetCurrentFont(font.value());
 
-	render_body();
+	render_body(horz_offset);
 
 	ImGui::EndChild();
+	ImGui::EndGroup();
+
 	ImGui::SetCurrentFont(old_font);
+	//ImGui::Dummy(ivec2(horz_size, 0));
+	ImGui::SameLine();
 
-
+	return horz_size + 10;
 }
-void Gui_CategoryItems::render_titlebar()
+void Gui_CategoryItems::render_titlebar(int horz_offset)
 {
 	
 	auto window = ImGui::GetCurrentWindow();
-	const ImRect title_bar_rect = window->TitleBarRect();
+	ImRect title_bar_rect = window->TitleBarRect();
+	title_bar_rect.Min.x += horz_offset;
+	title_bar_rect.Max.x += horz_offset;
+
 	ivec2 p = title_bar_rect.Min;
 	auto wnd = ImGui::FindWindowByName(WINDOW_TITLE)->DrawList;
 	const auto& color = ImGui::GetStyle().Colors[ImGuiCol_Separator];
@@ -39,17 +48,19 @@ void Gui_CategoryItems::render_titlebar()
 		ivec2(title_bar_rect.Max.x, p.y + 32 + 3),
 		c);
 
-	ImGui::GetWindowDrawList()->AddText(ivec2(title_bar_rect.Min.x + 10, title_bar_rect.Min.y + 16 - ImGui::GetFontSize()/2), IM_COL32(255, 255, 255, 255), title.c_str());
+	wnd->AddText(ivec2(title_bar_rect.Min.x + 10, title_bar_rect.Min.y + 16 - ImGui::GetFontSize()/2), IM_COL32(255, 255, 255, 255), title.c_str());
 	ImGui::Dummy(ivec2(0, title_bar_rect.Max.y + 32 - title_bar_rect.Min.y));
 
 	body_mins = ivec2(p.x, p.y + 32 + 3);
 }
-void Gui_CategoryItems::render_body()
+void Gui_CategoryItems::render_body(int horz_offset)
 {
 	//static bool cb;
 	//static float slider = 1;
 	//static const char* items[] = { "first", "second", "third" };
 	//int itemIndex = 0;
+
+	//ImGui::SetCursorPos(ivec2(body_mins.x - child_mins.x + horz_offset, body_mins.y - child_mins.y));
 
 	auto wnd = ImGui::FindWindowByName(WINDOW_TITLE)->DrawList;
 	wnd->AddRectFilled(body_mins, ivec2(body_mins.x + 200, body_mins.y + (400 - (body_mins.y - child_mins.y))), IM_COL32(33, 33, 33, 255), ImGui::GetStyle().WindowRounding, ImDrawFlags_RoundCornersBottom);

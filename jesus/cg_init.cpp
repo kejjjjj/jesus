@@ -18,7 +18,7 @@ void CG_Init()
     hook::nop(0x4056DF); //BG_GetConditionBit
     hook::write_addr(0x405360, "\xC3", 1); //BG_EvaluateConditions
 
-    hook::write_addr(0x458110, "\xC3", 1); //CG_SpawnTracer
+    //hook::write_addr(0x458110, "\xC3", 1); //CG_SpawnTracer
 
 
    // hook::write_addr(0x41AA40, "\xC3", 1); //BG_GetVerticalBobFactor
@@ -46,7 +46,8 @@ void CG_Init()
 
     Cmd_AddCommand("gui", Gui::getInstance().menu_toggle);
 
-    //Cmd_AddCommand("elebot_run", elebot.start_ground);
+    //Cmd_AddCommand("elebot_run", elebot.start_ground); //broken as of now so don't use
+
     Cmd_AddCommand("recorder_record", recorder.OnToggleRecording);
     Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);
     Cmd_AddCommand("recorder_playback", recorder.OnStartPlayback);
@@ -55,8 +56,6 @@ void CG_Init()
     
     Cmd_AddCommand("hack_norecoil", Cmd_NoRecoil_f);
     Cmd_AddCommand("cm_mapexport", CM_MapExport);
-
-    Dvar_RegisterFloat("cm_drawbrushes_dist", 1000.f, 0.f, 3.402823466E+38, dvar_flags::saved, "brush render distance");
 
     recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,
         "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback");

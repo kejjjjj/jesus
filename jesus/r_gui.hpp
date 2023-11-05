@@ -34,10 +34,12 @@ private:
 
 	void cheats_create_hardcoded();
 	void cheats_create_visuals(std::unique_ptr<Gui_SubCategory>& category);
+	void cheats_create_inputs(std::unique_ptr<Gui_SubCategory>& category);
 
-	void automation_create_hardcoded();
-	void automation_create_movement(std::unique_ptr<Gui_SubCategory>& category);
-	void automation_create_fps(std::unique_ptr<Gui_SubCategory>& category);
+	void movement_create_hardcoded();
+	void movement_create_strafing(std::unique_ptr<Gui_SubCategory>& category);
+	void movement_create_fps(std::unique_ptr<Gui_SubCategory>& category);
+	void movement_create_jumping(std::unique_ptr<Gui_SubCategory>& category);
 
 	void geometry_create_hardcoded();
 	void geometry_create_clipmap(std::unique_ptr<Gui_SubCategory>& category);

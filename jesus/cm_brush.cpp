@@ -237,8 +237,15 @@ void RB_RenderWinding(const showcol_brush& sb)
 	if (sb.brush->get_origin().dist(clients->cgameOrigin) > find_evar<float>("Draw Distance")->get())
 		return;
 
-	for (auto& i : sb.windings)
+	bool only_bounces = find_evar<bool>("Only Bounces")->get();
+
+	for (auto& i : sb.windings) {
+
+		if (only_bounces && i.is_bounce == false)
+			continue;
+
 		RB_DrawCollisionPoly(i.points.size(), (float(*)[3])i.points.data(), vec4_t{ 0,1,1,0.3f });
+	}
 
 
 }
@@ -509,6 +516,9 @@ void __cdecl wtf(adjacencyWinding_t* w, float* a, float* b, float* c, float* poi
 	current_winding.windings.push_back({ sc_winding_t{ winding_points } });
 	current_winding.brush = current_brush;
 
+	//PlaneFromPoints(plane, winding_points[0], winding_points[1], winding_points[2]);
+
+	current_winding.windings.back().is_bounce = current_normals[2] >= 0.3f && current_normals[2] <= 0.7f;
 
 }
 

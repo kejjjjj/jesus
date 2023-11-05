@@ -159,6 +159,7 @@ typedef vec_t vec4_t[4];
 
 #include "lineup.hpp"
 #include "elebot.hpp"
+#include "elebot_air.hpp"
 
 #include "geom_shapes.hpp"
 

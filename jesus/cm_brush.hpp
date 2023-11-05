@@ -22,6 +22,7 @@ void GetBrushPolys(cbrush_t* brush, float(*outPlanes)[4]);
 struct sc_winding_t
 {
 	std::vector<fvec3> points;
+	bool is_bounce = false;
 };
 
 struct showcol_brush

@@ -289,7 +289,7 @@ HRESULT R_DrawXModelSkinnedCached(GfxCmdBufSourceState* src, GfxCmdBufState* sta
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_XMODEL_SKINNED);
 	static LPDIRECT3DTEXTURE9 tex_Z;
 
-	if (Dvar_FindMalleableVar("hack_chams")->current.enabled == false || COD4X::getInstance().attempted_screenshot())
+	if (find_evar<bool>("Chams")->get() == false || COD4X::getInstance().attempted_screenshot())
 		return detour_func.cast_call<HRESULT(*)(GfxCmdBufSourceState *, GfxCmdBufState*, GfxModelSkinnedSurface*)>(src, state, modelSurf);
 
 	if (!tex_Z) {

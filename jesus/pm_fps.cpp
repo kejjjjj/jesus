@@ -93,12 +93,12 @@ std::vector<fps_zone> FPS_GetZones(int g_speed)
 	return zone;
 }
 
-int32_t FPS_GetIdeal(pmove_t* pm)
+int32_t FPS_GetIdeal(playerState_s* ps, usercmd_s* cmd)
 {
-	const auto in_range = [&pm](float yaw, float min, float max, bool info) -> bool {
+	const auto in_range = [&cmd](float yaw, float min, float max, bool info) -> bool {
 		const float screen_center = float(cgs->refdef.width / 2);
 
-		const float aa = RAD2DEG(atan2(-(int)pm->cmd.rightmove, (int)pm->cmd.forwardmove));
+		const float aa = RAD2DEG(atan2(-(int)cmd->rightmove, (int)cmd->forwardmove));
 		yaw = AngleNormalize90(yaw + aa);
 		const float fov = Dvar_FindMalleableVar("cg_fov")->current.value * Dvar_FindMalleableVar("cg_fovscale")->current.value;
 
@@ -107,28 +107,28 @@ int32_t FPS_GetIdeal(pmove_t* pm)
 		return results.x1 <= screen_center && results.x2 >= screen_center;
 	};
 	static int g_speed = 0;
-	static std::vector<fps_zone> zones = FPS_GetZones(pm->ps->speed);
+	static std::vector<fps_zone> zones = FPS_GetZones(ps->speed);
 	fps_zone copy;
-	if (g_speed != pm->ps->speed) {
-		zones = FPS_GetZones(pm->ps->speed);
-		g_speed = pm->ps->speed;
+	if (g_speed != ps->speed) {
+		zones = FPS_GetZones(ps->speed);
+		g_speed = ps->speed;
 	}
 
 	copy = zones[0];
 
 
-	if (pm->cmd.rightmove == 127) {
+	if (cmd->rightmove == 127) {
 		copy.start *= -1;
 		copy.end *= -1;
 
 	}
 
-	if (!in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
+	if (!in_range(ps->viewangles[YAW], copy.start, copy.end, 0))
 		return 333;
 
 	swapForAxis(copy);
 
-	if (in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
+	if (in_range(ps->viewangles[YAW], copy.start, copy.end, 0))
 		return 333;
 
 
@@ -136,18 +136,18 @@ int32_t FPS_GetIdeal(pmove_t* pm)
 
 		copy = zones[zone];
 
-		if (pm->cmd.rightmove == 127) {
+		if (cmd->rightmove == 127) {
 			copy.start *= -1;
 			copy.end *= -1;
 
 		}
 
-		if (in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
+		if (in_range(ps->viewangles[YAW], copy.start, copy.end, 0))
 			return zones[zone].FPS;
 
 		swapForAxis(copy);
 
-		if (in_range(pm->ps->viewangles[YAW], copy.start, copy.end, 0))
+		if (in_range(ps->viewangles[YAW], copy.start, copy.end, 0))
 			return zones[zone].FPS;
 
 	}
@@ -157,13 +157,13 @@ int32_t FPS_GetIdeal(pmove_t* pm)
 	return 333;
 }
 
-zone_distance FPS_GetDistanceToZone(pmove_t* pm, int wishFPS)
+zone_distance FPS_GetDistanceToZone(playerState_s* ps, usercmd_s* cmd, int wishFPS)
 {
 	static int g_speed = 0;
-	static std::vector<fps_zone> zones = FPS_GetZones(pm->ps->speed);
-	if (g_speed != pm->ps->speed) {
-		zones = FPS_GetZones(pm->ps->speed);
-		g_speed = pm->ps->speed;
+	static std::vector<fps_zone> zones = FPS_GetZones(ps->speed);
+	if (g_speed != ps->speed) {
+		zones = FPS_GetZones(ps->speed);
+		g_speed = ps->speed;
 	}
 
 	fps_zone* zone = 0;
@@ -176,13 +176,13 @@ zone_distance FPS_GetDistanceToZone(pmove_t* pm, int wishFPS)
 
 	zone = &*it;
 
-	char rightmove = pm->cmd.rightmove;
+	char rightmove = cmd->rightmove;
 
 	if (rightmove >= 0)
 		rightmove *= -1;
 
-	const float yaw = AngleNormalize90(pm->ps->viewangles[YAW] + RAD2DEG(atan2(-(int)rightmove, (int)pm->cmd.forwardmove))); //yaw + accel angle
-	const float real_yaw = AngleNormalize90(pm->ps->viewangles[YAW]);;
+	const float yaw = AngleNormalize90(ps->viewangles[YAW] + RAD2DEG(atan2(-(int)rightmove, (int)cmd->forwardmove))); //yaw + accel angle
+	const float real_yaw = AngleNormalize90(ps->viewangles[YAW]);;
 	zone_distance results;
 
 	results.begin = AngleNormalize90((AngleDelta(yaw, zone->end)));

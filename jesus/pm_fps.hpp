@@ -25,6 +25,6 @@ struct zone_distance
 
 std::vector<fps_zone> FPS_GetZones(int g_speed);
 
-int32_t FPS_GetIdeal(pmove_t* pm);
+int32_t FPS_GetIdeal(playerState_s* ps, usercmd_s* cmd);
 
-zone_distance FPS_GetDistanceToZone(pmove_t* pm, int wishFPS);
+zone_distance FPS_GetDistanceToZone(playerState_s* ps, usercmd_s* cmd, int wishFPS);
