@@ -3302,6 +3302,8 @@ struct adjacencyWinding_t
 {
 	int numsides;
 	int sides[12];
+
+
 };
 
 #pragma pack(push, 16)

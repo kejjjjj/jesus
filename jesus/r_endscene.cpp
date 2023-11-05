@@ -10,6 +10,7 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_ENDSCENE);
 	static BouncePrediction& bp = BouncePrediction::getInstance();
 	static decltype(auto) cod4x = COD4X::getInstance();
+	static Gui& gui = Gui::getInstance();
 
 	static bool canSS = false;
 	
@@ -36,6 +37,7 @@ long __stdcall Renderer::EndSceneRenderer(IDirect3DDevice9* device)
 
 		//bp.RB_ShowPath();
 
+		gui.render();
 
 		renderer.end_frame();
 	}
@@ -82,6 +84,7 @@ void __cdecl Renderer::CG_DrawActive()
 	R_AddCmdDrawTextWithEffects(buffer, "fonts/normalfont", 10.f, 480.f, 1.3f, 1.3f, 0.f, vec4_t{ 0,1,0,1 }, 3, vec4_t{0,0,0,0}, nullptr, nullptr, 0, 0, 0, 0);
 
 	mr.DrawPlayback();
+
 
 	return detour_func.cast_call<void (__cdecl*)()>();
 }

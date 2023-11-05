@@ -2,20 +2,33 @@
 
 SimplePlaneIntersection pts[1024];
 
-void Cmd_ShowBrushes_f()
+
+void GetBrushPolys(cbrush_t* brush, float(*outPlanes)[4])
 {
-	if (cmd_args->argc[cmd_args->nesting] == 0 || cmd_args->argc[cmd_args->nesting] > 2) {
-		Com_Printf(CON_CHANNEL_CONSOLEONLY, "usage: showbrush <material> or showbrush (will clear everything)");
-		return;
-	}
+	int planeCount = BrushToPlanes(brush, outPlanes);
+	int intersections = GetPlaneIntersections((const float**)outPlanes, planeCount, pts);
+	adjacencyWinding_t windings[40]{};
 
-	if (cmd_args->argc[cmd_args->nesting] == 1) {
-		showcollision_brushes.clear();
-		Com_Printf(CON_CHANNEL_CONSOLEONLY, "^2cleared!\n");
-		return;
-	}
+	int verts = 0;
+	int intersection = 0;
 
-	auto arg = *(cmd_args->argv[cmd_args->nesting] + 1);
+	current_brush = brush;
+	do {
+		current_normals = outPlanes[intersection];
+		if (auto r = BuildBrushdAdjacencyWindingForSide(intersections, pts, outPlanes[intersection], intersection, &windings[intersection])) {
+			verts += r->numsides;
+		}
+
+		++intersection;
+
+	} while (intersection < planeCount);
+
+	s_brushes.push_back(current_winding);
+	current_winding.windings.clear();
+
+}
+void Cmd_ShowBrushes_f(char* arg)
+{
 	float planes[30][4]{};
 
 	int found = 0;
@@ -28,43 +41,28 @@ void Cmd_ShowBrushes_f()
 			continue;
 
 		++found;
-
-		
-
 		int planeCount = BrushToPlanes(brush, planes);
 		int intersections = GetPlaneIntersections((const float**)planes, planeCount, pts);
-
-		//std::cout << "numPlanes: " << planeCount << '\n';
-		//std::cout << "intersections: " << intersections << '\n';
-
 		adjacencyWinding_t windings[32]{};
 
 		int verts = 0;
 		int intersection = 0;
 
 		current_brush = brush;
-
 		do {
-
+			current_normals = planes[intersection];
 			if (auto r = BuildBrushdAdjacencyWindingForSide(intersections, pts, planes[intersection], intersection, &windings[intersection])) {
 				verts += r->numsides;
-				//std::cout << "verts: " << r->numsides << '\n';
 			}
-			//
-			//else
-			//	windings->numsides = 0;
 
-			//++windings;
 			++intersection;
 
 		} while (intersection < planeCount);
-		//std::cout << "total verts: " << verts << '\n';
-
 		s_brushes.push_back(current_winding);
 		current_winding.windings.clear();
 
 	}
-	std::cout << "loaded " << s_brushes.size() << " brushes while we found a total of " << found << " brushes!\n";
+	//std::cout << "loaded " << s_brushes.size() << " brushes while we found a total of " << found << " brushes!\n";
 
 }
 void CM_BuildAxialPlanes(float(*planes)[6][4], const cbrush_t* brush)
@@ -196,7 +194,7 @@ bool CM_BrushInView(const cbrush_t* brush, struct cplane_s* frustumPlanes, int n
 
 void RB_ShowCollision(GfxViewParms* viewParms)
 {
-	if (showcollision_brushes.empty() && s_brushes.empty())
+	if (s_brushes.empty() && cm_terrainpoints.empty())
 		return;
 
 	cplane_s frustum_planes[6];
@@ -224,20 +222,20 @@ void RB_ShowCollision(GfxViewParms* viewParms)
 
 	SetPlaneSignbits(plane);
 
-	for(auto& i : showcollision_brushes)
-		if (CM_BrushInView(i.brush, frustum_planes, 5)) {
-			RB_RenderWinding(i);
-		}
 	for (auto& i : s_brushes)
 		if (CM_BrushInView(i.brush, frustum_planes, 5)) {
 			RB_RenderWinding(i);
 		}
 
+	for (auto& i : cm_terrainpoints) {
+		CM_ShowTerrain(&i, frustum_planes);
+	}
+
 }
 void RB_RenderWinding(const showcol_brush& sb)
 {
-	//if (sb.brush->get_origin().dist(clients->cgameOrigin) > 2000)
-	//	return;
+	if (sb.brush->get_origin().dist(clients->cgameOrigin) > find_evar<float>("Draw Distance")->get())
+		return;
 
 	for (auto& i : sb.windings)
 		RB_DrawCollisionPoly(i.points.size(), (float(*)[3])i.points.data(), vec4_t{ 0,1,1,0.3f });
@@ -249,7 +247,7 @@ void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFl
 {
 	uint8_t c[4];
 	std::vector<fvec3> pts;
-	const auto depthtest = true;
+	const auto depthtest = find_evar<bool>("Depth Test")->get();
 
 	R_ConvertColorToBytes(colorFloat, c);
 
@@ -257,13 +255,13 @@ void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFl
 		pts.push_back(points[i]);
 
 
-	//GfxPointVertex verts[4]{};
+	GfxPointVertex verts[4]{};
 
 	//for (int i = 0; i < numPoints -1; i++) {
 
 
-	//	RB_AddDebugLine(verts, depthtest->get(), points[i], (float*)points[i + 1], c, 0);
-	//	RB_DrawLines3D(1, 3, verts, depthtest->get());
+	//	RB_AddDebugLine(verts, depthtest, points[i], (float*)points[i + 1], c, 0);
+	//	RB_DrawLines3D(1, 3, verts, depthtest);
 
 	//}
 
@@ -289,6 +287,59 @@ void CM_GetPlaneVec4Form(const cbrushside_t* sides, const float(*axialPlanes)[4]
 	expandedPlane[2] = plane[2];
 	expandedPlane[3] = plane[3];
 
+}
+void CM_ReverseWinding(winding_t* w)
+{
+
+	for (int i = 0; i < w->numpoints; i++)
+	{
+
+		const float temp[3] =
+		{
+			w->p[i][0], w->p[i][1], w->p[i][2]
+		};
+
+		VectorCopy(w->p[w->numpoints - 1 - i], w->p[i]);
+		VectorCopy(temp, w->p[w->numpoints - 1 - i]);
+
+
+	}
+}
+bool PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c)
+{
+	vec3_t d1, d2;
+
+	VectorSubtract(b, a, d1);
+	VectorSubtract(c, a, d2);
+
+
+	CrossProduct(d2, d1, plane);
+
+	float len = VectorLength(plane);
+
+	if (!len)
+		return false;
+
+	if (len < 2.f) {
+		if (VectorLength(d1) * VectorLength(d2) * 0.0000010000001f >= len) {
+			VectorSubtract(c, b, d1);
+			VectorSubtract(a, b, d2);
+
+			CrossProduct(d2, d1, plane);
+
+			if (VectorLength(d1) * VectorLength(d2) * 0.0000010000001f >= len) {
+				return false;
+			}
+
+		}
+	}
+
+	if (VectorNormalize(plane) == 0) {
+		return 0;
+	}
+
+	plane[3] = DotProduct(a, plane);
+	return 1;
 }
 int GetPlaneIntersections(const float** planes, int planeCount, SimplePlaneIntersection* OutPts)
 {
@@ -318,6 +369,94 @@ int BrushToPlanes(const cbrush_t* brush, float(*outPlanes)[4])
 
 	return i;
 }
+vec_t   WindingArea(winding_t* w)
+{
+	int i;
+	vec3_t d1, d2, cross;
+	vec_t total;
+
+	total = 0;
+	for (i = 2; i < w->numpoints; i++)
+	{
+		VectorSubtract(w->p[i - 1], w->p[0], d1);
+		VectorSubtract(w->p[i], w->p[0], d2);
+		CrossProduct(d1, d2, cross);
+		total += 0.5 * VectorLength(cross);
+	}
+	return total;
+}
+void WindingPlane(winding_t* w, vec3_t normal, vec_t* dist) {
+	vec3_t v1, v2;
+
+	VectorSubtract(w->p[1], w->p[0], v1);
+	VectorSubtract(w->p[2], w->p[0], v2);
+	CrossProduct(v2, v1, normal);
+	VectorNormalize2(normal, normal);
+	*dist = DotProduct(w->p[0], normal);
+
+}
+void CheckWinding(winding_t* w) {
+	int i, j;
+	vec_t* p1, * p2;
+	vec_t d, edgedist;
+	vec3_t dir, edgenormal, facenormal;
+	vec_t area;
+	vec_t facedist;
+
+	if (w->numpoints < 3) {
+		return Com_Printf("CheckWinding: %i points\n", w->numpoints);
+	}
+
+	area = WindingArea(w);
+	if (area < 1) {
+		return Com_Printf("CheckWinding: %f area\n", area);
+	}
+
+	WindingPlane(w, facenormal, &facedist);
+
+	for (i = 0; i < w->numpoints; i++)
+	{
+		p1 = w->p[i];
+
+		//for (j = 0; j < 3; j++)
+		//	if (p1[j] > MAX_MAP_BOUNDS || p1[j] < -MAX_MAP_BOUNDS) {
+		//		Com_Error(ERR_DROP, "CheckFace: MAX_MAP_BOUNDS: %f", p1[j]);
+		//	}
+
+		j = i + 1 == w->numpoints ? 0 : i + 1;
+
+		// check the point is on the face plane
+		d = DotProduct(p1, facenormal) - facedist;
+		if (d < -ON_EPSILON || d > ON_EPSILON) {
+			return Com_Printf("CheckWinding: point off plane\n");
+		}
+
+		// check the edge isnt degenerate
+		p2 = w->p[j];
+		VectorSubtract(p2, p1, dir);
+
+		if (VectorLength(dir) < ON_EPSILON) {
+			return Com_Printf("CheckWinding: degenerate edge\n");
+		}
+
+		CrossProduct(facenormal, dir, edgenormal);
+		VectorNormalize2(edgenormal, edgenormal);
+		edgedist = DotProduct(p1, edgenormal);
+		edgedist += ON_EPSILON;
+
+		// all other points must be on front side
+		for (j = 0; j < w->numpoints; j++)
+		{
+			if (j == i) {
+				continue;
+			}
+			d = DotProduct(w->p[j], edgenormal);
+			if (d > edgedist) {
+				return Com_Printf("CheckWinding: non-convex\n");
+			}
+		}
+	}
+}
 adjacencyWinding_t* BuildBrushdAdjacencyWindingForSide(int ptCount, SimplePlaneIntersection* pts, float* sideNormal, int planeIndex, adjacencyWinding_t* optionalOutWinding)
 {
 	adjacencyWinding_t* r = 0;
@@ -337,92 +476,40 @@ adjacencyWinding_t* BuildBrushdAdjacencyWindingForSide(int ptCount, SimplePlaneI
 
 	return r;
 }
-void hmm_f()
-{
-	//if (cmd_args->argc[cmd_args->nesting] == 0 || cmd_args->argc[cmd_args->nesting] > 2) {
-	//	Com_Printf(CON_CHANNEL_CONSOLEONLY, "usage: showbrush <material> or showbrush (will clear everything)");
-	//	return;
-	//}
-
-	if (cmd_args->argc[cmd_args->nesting] == 1) {
-		Com_Printf(CON_CHANNEL_CONSOLEONLY, "^2cleared!\n");
-		return;
-	}
-
-	auto arg = *(cmd_args->argv[cmd_args->nesting] + 1);
-
-	float planes[20][4]{};
-	int idx = int(random(cm->numBrushes / 2));
-
-	while (cm->brushes[idx].numsides == NULL) {
-		idx = int(random(cm->numBrushes / 2));
-	}
-
-	s_brushes.clear();
-
-	int planeCount = BrushToPlanes(&cm->brushes[idx], planes);
-	int intersections = GetPlaneIntersections((const float**)planes, planeCount, pts);
-
-	std::cout << "numPlanes: " << planeCount << '\n';
-	std::cout << "intersections: " << intersections << '\n';
-
-	adjacencyWinding_t windings[32]{};
-
-	int verts = 0;
-	int intersection = 0;
-
-	current_brush = &cm->brushes[idx];
-
-	do {
-
-		if (auto r = BuildBrushdAdjacencyWindingForSide(intersections, pts, planes[intersection], intersection, &windings[intersection])) {
-			verts += r->numsides;
-			//std::cout << "verts: " << r->numsides << '\n';
-		}
-		//
-		//else
-		//	windings->numsides = 0;
-
-		//++windings;
-		++intersection;
-
-	} while (intersection < planeCount);
-	//std::cout << "total verts: " << verts << '\n';
-
-	s_brushes.push_back(current_winding);
-
-
-	return;
-}
-
 void __cdecl wtf(adjacencyWinding_t* w, float* a, float* b, float* c, float* points)
 {
-	std::cout << "numPoints: " << w->numsides << '\n';
-	//std::cout << "i0: " << *i0 << '\n';
+	float plane[4];
+	PlaneFromPoints(plane, a, b, c);
+	
 
-	int idx = 0;
+
+	if ((DotProduct(plane, current_normals) < 0.f)) {
+		int* sides = w->sides;
+		int* end = &w->sides[w->numsides];
+
+		if (w->sides < end)
+		{
+			do
+			{
+				int temp = *sides;
+				*sides = *end;
+				*end-- = temp;
+				++sides;
+			} while (sides < end);
+		}
+	}
+
 
 	std::vector<fvec3> winding_points;
 
-
-	for (int i = 0; i < w->numsides; i++) {
-
-		winding_points.push_back(fvec3(&points[idx]));
-
-		//std::cout << "winding[" << i << "][" << idx << "]: " << fvec3(&points[idx]) << '\n';
-
-		idx += 3;
-
+	for (int winding = 0; winding < w->numsides; winding++) {
+		winding_points.push_back({ &points[winding*3]});
 	}
 
 	current_winding.windings.push_back({ sc_winding_t{ winding_points } });
 	current_winding.brush = current_brush;
 
-	//std::cout << "a: " << fvec3(a) << '\n';
-	//std::cout << "b: " << fvec3(b) << '\n';
-	//std::cout << "c: " << fvec3(c) << '\n';
 
-	//VectorCopy(points, stolen_vec3);
 }
 
 __declspec(naked) void stealerino_test()
@@ -452,11 +539,19 @@ __declspec(naked) void stealerino_test()
 		call wtf;
 		add esp, 20;
 
-		fld dword ptr[ebp + 04h];
-		fmul dword ptr[esp + 2Ch];
-		fld dword ptr[ebp + 00h];
-		fmul dword ptr[esp + 28h];
-		jmp lbl;
+		xor eax, eax;
+		pop edi;
+		pop esi;
+		pop ebp;
+		pop ebx;
+		add esp, 6028h;
+		retn;
+
+		//fld dword ptr[ebp + 04h];
+		//fmul dword ptr[esp + 2Ch];
+		//fld dword ptr[ebp + 00h];
+		//fmul dword ptr[esp + 28h];
+		//jmp lbl;
 
 	}
 }

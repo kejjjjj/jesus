@@ -11,8 +11,8 @@ void CG_Init()
     decltype(auto) renderer = Renderer::getInstance();
     decltype(auto) elebot = Elebot::getInstance();
     decltype(auto) recorder = MovementRecorder::getInstance();
-    //decltype(auto) resources = Resources::getInstance();
-    //decltype(auto) gui = Gui::getInstance();
+    decltype(auto) resources = Resources::getInstance();
+    decltype(auto) gui = Gui::getInstance();
 
     hook::nop(0x04122D2); //PM_SetStrafeCondition 
     hook::nop(0x4056DF); //BG_GetConditionBit
@@ -41,9 +41,10 @@ void CG_Init()
 
     }
 
-    CG_CreateSubdirectory("");
-    CG_CreateSubdirectory("recorder");
+    resources.initialize();
+    gui.initialize();
 
+    Cmd_AddCommand("gui", Gui::getInstance().menu_toggle);
 
     //Cmd_AddCommand("elebot_run", elebot.start_ground);
     Cmd_AddCommand("recorder_record", recorder.OnToggleRecording);
@@ -53,8 +54,9 @@ void CG_Init()
     Cmd_AddCommand("recorder_reloadPlaybacks", []() { return MovementRecorder::getInstance().OnLoadFromMemory(&cgs->predictedPlayerState); });
     
     Cmd_AddCommand("hack_norecoil", Cmd_NoRecoil_f);
-    Cmd_AddCommand("showcollision_brushes", Cmd_ShowBrushes_f);
-    Cmd_AddCommand("hmm", hmm_f);
+    Cmd_AddCommand("cm_mapexport", CM_MapExport);
+
+    Dvar_RegisterFloat("cm_drawbrushes_dist", 1000.f, 0.f, 3.402823466E+38, dvar_flags::saved, "brush render distance");
 
     recorder.recorder_lineupDistance = Dvar_RegisterFloat("recorder_lineupDistance", 0.01f, 0.f, 1.f, dvar_flags::saved,
         "how close to the origin of the playback the bot will attempt to move to; lower value -> better playback");
@@ -67,12 +69,7 @@ void CG_Init()
     Dvar_RegisterBool("hack_superSprint", dvar_flags::saved, false, "run a lot faster yea");
     Dvar_RegisterBool("hack_autoKnife", dvar_flags::saved, false, "knife everyone near you automatically");
 
-    Dvar_RegisterBool("hack_playerNames", dvar_flags::saved, false, "render player names");
-    Dvar_RegisterBool("hack_playerWeapons", dvar_flags::saved, false, "render player weapons");
-    Dvar_RegisterBool("hack_circularCompass", dvar_flags::saved, false, "a better compass");
-    Dvar_RegisterBool("hack_killableEnemy", dvar_flags::saved, false, "draws information if you can kill an enemy from your current position");
     Dvar_RegisterBool("hack_silentAim", dvar_flags::saved, false, "aaaaaa");
-    Dvar_RegisterBool("hack_drawBounds", dvar_flags::saved, false, "draw hitboxes");
 
     Dvar_RegisterBool("hack_chams", dvar_flags::saved, false, "wooow u can see them thru walls!");
 

@@ -94,7 +94,10 @@ typedef vec_t vec4_t[4];
 
 #include "fs_utilities.hpp"
 
+#include "resources.hpp"
+
 #include "errors.hpp"
+#include "evar.hpp"
 #include "koukku.hpp"
 
 
@@ -111,6 +114,10 @@ typedef vec_t vec4_t[4];
 
 #include "r_renderer.hpp"
 #include "r_drawtools.hpp"
+#include "r_gui_c_items.hpp"
+#include "r_gui_sub_c.hpp"
+#include "r_gui_main.hpp"
+#include "r_gui.hpp"
 
 #include "g_entity.hpp"
 #include "g_penetration.hpp"
@@ -130,6 +137,8 @@ typedef vec_t vec4_t[4];
 #include "aim.hpp"
 
 #include "cm_brush.hpp"
+#include "cm_terrain.hpp"
+#include "cm_export.hpp"
 
 #include "cod4x.hpp"
 

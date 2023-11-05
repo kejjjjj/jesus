@@ -60,7 +60,25 @@ vec_t VectorNormalize(vec3_t v) {
 
 	return length;
 }
+vec_t VectorNormalize2(const vec3_t v, vec3_t out) {
+	float length, ilength;
 
+	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+	length = sqrt(length);
+
+	if (length) {
+		ilength = 1 / length;
+		out[0] = v[0] * ilength;
+		out[1] = v[1] * ilength;
+		out[2] = v[2] * ilength;
+	}
+	else {
+		VectorClear(out);
+	}
+
+	return length;
+
+}
 void MatrixTransformVector43(const float* in1, const float(*in2)[3], float* out)
 {
 	*out = ((*in1 * (*in2)[0]) + (((*in2)[6] * in1[2]) + ((*in2)[3] * in1[1]))) + (*in2)[9];

@@ -99,7 +99,7 @@ void R_OwnerDraw(entity_s* target)
 
 void R_DrawPlayerName(entity_s* target)
 {
-	if (Dvar_FindMalleableVar("hack_playerNames")->current.enabled == false)
+	if (find_evar<bool>("Player Names")->get() == false)
 		return;
 
 	char* name = target->getName();
@@ -119,7 +119,7 @@ void R_DrawPlayerName(entity_s* target)
 }
 void R_DrawPlayerWeapon(entity_s* target)
 {
-	if (Dvar_FindMalleableVar("hack_playerWeapons")->current.enabled == false)
+	if (find_evar<bool>("Player Weapons")->get() == false)
 		return;
 
 
@@ -139,7 +139,7 @@ void R_DrawPlayerWeapon(entity_s* target)
 
 void R_DrawCircularCompass(entity_s* target)
 {
-	if (Dvar_FindMalleableVar("hack_circularCompass")->current.enabled == false)
+	if (find_evar<bool>("360 Compass")->get() == false)
 		return;
 
 	if (!target->isEnemy())
@@ -160,7 +160,7 @@ void R_DrawCircularCompass(entity_s* target)
 
 void R_DrawKillable(entity_s* target)
 {
-	if (!target->isEnemy() || Dvar_FindMalleableVar("hack_killableEnemy")->current.enabled == false)
+	if (!target->isEnemy() || find_evar<bool>("Killable Enemy")->get() == false)
 		return;
 
 	std::optional<killable_entity> killable = target->CanBeKilled();
@@ -192,7 +192,7 @@ void R_DrawKillable(entity_s* target)
 }
 void R_DrawBounds(entity_s* target)
 {
-	if (Dvar_FindMalleableVar("hack_drawBounds")->current.enabled == false)
+	if (find_evar<bool>("Hitboxes")->get() == false)
 		return;
 
 	fvec3 helmet;

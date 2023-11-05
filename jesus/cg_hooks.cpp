@@ -61,6 +61,7 @@ void CG_CreateHooks()
 
 	}
 
+	std::this_thread::sleep_for(100ms);
 }
 void CG_ReleaseHooks()
 {
