@@ -87,7 +87,8 @@ void CM_GetTerrainTriangles(cLeaf_t* leaf, const std::string& material_filter)
 		++aabbIdx;
 	} while (aabbIdx < leaf->collAabbCount);
 
-	cm_terrainpoints.push_back(std::move(terrain));
+	if(terrain.tris.empty() == false)
+		cm_terrainpoints.push_back(std::move(terrain));
 
 }
 

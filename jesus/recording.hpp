@@ -34,6 +34,7 @@ inline playback_cmd cmd2playback(playerState_s* ps, usercmd_s* cmd, const int FP
 	pcmd.FPS = FPS;
 	pcmd.serverTime = cmd->serverTime;
 
+
 	return pcmd;
 }
 

@@ -28,6 +28,7 @@ void SV_Map(void* a1)
 	decltype(auto) r = MovementRecorder::getInstance();
 
 	r.LoadRecordings(mapname);
+	elebot_load_from_map(mapname);
 
 	return;
 
@@ -53,7 +54,7 @@ void LoadMapLoadscreen(char* mapname)
 
 
 	r.LoadRecordings(mapname);
-
+	elebot_load_from_map(mapname);
 
 	return;
 	//detour_func.cast_call<void(*)(char*)>(mapname);

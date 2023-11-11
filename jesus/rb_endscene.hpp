@@ -14,7 +14,7 @@ void RB_DrawTriangleOutline(vec3_t points[3], vec4_t color, int width = 3, bool 
 int RB_AddDebugLine(GfxPointVertex* verts, char depthTest, const vec_t* start, vec_t* end, const BYTE* color, int vertCount);
 void R_ConvertColorToBytes(const vec4_t in, uint8_t* out);
 void R_AddDebugBox(const float* mins, const float* maxs, DebugGlobals* debugGlobaksEntry, float* color);
-void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFloat);
+void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFloat, bool depthtest);
 
 void CM_DrawPoly(Poly* poly, float* color);
 

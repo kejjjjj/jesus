@@ -25,3 +25,7 @@ float CG_GetDistanceToGround(playerState_s* ps)
 
 	return abs((ps->origin[2] + trace.fraction * (end[2] - ps->origin[2])) - ps->origin[2]);
 }
+float CG_GetEyeHeight(playerState_s* ps)
+{
+	return ps->origin[2] + ps->viewHeightCurrent;
+}

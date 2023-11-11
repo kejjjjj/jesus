@@ -27,6 +27,36 @@ void GetBrushPolys(cbrush_t* brush, float(*outPlanes)[4])
 	current_winding.windings.clear();
 
 }
+std::optional<sc_winding_t> CM_GetBrushWinding(cbrush_t* b, const fvec3& normals)
+{
+	float planes[30][4]{};
+
+	int planeCount = BrushToPlanes(b, planes);
+	int intersections = GetPlaneIntersections((const float**)planes, planeCount, pts);
+	adjacencyWinding_t windings[40]{};
+
+	int verts = 0;
+	int intersection = 0;
+
+	current_brush = b;
+	do {
+		current_normals = planes[intersection];
+		if (auto r = BuildBrushdAdjacencyWindingForSide(intersections, pts, planes[intersection], intersection, &windings[intersection])) {
+			verts += r->numsides;
+		}
+
+		++intersection;
+
+		std::cout << normals << " = " << current_normals << '\n';
+
+		if (normals == current_normals) {
+			return current_winding.windings.back();
+		}
+
+	} while (intersection < planeCount);
+
+	return std::nullopt;
+}
 void Cmd_ShowBrushes_f(char* arg)
 {
 	float planes[30][4]{};
@@ -64,6 +94,30 @@ void Cmd_ShowBrushes_f(char* arg)
 	}
 	//std::cout << "loaded " << s_brushes.size() << " brushes while we found a total of " << found << " brushes!\n";
 
+}
+cbrush_t* CM_FindBrushByOrigin(const fvec3& origin)
+{
+	cbrush_t* brush = cm->brushes;
+
+	for (uint16_t i = 0; i < cm->numBrushes; i++) {
+
+		if (brush) {
+
+			if (origin[0] >= brush->mins[0] && origin[0] <= brush->maxs[0]
+				&& origin[1] >= brush->mins[1] && origin[1] <= brush->maxs[1]
+				&& origin[2] >= brush->mins[2] && origin[2] <= brush->maxs[2]) {
+
+				return brush;
+
+			}
+
+
+
+		}
+
+		++brush;
+	}
+	return nullptr;
 }
 void CM_BuildAxialPlanes(float(*planes)[6][4], const cbrush_t* brush)
 {
@@ -199,33 +253,13 @@ void RB_ShowCollision(GfxViewParms* viewParms)
 
 	cplane_s frustum_planes[6];
 
-	BuildFrustumPlanes(viewParms, frustum_planes);
-
-	frustum_planes[5].normal[0] = -frustum_planes[4].normal[0];
-	frustum_planes[5].normal[1] = -frustum_planes[4].normal[1];
-	frustum_planes[5].normal[2] = -frustum_planes[4].normal[2];
-
-	frustum_planes[5].dist = -frustum_planes[4].dist - 2000;
-	auto plane = &frustum_planes[5];
-
-	char signbit = 0;
-
-	if (plane->normal[0] != 1.f) {
-		if (plane->normal[1] == 1.f)
-			signbit = 1;
-		else {
-			signbit = plane->normal[2] == 1.f ? 2 : 3;
-		}
-	}
-
-	plane->type = signbit;
-
-	SetPlaneSignbits(plane);
+	CreateFrustumPlanes(viewParms, frustum_planes);
 
 	for (auto& i : s_brushes)
 		if (CM_BrushInView(i.brush, frustum_planes, 5)) {
 			RB_RenderWinding(i);
 		}
+
 
 	for (auto& i : cm_terrainpoints) {
 		CM_ShowTerrain(&i, frustum_planes);
@@ -244,17 +278,16 @@ void RB_RenderWinding(const showcol_brush& sb)
 		if (only_bounces && i.is_bounce == false)
 			continue;
 
-		RB_DrawCollisionPoly(i.points.size(), (float(*)[3])i.points.data(), vec4_t{ 0,1,1,0.3f });
+		RB_DrawCollisionPoly(i.points.size(), (float(*)[3])i.points.data(), vec4_t{ 0,1,1,0.3f }, find_evar<bool>("Depth Test")->get());
 	}
 
 
 }
 
-void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFloat)
+void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFloat, bool depthtest)
 {
 	uint8_t c[4];
 	std::vector<fvec3> pts;
-	const auto depthtest = find_evar<bool>("Depth Test")->get();
 
 	R_ConvertColorToBytes(colorFloat, c);
 

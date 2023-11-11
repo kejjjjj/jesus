@@ -75,6 +75,8 @@ void CL_FinishMove(usercmd_s* cmd)
 	static entities_s& entities = entities_s::get();
 	decltype(auto) spread_data = spreadData::get();
 
+	playerState_s* ps = &cgs->predictedPlayerState;
+
 	CL_FixServerTime(cmd);
 	bp.PredictBounce(cmd);
 	mr.OnUserCmd(cmd);
@@ -85,8 +87,13 @@ void CL_FinishMove(usercmd_s* cmd)
 	M_AutoFPS(cmd);
 
 	if (GetAsyncKeyState(VK_NUMPAD0) & 1) {
-		elebot_evaluate_angles_midair(&cgs->predictedPlayerState);
+		elebot_evaluate_angles_midair(ps);
 	}
+
+	if (elebot_has_lineup(ps, cmd))
+		elebot_start_lineup(ps, cmd);
+
+	elebot_start_playback(ps, cmd);
 
 	entities.update_all(clients->snap.numClients);
 

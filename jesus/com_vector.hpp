@@ -18,7 +18,7 @@ int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, struct cplane_s* p);
 
 void BuildFrustumPlanes(const struct GfxViewParms* viewParms, cplane_s* frustumPlanes);
 void SetPlaneSignbits(cplane_s* out);
-
+void CreateFrustumPlanes(const struct GfxViewParms* viewParms, cplane_s* frustumPlanes);
 
 inline int Vec3PackUnitVec(float* v) {
 	int r = 0;

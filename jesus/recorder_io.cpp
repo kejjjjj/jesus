@@ -1,10 +1,6 @@
 #include "pch.hpp"
 
-template<typename T>
-void IO_WriteData(std::ofstream& f, const T& data);
 
-template<typename T>
-std::optional<T> IO_ReadBlock(std::fstream& f, size_t amount_of_bytes = 0);
 
 void MovementRecorder::Save2File()
 {
@@ -132,12 +128,57 @@ void IO_WriteData(std::ofstream& f, const T& data)
 	}
 	f << "]";
 }
+void IO_WriteData(std::ofstream& f, const void* from, const void* to)
+{
 
+	DWORD length = std::max((DWORD)to, (DWORD)from) - std::min((DWORD)to, (DWORD)from);
+
+	std::cout << "length: " << length << '\n';
+
+	DWORD base = (DWORD)from;
+	f << '[';
+	for (int i = 0; i < length; i += 1) {
+		std::stringstream ss;
+		std::string s;
+		ss << std::hex << (int)(*(BYTE*)(base + i));
+
+		if ((s = ss.str()).size() == 1)
+			s.insert(s.begin(), '0');
+
+		f << s;
+
+	}
+	f << "]";
+}
+void IO_WriteData(std::ofstream& f, const void* from, DWORD length)
+{
+
+	std::cout << "length: " << length << '\n';
+
+	DWORD base = (DWORD)from;
+	f << '[';
+	for (int i = 0; i < length; i += 1) {
+		std::stringstream ss;
+		std::string s;
+		ss << std::hex << (int)(*(BYTE*)(base + i));
+
+		if ((s = ss.str()).size() == 1)
+			s.insert(s.begin(), '0');
+
+		f << s;
+
+	}
+	f << "]";
+}
 template<typename T>
 std::optional<T> IO_ReadBlock(std::fstream& f, size_t amount_of_bytes)
 {
 	T data{ };
-	char ch = fs::get(f);
+	
+	char ch = fs::file.current_character;
+
+	if(ch != '[')
+		ch = fs::get(f);
 
 	if (f.eof())
 		return std::nullopt;
@@ -196,4 +237,63 @@ std::optional<T> IO_ReadBlock(std::fstream& f, size_t amount_of_bytes)
 
 	FatalError("std::optional<T> Prediction::IO_ReadBlock(): unexpected end of file");
 	return std::nullopt;
+}
+void IO_ReadBlock(std::fstream& f, void* data, size_t amount_of_bytes)
+{
+	char ch = fs::get(f);
+
+	if (f.eof())
+		return;
+
+	if (ch != '[') {
+		FatalError(std::format("std::optional<T> Prediction::IO_ReadBlock(): expected {} instead of {}", '[', ch));
+		return;
+	}
+
+	size_t bytes_read = 0;
+
+	DWORD base = (DWORD)(data);
+
+	do {
+
+		std::string hex = "0x";
+
+		for (int i = 0; i < 2; i++) {
+
+			if (f.eof() || !f.good()) {
+				FatalError("std::optional<T> Prediction::IO_ReadBlock(): unexpected end of file");
+				return;
+			}
+
+			ch = fs::get(f);
+
+			if (bytes_read == amount_of_bytes && ch != ']') {
+				FatalError(std::format("bytes_read ({}) == sizeof(T) ({}) && ch != ']' ({})", bytes_read, amount_of_bytes, ch));
+				return;
+			}
+			else if (bytes_read == amount_of_bytes && ch == ']') {
+				//fs::get(f); //skip the newline
+				return;
+			}
+
+			if (!IsHex(ch)) {
+				FatalError("std::optional<T> Prediction::IO_ReadBlock(): unexpected end of file");
+				return;
+			}
+			hex.push_back(ch);
+
+
+		}
+
+		//here it HAS to be from 0 to 255
+		auto hex_byte = std::strtol(hex.c_str(), NULL, 0);
+		*(BYTE*)base = (BYTE)hex_byte;
+
+		base += 1;
+		bytes_read++;
+
+	} while (true);
+
+	FatalError("std::optional<T> Prediction::IO_ReadBlock(): unexpected end of file");
+	return;
 }

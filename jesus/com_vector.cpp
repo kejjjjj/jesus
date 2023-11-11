@@ -158,7 +158,31 @@ void BuildFrustumPlanes(const GfxViewParms* viewParms, cplane_s* frustumPlanes)
 
 	}
 }
+void CreateFrustumPlanes(const struct GfxViewParms* viewParms, cplane_s* frustum_planes)
+{
+	BuildFrustumPlanes(viewParms, frustum_planes);
 
+	frustum_planes[5].normal[0] = -frustum_planes[4].normal[0];
+	frustum_planes[5].normal[1] = -frustum_planes[4].normal[1];
+	frustum_planes[5].normal[2] = -frustum_planes[4].normal[2];
+
+	frustum_planes[5].dist = -frustum_planes[4].dist - 2000;
+	auto plane = &frustum_planes[5];
+
+	char signbit = 0;
+
+	if (plane->normal[0] != 1.f) {
+		if (plane->normal[1] == 1.f)
+			signbit = 1;
+		else {
+			signbit = plane->normal[2] == 1.f ? 2 : 3;
+		}
+	}
+
+	plane->type = signbit;
+
+	SetPlaneSignbits(plane);
+}
 void SetPlaneSignbits(cplane_s* out)
 {
 	int bits, j;

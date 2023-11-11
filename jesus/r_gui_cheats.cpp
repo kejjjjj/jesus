@@ -26,7 +26,7 @@ void Gui::cheats_create_visuals(std::unique_ptr<Gui_SubCategory>& category)
 
 	const auto player_names = instance.add_variable<bool>("Player Names", false);
 	const auto weapons = instance.add_variable<bool>("Player Weapons", false);
-	const auto killable_enemy = instance.add_variable<bool>("Killable enemy", false);
+	const auto killable_enemy = instance.add_variable<bool>("Killable Enemy", false);
 	const auto hitboxes = instance.add_variable<bool>("Hitboxes", false);
 	const auto compass = instance.add_variable<bool>("360 Compass", false);
 	const auto chams = instance.add_variable<bool>("Chams", false);

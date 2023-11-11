@@ -4,6 +4,15 @@
 
 namespace _fs = std::filesystem;
 
+template<typename T>
+void IO_WriteData(std::ofstream& f, const T& data);
+void IO_WriteData(std::ofstream& f, const void* from, const void* to);
+void IO_WriteData(std::ofstream& f, const void* from, DWORD length);
+
+template<typename T>
+std::optional<T> IO_ReadBlock(std::fstream& f, size_t amount_of_bytes = 0);
+void IO_ReadBlock(std::fstream& f, void* dst, size_t amount_of_bytes = 0);
+
 namespace fs
 {
 	enum class fileopen : int

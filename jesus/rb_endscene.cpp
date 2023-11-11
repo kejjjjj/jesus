@@ -200,47 +200,8 @@ char RB_DrawDebug(GfxViewParms* viewParms)
 	decltype(auto) r = MovementRecorder::getInstance();
 
 	r.RB_OnRenderPositions();
-
-	//static std::vector<float> maxVerts(24);
-	//static std::vector<Poly> polygons(1);
-
-	//if (GetAsyncKeyState(VK_NUMPAD1) & 1) {
-	//	maxVerts.clear();
-	//	polygons.clear();
-	//	maxVerts.resize(24);
-	//	polygons.resize(1);
-
-	//	int idx = int(random(cm->numBrushes/2));
-	//	cbrush_t* brush = &cm->brushes[idx];
-
-	//	while (brush->numsides == 0) {
-	//		idx = int(random(cm->numBrushes/2));
-	//		brush = &cm->brushes[idx];
-	//	}
-	//	//Com_Printf("numsides: %i, index %i\n", brush->numsides, idx);
-	//	//std::cout << idx << " -> bounds: " << (fvec3(brush->maxs) - fvec3(brush->mins)).abs() << '\n';
-	//
-	//	int verts = CM_BuildWindingsForBrush(&brush[idx], polygons, maxVerts);
-
-	//	Poly* poly = &polygons.front();
-	//	int i = 0;
-	//	do
-	//	{ 
-	//		CM_DrawPoly(poly, vec4_t{1,0,0,1.f});
-	//		++poly;
-	//	} while (++i < brush->numsides + 6);
-
-	//	VectorCopy(polygons.front().pts[0], ps_loc->origin);
-
-	//}
-
-	//if (polygons.size() > 1) {
-	//	for (auto& i : polygons) {
-	//		CM_DrawPoly(&i, vec4_t{ 0,1,1,0.7f });
-	//	}
-	//}
-
 	RB_ShowCollision(viewParms);
+	elebot_render_winding(viewParms);
 		
 	return detour_func.cast_call<char(*)(GfxViewParms*)>(viewParms);
 }

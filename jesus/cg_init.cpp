@@ -46,7 +46,7 @@ void CG_Init()
 
     Cmd_AddCommand("gui", Gui::getInstance().menu_toggle);
 
-    //Cmd_AddCommand("elebot_run", elebot.start_ground); //broken as of now so don't use
+    Cmd_AddCommand("elebot_saveSelected", elebot_save_selected); //broken as of now so don't use
 
     Cmd_AddCommand("recorder_record", recorder.OnToggleRecording);
     Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);

@@ -19,11 +19,14 @@
 
 void Cmd_ShowBrushes_f(char* arg);
 void GetBrushPolys(cbrush_t* brush, float(*outPlanes)[4]);
+
 struct sc_winding_t
 {
 	std::vector<fvec3> points;
 	bool is_bounce = false;
 };
+
+std::optional<sc_winding_t> CM_GetBrushWinding(cbrush_t* b, const fvec3& normals);
 
 struct showcol_brush
 {
@@ -46,6 +49,7 @@ struct showcol_brush
 		return tris;
 	}
 };
+cbrush_t* CM_FindBrushByOrigin(const fvec3& origin);
 
 void CM_BuildAxialPlanes(float(*planes)[6][4], const cbrush_t* brush);
 void CM_GetWindingForBrushFace(unsigned int brushSide, cbrush_t* brush, Poly* polygon, const float(*planes)[4], signed int maxVerts);

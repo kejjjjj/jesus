@@ -80,6 +80,7 @@ void Playback::doPlayback(usercmd_s* cmd) noexcept
 	cmd->buttons = (it)->buttons;
 	cmd->forwardmove = (it)->forwardmove;
 	cmd->rightmove = (it)->rightmove;
+	
 	++it;
 
 	//auto copy = it;

@@ -103,7 +103,7 @@ void T_AutoPara(playerState_s* ps, usercmd_s* cmd)
 	const float speed = fvec2(ps->velocity[0], ps->velocity[1]).mag();
 	static char _rightmove = 0;
 
-	if ((speed <= 285 || speed >= 625) || cmd->forwardmove == NULL || ps->groundEntityNum != 1023) {
+	if ((speed <= 285 || speed >= 635) || cmd->forwardmove == NULL || ps->groundEntityNum != 1023) {
 		_rightmove = 0;
 		return;
 	}
@@ -127,7 +127,7 @@ void T_AutoPara(playerState_s* ps, usercmd_s* cmd)
 
 	float distance2inneredge = _rightmove == 127 ? results.end : results.begin;
 
-	if (distance2inneredge < 0.1f || distance2inneredge >= results.length + 10) {
+	if (distance2inneredge < 0.05f || distance2inneredge >= results.length + 10) {
 		_rightmove *= -1;
 	}
 
