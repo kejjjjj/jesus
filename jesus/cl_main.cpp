@@ -7,6 +7,9 @@ void CL_Disconnect()
 	if (clientUI->connectionState != CA_DISCONNECTED) { //gets called in the loading screen in 1.7
 		
 		MovementRecorder::getInstance().OnDisconnect();
+
+		cl_connection::on_disconnect();
+		elebot_on_disconnect();
 	}
 
 	detour_func.cast_call<void(*)()>();
@@ -58,4 +61,11 @@ void LoadMapLoadscreen(char* mapname)
 
 	return;
 	//detour_func.cast_call<void(*)(char*)>(mapname);
+}
+void FS_Restart(char n, int checkSum)
+{
+	decltype(auto) detour_func = find_hook(hookEnums_e::HOOK_FS_RESTART);
+	detour_func.cast_call<void(*)(char, int)>(n, checkSum);
+
+	std::cout << "FS_RESTART\n";
 }

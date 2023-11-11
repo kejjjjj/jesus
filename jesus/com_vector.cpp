@@ -196,3 +196,18 @@ void SetPlaneSignbits(cplane_s* out)
 	}
 	out->signbits = bits;
 }
+bool PointInFront(const fvec3& origin, const fvec3& target, const cardinalDirection_e d)
+{
+	
+	switch (d) {
+	case cardinalDirection_e::N:
+		return target.x > origin.x;
+	case cardinalDirection_e::E:
+		return target.y < origin.y;
+	case cardinalDirection_e::S:
+		return target.x < origin.x;
+	case cardinalDirection_e::W:
+		return target.y > origin.y;
+	}
+
+}

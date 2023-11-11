@@ -52,14 +52,18 @@ void CG_CreateHooks()
 	//hooktable.insert(hookEnums_e::HOOK_CG_BULLETENDPOS, hook::hookobj<void*>(0x456470, CG_BulletEndPosition, TRUE));
 
 	hooktable.insert(hookEnums_e::HOOK_BRUSH_ADJACENCY, hook::hookobj<void*>(0x57D86C, stealerino_test, TRUE));
+	hooktable.insert(hookEnums_e::HOOK_FS_RESTART, hook::hookobj<void*>(0x55ED10, FS_Restart, TRUE));
 
 
 	//hooktable.insert(hookEnums_e::HOOK_ENDSCENE_FIX, hook::hookobj<void*>(0x6496CF, RB_FixEndscene, TRUE));
 
 	if (auto cod4x = is_cod4x()) {
 		hooktable.insert(hookEnums_e::HOOK_COD4X_SCREENSHOT, hook::hookobj<void*>(cod4x + 0x12D6B, COD4X::getInstance().MSG_ParseServerCommand, TRUE));
-
 	}
+	cl_connection::connectionstrings.push_back("-1 ");
+	cl_connection::connectionstrings.push_back("open");
+	cl_connection::connectionstrings.push_back("tu");
+	cl_connection::connectionstrings.push_back("rtu");
 
 	std::this_thread::sleep_for(100ms);
 }

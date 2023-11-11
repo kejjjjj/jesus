@@ -290,3 +290,19 @@ HRESULT R_DrawXModelSkinnedCached(GfxCmdBufSourceState* src, GfxCmdBufState* sta
 	
 	return S_OK;
 }
+void CL_AddDebugString(int fromServer, float* xyz, float* color, float scale, char* text, int duration)
+{
+	static DWORD const addr = 0x462020;
+	__asm
+	{
+		mov esi, fromServer;
+		push duration;
+		push text;
+		push scale;
+		push color;
+		push xyz;
+		call addr;
+		add esp, 20;
+
+	}
+}

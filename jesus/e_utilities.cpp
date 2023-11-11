@@ -29,6 +29,7 @@ void Cmd_ExecuteSingleCommand(int localClientNum, int controllerIndex, char* com
 
 	}
 
+	//std::cout << command << '\n';
 
 	return detour_func.cast_call<void(*)(int,int,char*)>(localClientNum, controllerIndex, command);
 }

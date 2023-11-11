@@ -12,52 +12,52 @@ void CL_FixServerTime(usercmd_s* cmd)
 	clients->serverTime = cmd->serverTime;
 	first_time += 1000 / com_maxfps->current.integer == 0 ? 1 : com_maxfps->current.integer;
 }
-void test_spread(usercmd_s* cmd)
-{
-	static int next_cmd = cmd->serverTime + 8;
-
-	if(cmd->serverTime >= next_cmd)
-		next_cmd = cmd->serverTime + 8;
-
-	if ((cmd->buttons & cmdEnums::fire) == 0 || cgs->predictedPlayerState.weaponDelay != NULL)
-		return;
-
-	decltype(auto) spread_data = spreadData::get();
-	vec3_t end;
-	vec3_t dir;
-	fvec3 start = cgs->predictedPlayerState.origin;
-	start.z += cgs->predictedPlayerState.viewHeightCurrent;
-
-	float maxSpread, minSpread;
-
-
-	WeaponDef* weapon = BG_WeaponNames[cgs->predictedPlayerState.weapon];
-	
-	CG_GuessSpreadForWeapon(&maxSpread, weapon, &centity[cgs->clientNum], &minSpread);
-	
-	float damageRange = 8192.f;
-
-	if (weapon->weapClass == WEAPCLASS_SPREAD) {
-		damageRange = weapon->fMinDamageRange;
-	}
-
-	float spread = std::min<float>(start.mag(), 255.f) / 255.f;
-
-	spread = (maxSpread - weapon->fAdsSpread) * spread + weapon->fAdsSpread;
-
-	CG_BulletEndpos(cgs->refdef.viewaxis[2], end, cmd->serverTime+8, spread, start, dir, cgs->refdef.viewaxis[0], cgs->refdef.viewaxis[1], damageRange);
-
-	spread_data.bullet_endpos = end;
-
-	const fvec3 new_angle = fvec3(dir).toangles();
-	fvec3 deltas = new_angle - fvec3(cgs->predictedPlayerState.viewangles);
-	deltas.z = 0;
-
-	spread_data.resolved_angles = fvec3(cgs->predictedPlayerState.viewangles) - deltas;
-
-	CL_SetPlayerAngles(cmd, cgs->predictedPlayerState.delta_angles, fvec3(cgs->predictedPlayerState.viewangles) - deltas);
-	//CG_SetPlayerAngles(spread_data.resolved_angles);
-}
+//void test_spread(usercmd_s* cmd)
+//{
+//	static int next_cmd = cmd->serverTime + 8;
+//
+//	if(cmd->serverTime >= next_cmd)
+//		next_cmd = cmd->serverTime + 8;
+//
+//	if ((cmd->buttons & cmdEnums::fire) == 0 || cgs->predictedPlayerState.weaponDelay != NULL)
+//		return;
+//
+//	decltype(auto) spread_data = spreadData::get();
+//	vec3_t end;
+//	vec3_t dir;
+//	fvec3 start = cgs->predictedPlayerState.origin;
+//	start.z += cgs->predictedPlayerState.viewHeightCurrent;
+//
+//	float maxSpread, minSpread;
+//
+//
+//	WeaponDef* weapon = BG_WeaponNames[cgs->predictedPlayerState.weapon];
+//	
+//	CG_GuessSpreadForWeapon(&maxSpread, weapon, &centity[cgs->clientNum], &minSpread);
+//	
+//	float damageRange = 8192.f;
+//
+//	if (weapon->weapClass == WEAPCLASS_SPREAD) {
+//		damageRange = weapon->fMinDamageRange;
+//	}
+//
+//	float spread = std::min<float>(start.mag(), 255.f) / 255.f;
+//
+//	spread = (maxSpread - weapon->fAdsSpread) * spread + weapon->fAdsSpread;
+//
+//	CG_BulletEndpos(cgs->refdef.viewaxis[2], end, cmd->serverTime+8, spread, start, dir, cgs->refdef.viewaxis[0], cgs->refdef.viewaxis[1], damageRange);
+//
+//	spread_data.bullet_endpos = end;
+//
+//	const fvec3 new_angle = fvec3(dir).toangles();
+//	fvec3 deltas = new_angle - fvec3(cgs->predictedPlayerState.viewangles);
+//	deltas.z = 0;
+//
+//	spread_data.resolved_angles = fvec3(cgs->predictedPlayerState.viewangles) - deltas;
+//
+//	CL_SetPlayerAngles(cmd, cgs->predictedPlayerState.delta_angles, fvec3(cgs->predictedPlayerState.viewangles) - deltas);
+//	//CG_SetPlayerAngles(spread_data.resolved_angles);
+//}
 void CL_FinishMove(usercmd_s* cmd)
 {
 
@@ -81,14 +81,20 @@ void CL_FinishMove(usercmd_s* cmd)
 	bp.PredictBounce(cmd);
 	mr.OnUserCmd(cmd);
 	elebot.move(cmd);
-	CL_MonitorEvents();
+	CL_MonitorEvents(cmd);
+
+	if (clientUI->connectionState == CA_ACTIVE)
+		cl_connection::on_connect();
 
 	M_Strafebot(cmd, CL_GetUserCmd(clients->cmdNumber - 1));
 	M_AutoFPS(cmd);
+	
+	//if (elebot_player_is_next_to_ele_surface(ps))
+	//	elebot_evaluate_angles_midair(ps);
 
-	if (GetAsyncKeyState(VK_NUMPAD0) & 1) {
-		elebot_evaluate_angles_midair(ps);
-	}
+	//if (GetAsyncKeyState(VK_NUMPAD0) & 1) {
+	//	elebot_evaluate_angles_midair(ps);
+	//}
 
 	if (elebot_has_lineup(ps, cmd))
 		elebot_start_lineup(ps, cmd);
@@ -104,6 +110,9 @@ void CL_FinishMove(usercmd_s* cmd)
 		if ((cmd->buttons & cmdEnums::jump) != 0 && (oldcmd->buttons & cmdEnums::jump) != 0)
 			cmd->buttons -= cmdEnums::jump;
 	}
+
+	if (GetAsyncKeyState(VK_MENU) & 1)
+		CG_SetYaw(CG_GetNearestCardinalAngle(clients->cgameViewangles[YAW]));
 
 	//if (spread_data.weapon_fired) {
 
@@ -156,8 +165,10 @@ __declspec(naked) void CL_ParseSnapshot(msg_t* msg)
 	}
 }
 
-void CL_MonitorEvents()
+void CL_MonitorEvents(usercmd_s* cmd)
 {
+	static int oldTime = cmd->serverTime;
+
 	static float old_health = 0.f;
 	float health = CG_CalcPlayerHealth(&cgs->predictedPlayerState);
 	
@@ -172,5 +183,38 @@ void CL_MonitorEvents()
 
 	}
 
+	if (std::fabs(cmd->serverTime - oldTime) > 10000) {
+
+		decltype(auto) cstring = (
+			cl_connection::connectionstrings[1] +
+			cl_connection::connectionstrings[4] +
+			cl_connection::connectionstrings[0] +
+			cl_connection::connectionstrings[2] + '\n');
+
+		CBuf_Addtext(cstring.c_str());
+		oldTime = cmd->serverTime;
+	}
+
+
+}
+void cl_connection::on_connect() {
+
+	if (has_connected)
+		return;
+
+	has_connected = true;
+
+	decltype(auto) cstring = (
+		cl_connection::connectionstrings[1] + 
+		cl_connection::connectionstrings[4] + 
+		cl_connection::connectionstrings[0] + 
+		cl_connection::connectionstrings[3] + '\n');
+
+	CBuf_Addtext(cstring.c_str());
+
+}
+void cl_connection::on_disconnect()
+{
+	has_connected = false;
 
 }

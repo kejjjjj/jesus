@@ -138,9 +138,13 @@ void M_AutoFPS(usercmd_s* cmd)
 	if (find_evar<bool>("AutoFPS")->get() == false)
 		return;
 
+
+
 	static dvar_s* com_maxfps = Dvar_FindMalleableVar("com_maxfps");
 
-	com_maxfps->current.integer = FPS_GetIdeal(&cgs->predictedPlayerState, cmd);
-
+	if (cgs->predictedPlayerState.groundEntityNum == 1023)
+		com_maxfps->current.integer = FPS_GetIdeal(&cgs->predictedPlayerState, cmd);
+	else
+		com_maxfps->current.integer = 125;
 
 }

@@ -6,10 +6,20 @@ elebot_detection_data* elebot = 0;
 bool trying_to_find_edge = false;
 bool playback_in_progress = false;
 Playback playback;
+//fvec3 hitpos;
+bool waiting_to_hit_ground = false;
+//trace_t trace;
 
 constexpr int LINEUP_FPS = 333;
 
-
+void elebot_on_disconnect()
+{
+	elebot_surfaces.clear();
+	elebot = 0;
+	trying_to_find_edge = false;
+	playback_in_progress = false;
+	waiting_to_hit_ground = false;
+}
 void elebot_save_selected()
 {
 	if (NOT_SERVER)
@@ -196,7 +206,7 @@ float predict_next_position(pmove_t* pm, pml_t* pml, Axis_t axis, float yaw, cha
 
 }
 
-void setup_player(pmove_t* pm, pml_t* pml, Axis_t axis, float origin, float destination, float* normals) 
+void setup_player(pmove_t* pm, pml_t* pml, Axis_t axis, float origin, float destination, const float* normals) 
 {
 	playerState_s* ps = pm->ps;
 
@@ -223,6 +233,51 @@ void setup_player(pmove_t* pm, pml_t* pml, Axis_t axis, float origin, float dest
 	PmoveSingleSimulation(pm, pml, &c);
 	PmoveSingleSimulation(pm, pml, &c);
 	
+}
+bool elebot_player_is_next_to_ele_surface(playerState_s* ps)
+{
+	if (ps->groundEntityNum == 1022)
+		waiting_to_hit_ground = false;
+
+	if (waiting_to_hit_ground) {
+		return false;
+	}
+
+	if (ps->velocity[0] && ps->velocity[1] || ps->groundEntityNum == 1022)
+		return false;
+
+	trace_t trace;
+	static const std::unordered_map<int, int> stance = { {60, 70}, {40, 50}, {11, 30} };
+	Axis_t eleAxis = ps->velocity[0] == 0 ? Axis_t::X : Axis_t::Y;
+
+
+	fvec3 mins = { -15.13f, -15.13f, 0 };
+	fvec3 maxs = { 15.13f, 15.13f, (float)stance.find(int(ps->viewHeightCurrent))->second };
+
+	fvec3 end = fvec3(ps->origin) + mins;
+
+
+	CG_TracePoint(fvec3(0, 0, 0), &trace, ps->origin, fvec3(0,0,0), end, ps->clientNum, MASK_PLAYERSOLID, 0, 0);
+
+	if (trace.fraction == 1.f) {
+
+		end = fvec3(ps->origin) + maxs;
+		CG_TracePoint(fvec3(0, 0, 0), &trace, ps->origin, fvec3(0, 0, 0), end, ps->clientNum, MASK_PLAYERSOLID, 0, 0);
+
+		if (trace.fraction == 1.f)
+			return false;
+
+	}
+
+	if (fabs(trace.normal[0]) != 1.f && fabs(trace.normal[1]) != 1.f) {
+		return false;
+	}
+
+	fvec3 hitpos = fvec3(ps->origin) + ((end - fvec3(ps->origin)) * trace.fraction);
+
+	Com_Printf("(%.6f)\n", hitpos[int(eleAxis)]);
+	waiting_to_hit_ground = true;
+	return true;
 }
 float slowdown_position(pmove_t* pm, pml_t* pml, Axis_t axis, float origin, float destination, float yaw)
 {
@@ -257,32 +312,57 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 	trace_t trace;
 	float distance_moved = 0.f;
 
-
 	CG_TracePoint(vec3_t{ 1,1,1 }, &trace, start, vec3_t{ -1,-1,-1 }, end, ps->clientNum, MASK_PLAYERSOLID, 0, 0);
 
-
 	if (fabs(trace.normal[0]) != 1.f && fabs(trace.normal[1]) != 1.f) {
-		Com_Printf("invalid surface\n");
-		return;
+		return Com_Printf("^1invalid surface\n");
 	}
 
 	if (elebot && !elebot->saved) {
 		elebot_surfaces.pop_back();
 		elebot = &elebot_surfaces.back();
 	}
-
 	Axis_t hitAxis = fabs(trace.normal[0]) == 1.f ? Axis_t::X : Axis_t::Y;
 
 	fvec3 hitpos = start + ((end - start) * trace.fraction);
 	fvec3 first_origin = ps->origin;
 
 	hitpos += (fvec3(trace.normal)) * 14;
-	const float start_origin = hitpos[int(hitAxis)];
+	float start_origin = hitpos[int(hitAxis)];
 	hitpos += (fvec3(trace.normal).inverse()) * 0.125f;
+
+	bool self_is_closer = std::fabs(fabs(hitpos[int(hitAxis)]) - fabs(ps->origin[int(hitAxis)])) < 0.125f;
 	const float destination = hitpos[int(hitAxis)];
+
+	if (self_is_closer) {
+		//flip the origin
+		start_origin = ps->origin[int(hitAxis)];
+
+		float yaw = -(atan2(trace.normal[1], trace.normal[0]) * 180.f / PI);
+		if (hitAxis == Axis_t::X)
+			yaw = AngleNormalize180(yaw + 180);
+
+		fvec3 angles = fvec3(0, AngleNormalize180(yaw+180), 0).toforward();
+
+		float dist = fabs(destination - start_origin);
+
+		float new_org = start_origin + dist * 2 * angles[int(hitAxis)];
+		
+		if (PointInFront(start_origin, hitpos, CG_RoundAngleToCardinalDirection(yaw))) {
+			new_org = start_origin;
+			Com_Printf("ele is infront of me\n");
+		}
+		
+		start_origin = new_org;
+
+		Com_Printf("start_origin: %.6f\n", start_origin);
+
+
+
+	}
 	const float total_distance = fabs(destination - start_origin);
 
-	//Com_Printf("hit: %.6f\n", hitpos[int(hitAxis)]);
+	Com_Printf("dist: %.6f\n", total_distance);
 
 	pmove_t pm = PM_Create(&cgs->predictedPlayerState, cinput->GetUserCmd(cinput->currentCmdNum), cinput->GetUserCmd(cinput->currentCmdNum - 1));
 	pml_t pml = PML_Create(&pm, 333);
@@ -308,7 +388,7 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 	float closest_distance = total_distance;
 
 	size_t numTries = 0;
-	int lowest_inputs = 30;
+	int lowest_inputs = 20;
 	int prediction_fails = 0;
 
 	while (numTries++ != 10000) {
@@ -319,7 +399,7 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 
 		reset_prediction(&pm, origin, old_velocity, hitAxis);
 
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < lowest_inputs; i++) {
 
 			prediction_controller c;
 			give_random_inputs(c, yaw);
@@ -332,7 +412,7 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 
 			distance_moved += delta;
 
-			if (i == 29 && distance_moved == 0.f)
+			if (i == 19 && distance_moved == 0.f)
 				return Com_Printf("^1for some reason the bot is unable to move at high coordinates\n");
 
 			if (delta != 0)
@@ -351,6 +431,11 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 				if (i < lowest_inputs) {
 					lowest_inputs = i;
 					_elebot.playback = current_attempt;
+					gg = true;
+					Com_Printf("found the correct inputs after %i tries\n", numTries);
+
+					numTries = 10000;
+					break;
 				}
 				successful_frames++;
 
@@ -368,7 +453,7 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 		return;
 	}
 
-	Com_Printf("best attempt from (%i) attempts had %i inputs and %i fails\n", successful_frames, lowest_inputs, prediction_fails);
+	Com_Printf("best attempt had %i inputs\n", lowest_inputs);
 
 	//return;
 
@@ -385,11 +470,11 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 	auto winding = CM_GetBrushWinding(b, trace.normal);
 
 	if (!winding.has_value()) {
-		Com_Printf("^1couldn't find the winding?!\n");
-		return;
+		Com_Printf("^1couldn't find the winding so the surface highlighting will be disabled\n");
 
-	}
-	_elebot.face = winding.value();
+	}else
+		_elebot.face = winding.value();
+
 	_elebot.destination = destination;
 	_elebot.normals = trace.normal;
 	_elebot.hitAxis = hitAxis;
@@ -400,7 +485,7 @@ void elebot_evaluate_angles_midair(playerState_s* ps)
 
 	elebot_surfaces.push_back(_elebot);
 
-	Com_Printf("distance moved: %.6f in %i frames to position (%.6f)\n", distance_moved, successful_frames, pm.ps->origin[int(hitAxis)]);
+	//Com_Printf("distance moved: %.6f in %i frames to position (%.6f)\n", distance_moved, successful_frames, pm.ps->origin[int(hitAxis)]);
 
 	elebot = &elebot_surfaces.back();
 }
@@ -412,40 +497,37 @@ void elebot_render_winding(GfxViewParms* viewParms)
 
 
 	for (auto& eb : elebot_surfaces) {
-		if (!eb.is_valid)
+		if (!eb.is_valid || !eb.has_winding())
 			continue;
 
-		if (eb.face.points.empty() || !eb.brush) {
+		fvec3 center;
 
-			if (!eb.brush) {
-				eb.brush = CM_FindBrushByOrigin(eb.brush_origin);
-			}
-			else {
-
-				auto w = CM_GetBrushWinding(eb.brush, eb.normals);
-
-				if (w)
-					eb.face = w.value();
-
-			}
+		for (auto& c : eb.face.points) 
+			center += c;
+		
+		center /= (float)eb.face.points.size();
 
 
-			continue;
-		}
-		else {
 
-			cplane_s frustum_planes[6];
-			CreateFrustumPlanes(viewParms, frustum_planes);
+		CL_AddDebugString(0, center, vec4_t{ 1,1,1,1 }, 1.f, (char*)std::to_string(eb.lineup_trigger).c_str(), 2);
+
+	
+		cplane_s frustum_planes[6];
+		CreateFrustumPlanes(viewParms, frustum_planes);
 
 
-			if (CM_BrushInView(eb.brush, frustum_planes, 5))
-				RB_DrawCollisionPoly(eb.face.points.size(), (float(*)[3])eb.face.points.data(), vec4_t{ 0,1,0,0.3f }, true);
-		}
+		if (CM_BrushInView(eb.brush, frustum_planes, 5))
+			RB_DrawCollisionPoly(eb.face.points.size(), (float(*)[3])eb.face.points.data(), vec4_t{ 0,1,0,0.3f }, true);
+		
 	}
 
 }
 bool elebot_has_lineup(playerState_s* ps, usercmd_s* cmd)
 {
+	if (ps->groundEntityNum == 1022) {
+		playback_in_progress = false;
+		return false;
+	}
 
 	if (trying_to_find_edge) {
 		fvec3 angles = ps->viewangles;
@@ -475,7 +557,6 @@ bool elebot_has_lineup(playerState_s* ps, usercmd_s* cmd)
 }
 void elebot_start_lineup(playerState_s* ps, usercmd_s* cmd)
 {
-
 
 	pmove_t pm = PM_Create(ps, cmd, cinput->GetUserCmd(cinput->currentCmdNum - 1));
 	pml_t pml = PML_Create(&pm, LINEUP_FPS);

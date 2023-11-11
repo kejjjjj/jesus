@@ -50,6 +50,9 @@ std::optional<sc_winding_t> CM_GetBrushWinding(cbrush_t* b, const fvec3& normals
 		std::cout << normals << " = " << current_normals << '\n';
 
 		if (normals == current_normals) {
+			if (current_winding.windings.empty())
+				return std::nullopt;
+
 			return current_winding.windings.back();
 		}
 

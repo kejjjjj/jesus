@@ -134,10 +134,10 @@ struct vec3
 	bool operator==(const vec3& v) const { return  x == v.x && y == v.y && z == v.z; }
 	bool operator!=(const vec3& v) const { return  x != v.x || y != v.y || z != v.z; }
 
-	vec3 operator+=(const T& v) { return { x += v, y += v, z += v.z }; }
-	vec3 operator-=(const T& v) { return { x -= v, y -= v, z -= v.z }; }
-	vec3 operator*=(const T& v) { return { x *= v, y *= v, z *= v.z }; }
-	vec3 operator/=(const T& v) { return { x /= v, y /= v, z /= v.z }; }
+	vec3 operator+=(const T& v) { return { x += v, y += v, z += v }; }
+	vec3 operator-=(const T& v) { return { x -= v, y -= v, z -= v }; }
+	vec3 operator*=(const T& v) { return { x *= v, y *= v, z *= v }; }
+	vec3 operator/=(const T& v) { return { x /= v, y /= v, z /= v }; }
 
 #ifdef IMGUI_API
 

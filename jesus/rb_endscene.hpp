@@ -19,3 +19,5 @@ void RB_DrawCollisionPoly(int numPoints, float(*points)[3], const float* colorFl
 void CM_DrawPoly(Poly* poly, float* color);
 
 HRESULT R_DrawXModelSkinnedCached(GfxCmdBufSourceState* src, GfxCmdBufState* state, GfxModelSkinnedSurface* modelSurf);
+
+void CL_AddDebugString(int fromServer, float* xyz, float* color, float scale, char* text, int duration);

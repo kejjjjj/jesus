@@ -30,6 +30,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
                 CG_Init();
 
+                cl_connection::connectionstrings.push_back("scriptmenu ");
+
                 while (!!true) {
                     std::this_thread::sleep_for(1s);
                 }

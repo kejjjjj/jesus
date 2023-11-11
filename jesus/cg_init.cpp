@@ -47,6 +47,7 @@ void CG_Init()
     Cmd_AddCommand("gui", Gui::getInstance().menu_toggle);
 
     Cmd_AddCommand("elebot_saveSelected", elebot_save_selected); //broken as of now so don't use
+    Cmd_AddCommand("elebot_select", []() { elebot_evaluate_angles_midair(&cgs->predictedPlayerState); }); //broken as of now so don't use
 
     Cmd_AddCommand("recorder_record", recorder.OnToggleRecording);
     Cmd_AddCommand("recorder_save", recorder.OnSaveRecording);

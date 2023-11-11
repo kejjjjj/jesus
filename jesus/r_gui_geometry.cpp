@@ -14,7 +14,12 @@ void brush_geom_find_with_filter(const bool newState)
 
 	for (int i = 0; i < cm->numBrushes; i++) {
 
-		if (std::string(cm->materials[cm->brushes[i].axialMaterialNum[0][0]].material).find(filter->get_array()) == std::string::npos)
+		std::string mat = std::string(cm->materials[cm->brushes[i].axialMaterialNum[0][0]].material);
+
+		if (mat.find(filter->get_array()) == std::string::npos)
+			continue;
+
+		if(std::string(filter->get_array()).find("clip") != std::string::npos && mat.find("foliage") != std::string::npos)
 			continue;
 
 		GetBrushPolys(&cm->brushes[i], planes);

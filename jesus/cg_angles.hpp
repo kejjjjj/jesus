@@ -14,10 +14,10 @@ enum class Axis_t : int
 	Z //?
 };
 
-enum class cardinalDirection_e : unsigned short
+enum class cardinalDirection_e : short
 {
 	N = 0, //X+ 0°
-	E = 270, //Y- 270°
+	E = -90, //Y- 270°
 	S = 180, //X- 180°
 	W = 90 //Y+ 90°
 
