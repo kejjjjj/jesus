@@ -46,8 +46,10 @@ void Gui::movement_create_fps(std::unique_ptr<Gui_SubCategory>& category)
 	std::unique_ptr<Gui_CategoryItems> items = std::make_unique<Gui_CategoryItems>("FPS");
 
 	const auto autofps = instance.add_variable<bool>("AutoFPS", false);
+	const auto long125 = instance.add_variable<bool>("Long 125", false);
 
 	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(autofps, "Automatically switches to the best FPS for acceleration"))));
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(long125, "the 125fps zone is wider", [](bool) { fps::refresh_required = true; fps::distances_refresh_required = true; }))));
 
 	category->append_itemlist(std::move(items));
 

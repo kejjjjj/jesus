@@ -61,11 +61,16 @@ std::vector<fps_zone> FPS_GetZones(int g_speed)
 	zone.resize(fps.size());
 	zone[0].start = (std::round(g_speed / (1000 / fps[0])));
 	zone[0].end = -zone[0].start;
+
 	zone[0].FPS = fps[0];
 
 	if (g_speed == 190) {
 		zone[0].start -= 1;
 		zone[0].end = -zone[0].start;
+	}
+
+	if (find_evar<bool>("Long 125")->get()) {
+		zone[0].start += 17.f;
 	}
 
 	zone[0].start = int(zone[0].start);
@@ -82,12 +87,20 @@ std::vector<fps_zone> FPS_GetZones(int g_speed)
 		zone[i].start = zone[i - 1].end;
 		zone[i].end = zone[i].start * float(1000 / fps[i - 1]) / float(1000 / fps[i]);
 
+		if (find_evar<bool>("Long 125")->get() && fps[i] == 125) {
+			zone[i].end = zone[0].start;
+		}
+
 		zone[i].start = int(zone[i].start);
 		zone[i].end = int(zone[i].end);
 		zone[i].FPS = fps[i];
 		zone[i].length = (zone[i].start > 45 ? 90.f - zone[i].start : zone[i].start) * 2;
 
 
+	}
+
+	for (auto& z : zone) {
+		std::cout << std::format("{}: [{:.1f}, {:.1f}]\n", z.FPS, z.start, z.end);
 	}
 
 	return zone;
@@ -109,9 +122,10 @@ int32_t FPS_GetIdeal(playerState_s* ps, usercmd_s* cmd)
 	static int g_speed = 0;
 	static std::vector<fps_zone> zones = FPS_GetZones(ps->speed);
 	fps_zone copy;
-	if (g_speed != ps->speed) {
+	if (g_speed != ps->speed || fps::refresh_required) {
 		zones = FPS_GetZones(ps->speed);
 		g_speed = ps->speed;
+		fps::refresh_required = false;
 	}
 
 	copy = zones[0];
@@ -161,9 +175,10 @@ zone_distance FPS_GetDistanceToZone(playerState_s* ps, usercmd_s* cmd, int wishF
 {
 	static int g_speed = 0;
 	static std::vector<fps_zone> zones = FPS_GetZones(ps->speed);
-	if (g_speed != ps->speed) {
+	if (g_speed != ps->speed || fps::distances_refresh_required) {
 		zones = FPS_GetZones(ps->speed);
 		g_speed = ps->speed;
+		fps::distances_refresh_required = false;
 	}
 
 	fps_zone* zone = 0;

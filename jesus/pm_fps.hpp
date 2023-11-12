@@ -27,4 +27,11 @@ std::vector<fps_zone> FPS_GetZones(int g_speed);
 
 int32_t FPS_GetIdeal(playerState_s* ps, usercmd_s* cmd);
 
+
 zone_distance FPS_GetDistanceToZone(playerState_s* ps, usercmd_s* cmd, int wishFPS);
+
+namespace fps
+{
+	inline bool refresh_required = false;
+	inline bool distances_refresh_required = false;
+}

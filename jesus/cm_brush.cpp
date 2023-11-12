@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
 SimplePlaneIntersection pts[1024];
-
+SimplePlaneIntersection* pts_results[1024];
 
 void GetBrushPolys(cbrush_t* brush, float(*outPlanes)[4])
 {
@@ -12,19 +12,32 @@ void GetBrushPolys(cbrush_t* brush, float(*outPlanes)[4])
 	int verts = 0;
 	int intersection = 0;
 
+	std::cout << "intersections: " << intersections << '\n';
+
 	current_brush = brush;
 	do {
 		current_normals = outPlanes[intersection];
-		if (auto r = BuildBrushdAdjacencyWindingForSide(intersections, pts, outPlanes[intersection], intersection, &windings[intersection])) {
-			verts += r->numsides;
+		adjacencyWinding_t* w = 0;
+		if (w = BuildBrushdAdjacencyWindingForSide(intersections, pts, outPlanes[intersection], intersection, &windings[intersection])) {
+			verts += w->numsides;
+
+
 		}
+
+		//int ptCount = GetPointListAllowDupes(pts, intersection, intersections, pts_results);
+		//ptCount = ReduceToACycle(intersection, pts_results, ptCount);
+		//if(ptCount >= 3 && pts_results[intersection])
+		current_winding.intersections.push_back(pts[intersection]);
 
 		++intersection;
 
 	} while (intersection < planeCount);
 
+
+
 	s_brushes.push_back(current_winding);
 	current_winding.windings.clear();
+	current_winding.intersections.clear();
 
 }
 std::optional<sc_winding_t> CM_GetBrushWinding(cbrush_t* b, const fvec3& normals)
@@ -384,6 +397,39 @@ bool PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t 
 	plane[3] = DotProduct(a, plane);
 	return 1;
 }
+int GetPointListAllowDupes(SimplePlaneIntersection* pts, int planeIndex, int pointCount, SimplePlaneIntersection** xyz)
+{
+	static const DWORD addr = 0x57C2E0;
+	int r = 0;
+	__asm
+	{
+		mov ecx, pts;
+		mov edi, planeIndex;
+		mov esi, pointCount;
+		push xyz;
+		call addr;
+		add esp, 0x4;
+		mov r, eax;
+	}
+
+	return r;
+}
+int ReduceToACycle(int basePlane, SimplePlaneIntersection** xyz, int ptsCount)
+{
+	int r = 0;
+	__asm
+	{
+		push ptsCount;
+		push xyz;
+		push basePlane;
+		mov esi, 0x57CF80;
+		call esi;
+		add esp, 0xC;
+		mov r, eax;
+
+	}
+	return r;
+}
 int GetPlaneIntersections(const float** planes, int planeCount, SimplePlaneIntersection* OutPts)
 {
 	int r = 0;
@@ -517,7 +563,7 @@ adjacencyWinding_t* BuildBrushdAdjacencyWindingForSide(int ptCount, SimplePlaneI
 		mov r, eax;
 	}
 
-	return r;
+	return optionalOutWinding;
 }
 void __cdecl wtf(adjacencyWinding_t* w, float* a, float* b, float* c, float* points)
 {

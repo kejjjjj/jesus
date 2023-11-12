@@ -32,6 +32,7 @@ struct showcol_brush
 {
 	std::vector<sc_winding_t> windings;
 	cbrush_t* brush;
+	std::vector<SimplePlaneIntersection> intersections;
 
 	std::vector<fvec3> to_triangles() const noexcept {
 		std::vector<fvec3> tris;
@@ -58,7 +59,8 @@ void Phys_GetWindingForBrushFace2(unsigned int brushSideIndex, cbrush_t* brush, 
 int Phys_BuildWindingsForBrush(cbrush_t* brush, const float(*planes)[4], Poly* outPolys, float(*outVerts)[3]);
 void CM_ReverseWinding(winding_t* w);
 bool PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
-
+int GetPointListAllowDupes(SimplePlaneIntersection* pts, int planeIndex, int pointCount, SimplePlaneIntersection** xyz);
+int ReduceToACycle(int basePlane, SimplePlaneIntersection** xyz, int ptsCount);
 int GetPlaneIntersections(const float** planes, int planeCount, SimplePlaneIntersection* OutPts);
 void CM_GetPlaneVec4Form(const cbrushside_t* sides, const float(*axialPlanes)[4], int index, float* expandedPlane);
 int BrushToPlanes(const cbrush_t* brush, float(*outPlanes)[4]);
@@ -79,6 +81,7 @@ inline fvec3 current_normals;
 inline showcol_brush current_winding;
 inline std::vector<showcol_brush> s_brushes;
 inline cbrush_t* current_brush = 0;
+
 
 inline void CM_ClearBrushes()
 {

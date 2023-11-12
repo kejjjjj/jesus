@@ -29,10 +29,21 @@ void CM_WriteBrush(std::ofstream& o, const showcol_brush& b, int index)
 
 	std::vector<export_brush> brushside;
 
+	//for (auto& intersection : b.intersections) {
+
+	//	int planeIdx0 = intersection.planeIndex[0];
+	//	int planeIdx1 = intersection.planeIndex[1];
+	//	int planeIdx2 = intersection.planeIndex[2];
+
+	//	brushside.push_back({ b.intersections[planeIdx0].xyz, b.intersections[planeIdx1].xyz, b.intersections[planeIdx2].xyz});
+
+
+	//}
+
 	for (auto& winding : b.windings) {
 		brushside.push_back({ winding.points[0], winding.points[1], winding.points[2] });
 	}
-
+	//std::swap(brushside[5], brushside[0]);
 	//std::swap(brushside[3], brushside[4]);
 	//std::swap(brushside[1], brushside[3]);
 	//std::swap(brushside[0], brushside[1]);
@@ -71,7 +82,7 @@ void CM_WriteAllBrushes(std::ofstream& o)
 
 	for (auto& brush : s_brushes) {
 		CM_WriteBrush(o, brush, brushIndex++);
-		break; //only write one
+		//break; //only write one
 	}
 
 	//end brushes

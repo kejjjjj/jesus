@@ -86,8 +86,10 @@ void CL_FinishMove(usercmd_s* cmd)
 	if (clientUI->connectionState == CA_ACTIVE)
 		cl_connection::on_connect();
 
-	M_Strafebot(cmd, CL_GetUserCmd(clients->cmdNumber - 1));
-	M_AutoFPS(cmd);
+	if (!mr.playback ) {
+		M_Strafebot(cmd, CL_GetUserCmd(clients->cmdNumber - 1));
+		M_AutoFPS(cmd);
+	}
 	
 	//if (elebot_player_is_next_to_ele_surface(ps))
 	//	elebot_evaluate_angles_midair(ps);
