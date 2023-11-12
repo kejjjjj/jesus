@@ -54,7 +54,6 @@ void CG_CreateHooks()
 	hooktable.insert(hookEnums_e::HOOK_BRUSH_ADJACENCY, hook::hookobj<void*>(0x57D86C, stealerino_test, TRUE));
 	hooktable.insert(hookEnums_e::HOOK_FS_RESTART, hook::hookobj<void*>(0x55ED10, FS_Restart, TRUE));
 
-
 	//hooktable.insert(hookEnums_e::HOOK_ENDSCENE_FIX, hook::hookobj<void*>(0x6496CF, RB_FixEndscene, TRUE));
 
 	if (auto cod4x = is_cod4x()) {

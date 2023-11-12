@@ -61,10 +61,12 @@ void Gui::movement_create_jumping(std::unique_ptr<Gui_SubCategory>& category)
 	std::unique_ptr<Gui_CategoryItems> items_strafing = std::make_unique<Gui_CategoryItems>("General");
 
 	const auto easy_bounces = instance.add_variable<bool>("Easy Bounces", false);
-	//const auto auto_para = instance.add_variable<bool>("Auto Para", false);
+	const auto bhop = instance.add_variable<bool>("Bhop", true);
 
 	items_strafing->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(easy_bounces, "Makes hitting difficult-to-hit bounces a lot easier"))));
+	items_strafing->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(bhop, "You're a bunny"))));
 
+	
 
 	category->append_itemlist(std::move(items_strafing));
 }

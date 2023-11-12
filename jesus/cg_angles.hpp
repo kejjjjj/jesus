@@ -33,6 +33,7 @@ void CL_SetSilentAngles(const fvec3& target);
 
 void CL_SetPlayerAngles(usercmd_s* cmd, float* delta_angles, const fvec3& target);
 ivec3 CL_GetPlayerAngles(usercmd_s* cmd, float* delta_angles, const fvec3& target);
+void CG_FillAngleYaw(float start, float end, float yaw, float y, float h, float fov, const vec4_t color);
 
 bool CG_SetDeltaAngles(float* dst);
 

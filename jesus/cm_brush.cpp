@@ -12,7 +12,7 @@ void GetBrushPolys(cbrush_t* brush, float(*outPlanes)[4])
 	int verts = 0;
 	int intersection = 0;
 
-	std::cout << "intersections: " << intersections << '\n';
+	//std::cout << "intersections: " << intersections << '\n';
 
 	current_brush = brush;
 	do {
@@ -60,7 +60,7 @@ std::optional<sc_winding_t> CM_GetBrushWinding(cbrush_t* b, const fvec3& normals
 
 		++intersection;
 
-		std::cout << normals << " = " << current_normals << '\n';
+		//std::cout << normals << " = " << current_normals << '\n';
 
 		if (normals == current_normals) {
 			if (current_winding.windings.empty())
@@ -276,25 +276,48 @@ void RB_ShowCollision(GfxViewParms* viewParms)
 			RB_RenderWinding(i);
 		}
 
-
-	for (auto& i : cm_terrainpoints) {
-		CM_ShowTerrain(&i, frustum_planes);
+	if (find_evar<bool>("Only Elevators")->get() == false) {
+		for (auto& i : cm_terrainpoints) {
+			CM_ShowTerrain(&i, frustum_planes);
+		}
 	}
 
 }
 void RB_RenderWinding(const showcol_brush& sb)
 {
-	if (sb.brush->get_origin().dist(clients->cgameOrigin) > find_evar<float>("Draw Distance")->get())
+	if (sb.brush->get_origin().dist(clients->cgameOrigin) > find_evar<float>("Draw Dist")->get())
 		return;
 
 	bool only_bounces = find_evar<bool>("Only Bounces")->get();
+	bool only_elevators = find_evar<bool>("Only Elevators")->get();
+
+
+	
 
 	for (auto& i : sb.windings) {
 
 		if (only_bounces && i.is_bounce == false)
 			continue;
 
-		RB_DrawCollisionPoly(i.points.size(), (float(*)[3])i.points.data(), vec4_t{ 0,1,1,0.3f }, find_evar<bool>("Depth Test")->get());
+		if (only_elevators && i.is_elevator == false)
+			continue;
+
+		vec4_t c = { 0,1,1,0.3f };
+
+		if (only_bounces) {
+			float n = i.normals[2];
+
+			if (n > 0.7f || n < 0.3f)
+				n = 0.f;
+			else
+				n = 1.f - (n - 0.3f) / (0.7f - 0.3f);
+
+			c[0] = 1.f - n;
+			c[1] = n;
+			c[2] = 0.f;
+		}
+
+		RB_DrawCollisionPoly(i.points.size(), (float(*)[3])i.points.data(), c, find_evar<bool>("Depth Test")->get());
 	}
 
 
@@ -601,7 +624,8 @@ void __cdecl wtf(adjacencyWinding_t* w, float* a, float* b, float* c, float* poi
 	//PlaneFromPoints(plane, winding_points[0], winding_points[1], winding_points[2]);
 
 	current_winding.windings.back().is_bounce = current_normals[2] >= 0.3f && current_normals[2] <= 0.7f;
-
+	current_winding.windings.back().is_elevator = std::fabs(current_normals[0]) == 1.f || std::fabs(current_normals[1]) == 1.f;
+	current_winding.windings.back().normals = current_normals;
 }
 
 __declspec(naked) void stealerino_test()

@@ -24,6 +24,8 @@ struct sc_winding_t
 {
 	std::vector<fvec3> points;
 	bool is_bounce = false;
+	bool is_elevator = false;
+	fvec3 normals;
 };
 
 std::optional<sc_winding_t> CM_GetBrushWinding(cbrush_t* b, const fvec3& normals);

@@ -131,10 +131,12 @@ void Gui::geometry_create_preferences(std::unique_ptr<Gui_SubCategory>& category
 
 
 	const auto only_bounces = instance.add_variable<bool>("Only Bounces", false);
+	const auto only_elevators = instance.add_variable<bool>("Only Elevators", false);
 	const auto depth_test = instance.add_variable<bool>("Depth Test", false);
-	const auto draw_distance = instance.add_variable<float>("Draw Distance", 2000.f);
+	const auto draw_distance = instance.add_variable<float>("Draw Dist", 2000.f);
 
-	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(only_bounces, "Only renders windings that can be bounced"))));
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(only_bounces, "Only renders windings which can be bounced", [](bool) {find_evar<bool>("Only Elevators")->get() = false; }))));
+	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(only_elevators, "Only renders windings which can be elevated", [](bool) {find_evar<bool>("Only Bounces")->get() = false; }))));
 	items->append_item(std::move(std::make_unique<Gui_ItemCheckbox>(Gui_ItemCheckbox(depth_test, "Don't render through walls"))));
 	items->append_item(std::move(std::make_unique<Gui_ItemSliderFloat>(Gui_ItemSliderFloat(draw_distance, "Maximum distance to show collision surfaces", 0, 20000))));
 

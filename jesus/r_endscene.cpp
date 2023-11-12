@@ -71,6 +71,8 @@ void __cdecl Renderer::CG_DrawActive()
 
 	sprintf_s(buffer, "x:     %.6f\ny:     %.6f\nz:     %.6f\nyaw: %.6f\nspeed: %.6f", clients->cgameOrigin[0], clients->cgameOrigin[1], clients->cgameOrigin[2], (clients->cgameViewangles[YAW]), fvec2(clients->cgameVelocity).mag());
 
+	//R_RenderFPSBar(&cgs->predictedPlayerState, CL_GetUserCmd(clients->cmdNumber));
+
 	float col[4] = { 0,1,0,1 };
 	float glowCol[4] = { 1,0,0,1 };
 

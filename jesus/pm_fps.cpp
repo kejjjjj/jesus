@@ -225,3 +225,56 @@ zone_distance FPS_GetDistanceToZone(playerState_s* ps, usercmd_s* cmd, int wishF
 
 	return results;
 }
+
+void R_RenderFPSBar(playerState_s* ps, usercmd_s* cmd)
+{
+	static int g_speed = ps->speed;
+	static std::vector<fps_zone> zones = FPS_GetZones(ps->speed);
+	if (g_speed != ps->speed || fps::distances_refresh_required) {
+		zones = FPS_GetZones(ps->speed);
+		g_speed = ps->speed;
+		fps::distances_refresh_required = false;
+	}
+
+	const dvar_s* _fov = Dvar_FindMalleableVar("cg_fov");
+	const dvar_s* fovscale = Dvar_FindMalleableVar("cg_fovscale");
+
+	const float fov = _fov->current.value * fovscale->current.value;
+	float yaw = ps->viewangles[YAW];
+	const float aa = RAD2DEG(atan2(-(int)cmd->rightmove, (int)cmd->forwardmove));
+	bool isInverted = yaw < fov || yaw > 180.f - fov;
+
+	yaw = AngleNormalize180(yaw + aa);
+
+	struct c
+	{
+		float r, g, b, a;
+	};
+
+	const std::vector<c> cs = {
+		{1,1,0, 0.5f},
+		{1,0,1, 0.5f},
+		{0,1,0, 0.5f},
+		{0,1,1, 0.5f}
+
+	};
+	for (int i = 1; i < zones.size(); i++) {
+		fps_zone copy = zones[i];
+
+		if (cmd->rightmove == 127) {
+			copy.start *= -1;
+			copy.end *= -1;
+
+		}
+
+		if (isInverted) {
+			CG_FillAngleYaw(-180.f + copy.start, -180.f + copy.end, yaw, 400, 20, DEG2RAD(fov), vec4_t{ cs[i].r, cs[i].g, cs[i].b, cs[i].a });
+		}
+
+		CG_FillAngleYaw(copy.start, copy.end, yaw, 400, 20, DEG2RAD(fov), vec4_t{ cs[i].r, cs[i].g, cs[i].b, cs[i].a });
+		CG_FillAngleYaw(copy.start + 90, copy.end + 90, yaw, 400, 20, DEG2RAD(fov), vec4_t{ cs[i].r, cs[i].g, cs[i].b, cs[i].a });
+		CG_FillAngleYaw(copy.start -90, copy.end - 90, yaw, 400, 20, DEG2RAD(fov), vec4_t{ cs[i].r, cs[i].g, cs[i].b, cs[i].a });
+		CG_FillAngleYaw(copy.start + 180, copy.end + 180, yaw, 400, 20, DEG2RAD(fov), vec4_t{ cs[i].r, cs[i].g, cs[i].b, cs[i].a });
+
+	}
+}

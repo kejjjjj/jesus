@@ -4,7 +4,7 @@
 
 using namespace cg;
 void CG_AdjustFrom640(float& x, float& y, float& w, float& h);
-Material* R_RegisterMaterial(const char* fontname);
+Material* R_RegisterMaterial(const char* fontname, int v);
 Font_s* R_RegisterFont(const char* fontname);
 
 char* __cdecl R_AddCmdDrawText(const char* text, int maxChars, Font_s* font, float x, float y, float xScale, float yScale, float rotation, float* color, int style);

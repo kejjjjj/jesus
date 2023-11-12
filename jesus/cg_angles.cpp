@@ -369,3 +369,14 @@ bool PointWithinLine(const fvec3& start, const fvec3& end, const fvec3& point, f
 
 	return closestDistance <= radius;
 }
+void CG_FillAngleYaw(float start, float end, float yaw, float y, float h, float fov, const vec4_t color)
+{
+	range_t const range = AnglesToRange(DEG2RAD(start), DEG2RAD(end), DEG2RAD(yaw), fov);
+
+	if(!range.split)
+		R_DrawRect("white", range.x1, y, range.x2 - range.x1, h, color);
+	else {
+		R_DrawRect("white", 0, y, range.x1, h, color);
+		R_DrawRect("white", range.x2, y, cgs->refdef.width - range.x2, h, color);
+	}
+}

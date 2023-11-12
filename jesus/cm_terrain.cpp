@@ -95,21 +95,20 @@ void CM_GetTerrainTriangles(cLeaf_t* leaf, const std::string& material_filter)
 void CM_ShowTerrain(cm_terrain* terrain, struct cplane_s* frustumPlanes)
 {
 	uint8_t col[4];
-	R_ConvertColorToBytes(vec4_t{ 1,0,0,0.3f }, col);
 	vec3_t tris[3];
 	fvec3 center;
 	std::vector<fvec3> points(3);
 	int i = 2;
 
-	const auto only_bounces = find_evar<bool>("Only Bounces");
-	const auto depth_test = find_evar<bool>("Depth Test");
-	const auto drawdist = find_evar<float>("Draw Distance");
+	const auto only_bounces = find_evar<bool>("Only Bounces")->get();
+	const auto depth_test = find_evar<bool>("Depth Test")->get();
+	const auto drawdist = find_evar<float>("Draw Dist")->get();
 
 	bool unwalkable_edges = find_evar<bool>("Unwalkable Edges")->get();
 
 	for (auto it = terrain->tris.begin(); it != terrain->tris.end(); ++it) {
 
-		if ((it->plane[2] < 0.3f || it->plane[2] > 0.7f) && only_bounces->get()) {
+		if ((it->plane[2] < 0.3f || it->plane[2] > 0.7f) && only_bounces) {
 			if (!unwalkable_edges)
 				continue;
 
@@ -124,6 +123,24 @@ void CM_ShowTerrain(cm_terrain* terrain, struct cplane_s* frustumPlanes)
 		if (!CM_TriangleInView(&*it, frustumPlanes, 5))
 			continue;
 
+		vec4_t c = { 0,1,1,0.3f };
+
+		if (only_bounces) {
+			float n = it->plane[2];
+
+			if (n > 0.7f || n < 0.3f)
+				n = 0.f;
+			else
+				n = 1.f - (n - 0.3f) / (0.7f - 0.3f);
+
+			c[0] = 1.f - n;
+			c[1] = n;
+			c[2] = 0.f;
+		}
+
+		R_ConvertColorToBytes(c, col);
+
+
 		points[0] = (it->a);
 		points[1] = (it->b);
 		points[2] = (it->c);
@@ -132,10 +149,10 @@ void CM_ShowTerrain(cm_terrain* terrain, struct cplane_s* frustumPlanes)
 		center.y = { (points[0].y + points[1].y + points[2].y) / 3 };
 		center.z = { (points[0].z + points[1].z + points[2].z) / 3 };
 
-		if (center.dist(clients->cgameOrigin) > drawdist->get())
+		if (center.dist(clients->cgameOrigin) > drawdist)
 			continue;
 
-		RB_DrawPolyInteriors(3, points, col, true, depth_test->get());
+		RB_DrawPolyInteriors(3, points, col, true, depth_test);
 
 	}
 

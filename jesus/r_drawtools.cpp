@@ -10,9 +10,9 @@ void CG_AdjustFrom640(float& x, float& y, float& w, float& h)
 	w *= scale;
 	h *= scaleY;
 }
-Material* R_RegisterMaterial(const char* mtl)
+Material* R_RegisterMaterial(const char* mtl, int v)
 {
-	return ((Material * (*)(const char* mtl, int size))0x5F2A80)(mtl, sizeof(mtl));
+	return ((Material * (*)(const char* mtl, int size))0x5F2A80)(mtl, v);
 
 }
 Font_s* R_RegisterFont(const char* fontname)
@@ -21,8 +21,8 @@ Font_s* R_RegisterFont(const char* fontname)
 }
 void R_DrawRect(const char* material, float x, float y, float w, float h, const float* color)
 {
-	CG_AdjustFrom640(x, y, w, h);
-	Material* mat = R_RegisterMaterial(material);
+	//CG_AdjustFrom640(x, y, w, h);
+	Material* mat = R_RegisterMaterial(material, sizeof(material));
 	R_AddCmdDrawStretchPic(mat, (x), (y), (w), (h), 0, 0, 0, 0, color);
 
 
@@ -121,7 +121,7 @@ ScreenPlacement* CG_GetScreenPlacement()
 }
 void CG_DrawRotatedPic(int vertical, int horizontal, ScreenPlacement* scrPlace, float x, float y, float w, float h, float angle, float* color, const char* material)
 {
-	Material* mat = R_RegisterMaterial(material);
+	Material* mat = R_RegisterMaterial(material, sizeof(material));
 	return CG_DrawRotatedPic(vertical, horizontal, scrPlace, x, y, w, h, angle, color, mat);
 }
 void CG_DrawRotatedPic(int vertical, int horizontal, ScreenPlacement* scrPlace, float x, float y, float w, float h, float angle, float* color, Material* material)
@@ -339,7 +339,7 @@ void R_DrawLine(const fvec2& a, const fvec2& b, float thickness, float* color)
 		v[i][1] = verts[i].v[1];
 	}
 
-	Material* m = R_RegisterMaterial("white");
+	Material* m = R_RegisterMaterial("white", sizeof("white"));
 	R_AddCmdDrawQuadPic((float*)v, vec4_t{ 1,1,0,1 }, m);
 
 }

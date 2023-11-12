@@ -79,7 +79,7 @@ void CL_FinishMove(usercmd_s* cmd)
 
 	CL_FixServerTime(cmd);
 	bp.PredictBounce(cmd);
-	mr.OnUserCmd(cmd);
+	
 	elebot.move(cmd);
 	CL_MonitorEvents(cmd);
 
@@ -90,7 +90,7 @@ void CL_FinishMove(usercmd_s* cmd)
 		M_Strafebot(cmd, CL_GetUserCmd(clients->cmdNumber - 1));
 		M_AutoFPS(cmd);
 	}
-	
+
 	//if (elebot_player_is_next_to_ele_surface(ps))
 	//	elebot_evaluate_angles_midair(ps);
 
@@ -105,29 +105,15 @@ void CL_FinishMove(usercmd_s* cmd)
 
 	entities.update_all(clients->snap.numClients);
 
-	static dvar_s* kej_bhop = Dvar_FindMalleableVar("kej_bhop");
-
-	if (kej_bhop && kej_bhop->current.enabled && (cmd->buttons & cmdEnums::jump) != 0) {
+	if (find_evar<bool>("Bhop")->get() && (cmd->buttons & cmdEnums::jump) != 0) {
 		usercmd_s* oldcmd = CL_GetUserCmd(clients->cmdNumber - 1);
 		if ((cmd->buttons & cmdEnums::jump) != 0 && (oldcmd->buttons & cmdEnums::jump) != 0)
 			cmd->buttons -= cmdEnums::jump;
 	}
 
-	if (GetAsyncKeyState(VK_MENU) & 1)
-		CG_SetYaw(CG_GetNearestCardinalAngle(clients->cgameViewangles[YAW]));
-
-	//if (spread_data.weapon_fired) {
-
-	//	fvec3 deltas = spread_data.dir.toangles() - fvec3(cgs->predictedPlayerState.viewangles);
-	//	cgs->oldTime -= 1;
-	//	CL_SetPlayerAngles(CL_GetUserCmd(clients->cmdNumber-1), cgs->predictedPlayerState.delta_angles, {0,0,0});
-
-	//	spread_data.weapon_fired = false;
-	//}
-
 	M_MovementCheats(cmd);
 
-	//test_spread(cmd);
+	mr.OnUserCmd(cmd);
 
 	return;
 
